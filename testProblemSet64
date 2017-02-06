@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -e 
+PROBLEM_0=("Tsiligirides Set 1" "etc/tsiligrides_problem1/" "--output="resultsProblem1"")
+PROBLEM_1=("Tsiligirides Set 2" "etc/tsiligrides_problem2/" "--output="resultsProblem2"")
+PROBLEM_2=("Tsiligirides Set 3" "etc/tsiligrides_problem3/" "--output="resultsProblem3"")
+PROBLEM_3=("Chao diamond-shaped Set" "etc/chao_set64-diamond/" "--output="resultsSet64"")
+PROBLEM_4=("Chao squared-shaped Set" "etc/chao_set66-square/" "--output="resultsSet66"")
+
+
+#PROBLEMS=(
+#  PROBLEM_0[@]
+#  PROBLEM_1[@]
+#  PROBLEM_2[@]
+#  PROBLEM_3[@]
+#  PROBLEM_4[@]
+#)
+
+#echo "$@"
+
+PROBLEMS=(
+  PROBLEM_3[@]
+)
+
+
+#./fourphase --name="Tsiligirides Set 1" --problem="etc/tsiligrides_problem1/tsiligirides_problem_1_budget_75.txt"
+
+NUM_TESTS=10
+#CONFIGS=(" --dop-radius=0 --dop-initial-resolution=1 " " --dop-radius=0.5 --dop-initial-resolution=32 " " --dop-radius=1.0 --dop-initial-resolution=32 ")
+CONFIGS=(" neighborhood-radius=0.0 " " neighborhood-radius=0.2 " " neighborhood-radius=0.5 " " neighborhood-radius=0.7 " " neighborhood-radius=1.0 " " neighborhood-radius=1.2 " " neighborhood-radius=1.5 " " neighborhood-radius=1.7 " " neighborhood-radius=2.0 ")
+COUNT_CONFIGS=${#CONFIGS[@]}
+
+COUNT_PROBLEMS=${#PROBLEMS[@]}
+
+for ((problemi=0; problemi<$COUNT_PROBLEMS; problemi++))
+do
+
+for ((configi=0; configi<$COUNT_CONFIGS; configi++))
+do
+
+additionalConfig=${CONFIGS[configi]}
+echo $additionalConfig
+
+for ((testi=0; testi<$NUM_TESTS; testi++))
+do
+
+  PROBLEM_NAME=${!PROBLEMS[problemi]:0:1}
+  PROBLEM_PATH=${!PROBLEMS[problemi]:1:1}
+  PROBLEM_CONFIG=${!PROBLEMS[problemi]:1:2}	
+  PROBLEM_FILES=`ls ${PROBLEM_PATH}`
+  echo "NAME ${PROBLEM_NAME}"
+  echo "PATH ${PROBLEM_PATH}"
+  #echo "FILES ${FILES_}"
+  for file_name in ${PROBLEM_FILES} ;
+  do
+	echo "test file ""$file_name"
+        echo "with additional config ""$additionalConfig"
+        echo "problem name ""$PROBLEM_NAME"
+  	./main --name="$PROBLEM_NAME" --problem="$PROBLEM_PATH$file_name" "$@" $PROBLEM_CONFIG $additionalConfig
+  done
+
+done
+
+done
+
+done
