@@ -25,8 +25,10 @@ NUM_ITERS=$NUM_ITERS
 NUM_ITERS_UNIMPR=$NUM_ITERS_UNIMPR
 NAME="$PROBLEM_NAME"
 MAX_L=$MAX_L
+NEIGHBORHOOD_RADIUS=$NEIGHBORHOOD_RADIUS
+NEIGHBORHOOD_RESOLUTION=$NEIGHBORHOOD_RESOLUTION
 
-./main --gui="none" --name="$$NAME" --nowait=1 --dop-initial-resolution=$$RESOLUTION --dop-radius=$$RADIUS --output="$$OUTPUT_FOLDER" --problem="$$PROBLEM" --use-rvns=$$RVNS --num-iterations=$$NUM_ITERS --num-iterations-unimproved=$$NUM_ITERS_UNIMPR --max_l=$$MAX_L
+./main --gui="none" --name="$$NAME" --nowait=1 --dop-initial-resolution=$$RESOLUTION --dop-radius=$$RADIUS --output="$$OUTPUT_FOLDER" --problem="$$PROBLEM" --use-rvns=$$RVNS --num-iterations=$$NUM_ITERS --num-iterations-unimproved=$$NUM_ITERS_UNIMPR --neighborhood-radius=$$NEIGHBORHOOD_RADIUS --neighborhood-resolution=$$NEIGHBORHOOD_RESOLUTION
 
 date
 

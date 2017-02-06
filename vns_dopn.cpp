@@ -46,6 +46,8 @@ VNSDOPN::VNSDOPN(imr::CConfig& config, const std::string& problemFile) :
 	this->draw_neighborhood_points = config.get<bool>("draw-neighborhood-points");
 	this->heading_improvement_minimal_budget_ratio = config.get<double>("heading-improvement-minimal-budget-ratio");
 	this->neighborhood_improvement_minimal_budget_ratio = config.get<double>("neighborhood-improvement-minimal-budget-ratio");
+	this->maximal_calculation_time_min = config.get<double>("maximal-calculation-time-min");
+	this->maximal_calculation_time_MS = maximal_calculation_time_min * 60.0 * 1000.0;
 
 	this->heading_improvement_minimal_distance = heading_improvement_minimal_budget_ratio * budget;
 	this->neighborhood_improvement_minimal_distance = neighborhood_improvement_minimal_budget_ratio * budget;
@@ -149,6 +151,10 @@ void VNSDOPN::iterate(int iter) {
 		}
 		if (act_iter >= numIterations) {
 			INFO("stop after maximal number of iterattion "<<numIterations);
+			stop = true;
+		}
+		if (testTouring.getRTimeMS() >= maximal_calculation_time_MS) {
+			INFO("stop at "<<testTouring.getRTimeMS()<<" after maximal number of misiliseconds "<<maximal_calculation_time_MS<< " obtained from "<<maximal_calculation_time_min<<" maximal minutes");
 			stop = true;
 		}
 		if (act_iter - numItersLastImprovement >= numIterationsUnimproved) {
@@ -2153,6 +2159,7 @@ imr::CConfig & VNSDOPN::getConfig(imr::CConfig & config) {
 	config.add<double>("neighborhood-resolution", "radius of the neighborhood disc", 1);
 	config.add<bool>("dopn-null-start-goal-radius", "disable/enable null radius for start and goal", true);
 	config.add<bool>("draw-neighborhood-points", "disable/enable draw points in neighborhoods", false);
+	config.add<double>("maximal-calculation-time-min", "maximal time for calculation", 100);
 
 	config.add<double>("heading-improvement-minimal-budget-ratio", "ratio of the budget that is minal for apliing heading improvement", 0.001);
 	config.add<double>("neighborhood-improvement-minimal-budget-ratio", "ratio of the budget that is minal for apliing neighborhood improvement", 0.001);

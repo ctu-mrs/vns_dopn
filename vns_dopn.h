@@ -190,6 +190,8 @@ private:
 
 	double heading_improvement_minimal_budget_ratio;
 	double neighborhood_improvement_minimal_budget_ratio;
+	double maximal_calculation_time_min;
+	long maximal_calculation_time_MS;
 
 	double heading_improvement_minimal_distance;
 	double neighborhood_improvement_minimal_distance;
