@@ -94,7 +94,7 @@ void DOPN::calcAllDistances(std::vector<GraphNode> allGraphNodes, double radius,
 							GraphNode_AngNeigh & from = allSamples[gn1Id][neighID1][idx1];
 							INFO("get sample "<<gn2Id<<" "<<gn2Id<<" "<<idx2);
 							GraphNode_AngNeigh & to = allSamples[gn2Id][neighID2][idx2];
-							INFO("calc dubins");
+							INFO("calc dubins from "<<from.toState()<<" to "<<to.toState());
 							Dubins dub(from.toState(), to.toState(), radius);
 							INFO("save length");
 							allDistances[gn1Id][gn2Id][neighID1][neighID2][idx1][idx2] = dub.length;
