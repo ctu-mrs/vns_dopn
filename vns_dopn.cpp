@@ -169,14 +169,15 @@ void VNSDOPN::iterate(int iter) {
 			stop = true;
 		}
 		int k = 1;
+		//INFO("k "<<k);
 		while (k <= maximalNDepth) {
-			//INFO("k "<<k);
+			INFO("k "<<k);
 			DOPN actualDOPN = tourDOPN;
 
 			std::vector<GraphNode> actualVNS = vnsVector;
 			double rewardBefore = actualDOPN.getReward();
 			double lengthBefore = actualDOPN.getPathLength();
-
+			INFO("randDoubleMinMax for shake");
 			if (randDoubleMinMax(0, 1.0) > 0.1) {
 				shake(actualDOPN, actualVNS, k);
 				//NeighImrpovementValue imprValue = improveNeighLocations(actualDOPN, this->neighborhood_improvement_minimal_distance);
@@ -232,7 +233,7 @@ void VNSDOPN::iterate(int iter) {
 }
 
 void VNSDOPN::shake(DOPN &actualDOP, std::vector<GraphNode> &actualVNS, int k) {
-	//INFO("shake "<<k);
+	INFO("shake "<<k);
 	if (k % 2 == 1) {
 		pathInsert(actualDOP, actualVNS, 1);
 	} else {
@@ -242,7 +243,7 @@ void VNSDOPN::shake(DOPN &actualDOP, std::vector<GraphNode> &actualVNS, int k) {
 		INFO_VAR(DEBUG_DOP_TRY_OPERATIONS);
 		checkConsistency(actualDOP, actualVNS);
 	}
-	//INFO("shake done "<<k);
+	INFO("shake done "<<k);
 }
 
 bool VNSDOPN::localSearch(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, int k) {
@@ -271,7 +272,7 @@ bool VNSDOPN::localSearch(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, i
 }
 
 bool VNSDOPN::randomLocalSearch(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, int k) {
-	//INFO("randomLocalSearch "<<k);
+	INFO("randomLocalSearch "<<k);
 
 	int numIters = numAvailableNodes * numAvailableNodes;
 	if (k == 1) {
@@ -289,7 +290,7 @@ bool VNSDOPN::randomLocalSearch(DOPN &actualDOPN, std::vector<GraphNode> &actual
 		INFO_VAR(DEBUG_DOP_TRY_OPERATIONS);
 		checkConsistency(actualDOPN, actualVNS);
 	}
-	//INFO("randomLocalSearch done "<<k);
+	INFO("randomLocalSearch done "<<k);
 	return true;
 }
 
