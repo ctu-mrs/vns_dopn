@@ -30,11 +30,11 @@ templateName = "./template.sh"
 # templateName = "pok";
 
 
-radiueses = [0.0 , 0.3 , 0.5 , 0.7 , 0.9 , 1.1 , 1.3 ]
+radiueses = [0.0 , 0.3 , 0.5 , 0.9 , 1.1 , 1.3 ]
 # radiueses = [0.0]
 
-neigh_radiuses = [0.0 , 0.2 , 0.5 , 0.7 , 1.0 , 1.2 , 1.5 , 1.7 , 2.0]
-testIds = range(0, 1)
+neigh_radiuses = [0.0 , 0.2 , 0.5 , 1.0 , 1.5 , 2.0]
+testIds = range(0, 10)
 
 RESOLUTION = 16
 NEIGHBORHOOD_RESOLUTION = 16
@@ -43,8 +43,11 @@ NUM_ITERS_UNIMPR = 5000
 NUM_ITERS = 10000
 RVNS = 1
 dict = {'NAME':'noname', 'RESOLUTION':RESOLUTION, 'MAX_COMP_TIME_MIN':MAX_COMP_TIME_MIN, 'NUM_ITERS_UNIMPR': NUM_ITERS_UNIMPR , 'NUM_ITERS':NUM_ITERS, 'NEIGHBORHOOD_RESOLUTION':NEIGHBORHOOD_RESOLUTION, 'NEIGHBORHOOD_RADIUS': '0.3', 'RVNS':RVNS, 'RADIUS':'1.3', 'PROBLEM':'etc/tsiligrides_problem1/tsiligirides_problem_1_budget_20.txt', 'OUTPUT_FOLDER':'out'}
-PROBLEM_NAMES = {'P1':'Tsiligirides Set 1', 'P2':'Tsiligirides Set 2', 'P3':'Tsiligirides Set 3', '64':'Chao diamond-shaped Set', '66':'Chao squared-shaped Set'}
+#PROBLEM_NAMES = {'P1':'Tsiligirides Set 1', 'P2':'Tsiligirides Set 2', 'P3':'Tsiligirides Set 3', '64':'Chao diamond-shaped Set', '66':'Chao squared-shaped Set'}
+
 PROBLEM_FOLDERS = {'P1':'etc/tsiligrides_problem1/', 'P2':'etc/tsiligrides_problem2/', 'P3':'etc/tsiligrides_problem3/', '64':'etc/chao_set64-diamond/', '66':'etc/chao_set66-square/'}
+
+PROBLEM_NAMES = {'66':'Chao squared-shaped Set'}
 
 templateFile = open(templateName, "r") 
 src = Template(templateFile.read()) 
@@ -56,7 +59,7 @@ templateFile.close()
 for NEIGHBORHOOD_RADIUS in neigh_radiuses:
     for RADIUS in radiueses:
         for TEST_ID in testIds :
-            for problem_key in PROBLEM_FOLDERS.iterkeys():
+            for problem_key in PROBLEM_NAMES.iterkeys():
                 problem_path = PROBLEM_FOLDERS[problem_key]
                 problem_name = PROBLEM_NAMES[problem_key]
                 print problem_path
