@@ -142,8 +142,8 @@ private:
 	bool insertRandom(DOPN &actualDOP, std::vector<GraphNode> &actualVNS, int num_changes);
 	bool exchangeRandom(DOPN &actualDOP, std::vector<GraphNode> &actualVNS, int num_changes);
 	NeighImrpovementValue improveNeighLocations(DOPN &actualDOPN, double minimal_improvement_distance);
-	bool insertNeighborhoods(DOPN &actualDOPN, std::vector<NeighAngValuesIds> originalNeighAngIds, std::vector<bool> improvedNode, std::vector<double> actualNeighAngles,
-			std::vector<GraphNode> actualGraphNodes);
+	bool insertNeighborhoods(DOPN &actualDOPN, std::vector<NeighAngValuesIds> originalNeighAngIds, std::vector<bool> improvedNode,
+			std::vector<double> actualNeighAngles, std::vector<GraphNode> actualGraphNodes);
 	bool improveHeadings(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, double minimal_improvement_distance);
 
 	bool insertSystematic(DOPN &actualDOP, std::vector<GraphNode> &actualVNS, int k);
@@ -173,6 +173,8 @@ private:
 	int goalIndex;
 	int K;
 	int I;
+
+	double maximalRewardAll;
 
 	//specific for DOPN - resolution of angles and radius of turning
 	int resolution;
@@ -223,7 +225,7 @@ private:
 
 	double maxOverGuessedTry;
 	double avgsaved;
-	double numTestedAvg ;
+	double numTestedAvg;
 };
 
 }

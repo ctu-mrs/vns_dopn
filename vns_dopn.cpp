@@ -20,11 +20,13 @@ using namespace opendubins;
 #define DEBUG_DOP_TRY_OPERATIONS false
 
 VNSDOPN::VNSDOPN(imr::CConfig& config, const std::string& problemFile) :
-		Base(config), SAVE_RESULTS(config.get<bool>("save-results")), SAVE_SETTINGS(config.get<bool>("save-settings")), BORDER(config.get<double>("canvas-border")), SAVE_INFO(
-				config.get<bool>("save-info")), SAVE_TARGETS(config.get<bool>("save-targets")), SAVE_SAMPLED_PATH(config.get<bool>("save-sampled-path")) {
+		Base(config), SAVE_RESULTS(config.get<bool>("save-results")), SAVE_SETTINGS(config.get<bool>("save-settings")), BORDER(
+				config.get<double>("canvas-border")), SAVE_INFO(config.get<bool>("save-info")), SAVE_TARGETS(config.get<bool>("save-targets")), SAVE_SAMPLED_PATH(
+				config.get<bool>("save-sampled-path")) {
 
 	DatasetOP loadedDataset = DatasetLoader::loadDataset(problemFile);
-	INFO("testing dataset with " << loadedDataset.graph.size() << " nodes, " << loadedDataset.Tmax << " max time budget and " << loadedDataset.P << " paths to find");
+	INFO(
+			"testing dataset with " << loadedDataset.graph.size() << " nodes, " << loadedDataset.Tmax << " max time budget and " << loadedDataset.P << " paths to find");
 	INFO("use budget " << loadedDataset.Tmax);
 	INFO("use startIndex " << loadedDataset.startID);
 	INFO("use goalIndex " << loadedDataset.goalID);
@@ -67,11 +69,11 @@ VNSDOPN::VNSDOPN(imr::CConfig& config, const std::string& problemFile) :
 		resolution = 1;
 	}
 
-	double rewardAll = 0;
+	maximalRewardAll = 0;
 	for (int var = 0; var < nodesAll.size(); ++var) {
-		rewardAll += nodesAll[var].reward;
+		maximalRewardAll += nodesAll[var].reward;
 	}
-	INFO_GREEN("rewardAll "<<rewardAll);
+	INFO_GREEN("maximalRewardAll "<<maximalRewardAll);
 
 	this->maximal_acceleration = 2.6;
 	this->fly_speed = 4;
@@ -154,7 +156,8 @@ void VNSDOPN::iterate(int iter) {
 			stop = true;
 		}
 		if (testTouring.getRTimeMS() >= maximal_calculation_time_MS) {
-			INFO("stop at "<<testTouring.getRTimeMS()<<" after maximal number of misiliseconds "<<maximal_calculation_time_MS<< " obtained from "<<maximal_calculation_time_min<<" maximal minutes");
+			INFO(
+					"stop at "<<testTouring.getRTimeMS()<<" after maximal number of misiliseconds "<<maximal_calculation_time_MS<< " obtained from "<<maximal_calculation_time_min<<" maximal minutes");
 			stop = true;
 		}
 		if (act_iter - numItersLastImprovement >= numIterationsUnimproved) {
@@ -706,7 +709,8 @@ bool VNSDOPN::insertRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, 
 					}
 					//INFO_GREEN("the neighborhood improvement fixed overbudget from "<<lengthAfterMove<<" to "<<lengthAfterImprovement);
 					lengthAfterMove = lengthAfterImprovement;
-					insertNeighborhoods(dopnCopy, improvedValue.originalNeighAngIds, improvedValue.improvedNode, improvedValue.actualNeighAngles, improvedValue.actualGraphNodes);
+					insertNeighborhoods(dopnCopy, improvedValue.originalNeighAngIds, improvedValue.improvedNode, improvedValue.actualNeighAngles,
+							improvedValue.actualGraphNodes);
 					actualDOPN.update();
 					//INFO_VAR(dopnCopy.getPathLength());
 					//lengthAfterMove = lengthAfterImprovement;
@@ -890,7 +894,8 @@ bool VNSDOPN::exchangeRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS
 					lengthAfterMove = actualLength + addedAfterReplaceTo + addedAfterReplaceFrom;
 				}
 
-				if (lengthAfterMove <= budget && (addedReward > maxAddReward || (fabs(addedReward - maxAddReward) < MIN_CHANGE_EPS && (minLength - lengthAfterMove) > MIN_CHANGE_EPS))) {
+				if (lengthAfterMove <= budget
+						&& (addedReward > maxAddReward || (fabs(addedReward - maxAddReward) < MIN_CHANGE_EPS && (minLength - lengthAfterMove) > MIN_CHANGE_EPS))) {
 					lastImprovementIndex = var;
 					GraphNode testingRelocateFrom = actualVNS[targetIDFrom];
 					GraphNode testingRelocateTo = actualVNS[targetIDTo];
@@ -954,7 +959,8 @@ bool VNSDOPN::exchangeRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS
 						//}
 						//INFO_GREEN("the neighborhood improvement fixed overbudget from "<<lengthAfterMove<<" to "<<lengthAfterImprovement);
 						lengthAfterMove = lengthAfterImprovement;
-						insertNeighborhoods(dopnCopy, improvedValue.originalNeighAngIds, improvedValue.improvedNode, improvedValue.actualNeighAngles, improvedValue.actualGraphNodes);
+						insertNeighborhoods(dopnCopy, improvedValue.originalNeighAngIds, improvedValue.improvedNode, improvedValue.actualNeighAngles,
+								improvedValue.actualGraphNodes);
 						actualDOPN.update();
 						//INFO_VAR(dopnCopy.getPathLength());
 						//lengthAfterMove = lengthAfterImprovement;
@@ -1045,7 +1051,8 @@ NeighImrpovementValue VNSDOPN::improveNeighLocations(DOPN &actualDOPN, double mi
 				//INFO("optimize targetID:"<<shuffled_target_id<<"out of "<<targetSize<<" targets");
 				//INFO("target position "<<testingTarget.x<<" "<<testingTarget.y);
 
-				NeighImprovement neighImprovement = actualDOPN.optimizeNeighborhoodPosition(shuffled_target_id, actualNeighAngles, originalNeighAngIds, minimal_improvement_distance);
+				NeighImprovement neighImprovement = actualDOPN.optimizeNeighborhoodPosition(shuffled_target_id, actualNeighAngles, originalNeighAngIds,
+						minimal_improvement_distance);
 				//INFO("target "<<shuffled_target_id<<" improved by "<<neighImprovement.improvementLength<<" to ang "<<neighImprovement.neigh_ang<<" from ang "<<actualNeighAngles[shuffled_target_id]);
 				//INFO("actual node "<<actualGraphNodes[shuffled_target_id].x<<" "<<actualGraphNodes[shuffled_target_id].y <<" from original node " << originalGraphNodes[shuffled_target_id].x <<" "<<originalGraphNodes[shuffled_target_id].y);
 
@@ -1082,8 +1089,8 @@ NeighImrpovementValue VNSDOPN::improveNeighLocations(DOPN &actualDOPN, double mi
 	return neighImprovement;
 }
 
-bool VNSDOPN::insertNeighborhoods(DOPN &actualDOPN, std::vector<NeighAngValuesIds> originalNeighAngIds, std::vector<bool> improvedNode, std::vector<double> actualNeighAngles,
-		std::vector<GraphNode> actualGraphNodes) {
+bool VNSDOPN::insertNeighborhoods(DOPN &actualDOPN, std::vector<NeighAngValuesIds> originalNeighAngIds, std::vector<bool> improvedNode,
+		std::vector<double> actualNeighAngles, std::vector<GraphNode> actualGraphNodes) {
 	int targetSize = actualDOPN.getNumTargets();
 	int numAddedNeighbours = 0;
 	bool anythingImproved = false;
@@ -1102,8 +1109,8 @@ bool VNSDOPN::insertNeighborhoods(DOPN &actualDOPN, std::vector<NeighAngValuesId
 				//INFO("inset sample "<<normalizeAngle(actualNeighAngles[targetID], 0, M_2PI)<<" imrpoved from "<<originalNeighAngIds[targetID + 1].neigh_ang);
 				//INFO("actual node "<<actualGraphNodes[targetID].x<<" "<<actualGraphNodes[targetID].y <<" from original node " << originalGraphNodes[targetID].x <<" "<<originalGraphNodes[targetID].y);
 
-				actualDOPN.insertNeighSample(targetID + 1, originalNeighAngIds[targetID + 1].idNeigh, originalNeighAngIds[targetID + 1].idNeigh, normalizeAngle(actualNeighAngles[targetID], 0, M_2PI),
-						actualGraphNodes[targetID]);
+				actualDOPN.insertNeighSample(targetID + 1, originalNeighAngIds[targetID + 1].idNeigh, originalNeighAngIds[targetID + 1].idNeigh,
+						normalizeAngle(actualNeighAngles[targetID], 0, M_2PI), actualGraphNodes[targetID]);
 			} else if (actualNeighAngles[targetID] > actual_neigh_ang) {
 				//insert after neighId
 				anythingImproved = true;
@@ -1193,7 +1200,8 @@ bool VNSDOPN::insertSystematic(DOPN &actualDOPN, std::vector<GraphNode> &actualV
 
 					lengthAfterMove = actualLength - lengthRemoved + lengthAdded;
 				}
-				if (lengthAfterMove <= budget && (addedReward > maxAddReward || (fabs(addedReward - maxAddReward) < MIN_CHANGE_EPS && (minLength - lengthAfterMove) > MIN_CHANGE_EPS))) {
+				if (lengthAfterMove <= budget
+						&& (addedReward > maxAddReward || (fabs(addedReward - maxAddReward) < MIN_CHANGE_EPS && (minLength - lengthAfterMove) > MIN_CHANGE_EPS))) {
 					//INFO("improved lengthAfterMove "<< lengthAfterMove);
 					//INFO("improved minLength "<< minLength);
 					//INFO("imrpoved addedReward "<< addedReward);
@@ -1325,7 +1333,8 @@ bool VNSDOPN::exchangeSystematic(DOPN &actualDOPN, std::vector<GraphNode> &actua
 					lengthAfterMove = actualLength + addedAfterReplaceTo + addedAfterReplaceFrom;
 				}
 
-				if (lengthAfterMove <= budget && (addedReward > maxAddReward || (fabs(addedReward - maxAddReward) < MIN_CHANGE_EPS && (minLength - lengthAfterMove) > MIN_CHANGE_EPS))) {
+				if (lengthAfterMove <= budget
+						&& (addedReward > maxAddReward || (fabs(addedReward - maxAddReward) < MIN_CHANGE_EPS && (minLength - lengthAfterMove) > MIN_CHANGE_EPS))) {
 
 					maxAddReward = addedReward;
 					minLength = lengthAfterMove;
@@ -1757,7 +1766,8 @@ void VNSDOPN::checkConsistency(DOPN &actualDOPN, std::vector<GraphNode> &actualV
 	for (int var1 = 0; var1 < actualVNS.size(); ++var1) {
 		if (var1 < actualDOPN.getNumTargets()) {
 			if (actualVNS[var1].id != actualDOPN.getTarget(var1).id) {
-				ERROR("inconsistent actualVNS not same as actualDOPN at position"<<var1<<" ids are "<<actualVNS[var1].id<<" and "<<actualDOPN.getTarget(var1).id);
+				ERROR(
+						"inconsistent actualVNS not same as actualDOPN at position"<<var1<<" ids are "<<actualVNS[var1].id<<" and "<<actualDOPN.getTarget(var1).id);
 				exit(1);
 			}
 		}
@@ -1787,18 +1797,18 @@ void VNSDOPN::load(void) {
 	if (canvas) {
 		CoordsVector points;
 		//INFO("BORDER " << BORDER);
-		foreach(GraphNode station, nodesAll) {
-			Coords coord_up(station.x + BORDER, station.y + BORDER);
-			Coords coord_down(station.x - BORDER, station.y - BORDER);
-			points.push_back(coord_up);
-			points.push_back(coord_down);
-		}
+		foreach(GraphNode station, nodesAll){
+		Coords coord_up(station.x + BORDER, station.y + BORDER);
+		Coords coord_down(station.x - BORDER, station.y - BORDER);
+		points.push_back(coord_up);
+		points.push_back(coord_down);
+	}
 		*canvas << canvas::AREA;
 		//INFO("draw points");
-		foreach(Coords coords, points) {
-			//INFO(coords.x<<" "<<coords.y);
-			*canvas << coords;
-		}
+		foreach(Coords coords, points){
+		//INFO(coords.x<<" "<<coords.y);
+		*canvas << coords;
+	}
 		INFO("set to canvas");
 		*canvas << canvas::END;
 
@@ -1836,8 +1846,9 @@ void VNSDOPN::load(void) {
 
 							//INFO_VAR(20 * radius);
 							*canvas << "neighbours";
-							*canvas << imr::gui::Shape::GREEN_POINT << imr::gui::canvas::PEN_ALPHA << 0.2 << imr::gui::canvas::FILL_ALPHA << 0.2 << imr::gui::canvas::FILL_COLOR
-									<< map.getColor((double) station.reward) << canvas::ARC << Fill(false) << station.x << station.y << radius << (double) 0 << (2 * M_PI);
+							*canvas << imr::gui::Shape::GREEN_POINT << imr::gui::canvas::PEN_ALPHA << 0.2 << imr::gui::canvas::FILL_ALPHA << 0.2
+									<< imr::gui::canvas::FILL_COLOR << map.getColor((double) station.reward) << canvas::ARC << Fill(false) << station.x
+									<< station.y << radius << (double) 0 << (2 * M_PI);
 						}
 					}
 				}
@@ -1921,8 +1932,8 @@ void VNSDOPN::drawPath(int usleepTime, DOPN * toShow) {
 		if (neighborhood_radius > 0 && pathDubins.size() > 0) {
 			SColor color;
 			color.set(1.0, 1.0, 0.0, 0.2);
-			*canvas << canvas::CLEAR << "sensorradius" << "sensorradius" << imr::gui::canvas::PEN_ALPHA << 0.0 << imr::gui::canvas::FILL_ALPHA << 0.3 << imr::gui::canvas::FILL_COLOR << color
-					<< canvas::ARC;
+			*canvas << canvas::CLEAR << "sensorradius" << "sensorradius" << imr::gui::canvas::PEN_ALPHA << 0.0 << imr::gui::canvas::FILL_ALPHA << 0.3
+					<< imr::gui::canvas::FILL_COLOR << color << canvas::ARC;
 			*canvas << pathDubins[0].start.point.x << pathDubins[0].start.point.y << neighborhood_radius << (double) 0 << (2 * M_PI);
 			for (int var = 0; var < pathDubins.size(); ++var) {
 				Coords cordend(pathDubins[var].end.point.x, pathDubins[var].end.point.y);
@@ -2058,9 +2069,11 @@ void VNSDOPN::defineResultLog(void) {
 		resultLog << result::newcol << "NEIGHBORHOOD_RADIUS";
 		resultLog << result::newcol << "NEIGHBORHOOD_RESOLUTION";
 		resultLog << result::newcol << "REWARDS";
+		resultLog << result::newcol << "MAX_ACHIEVABLE_REWARDS";
 		resultLog << result::newcol << "LENGTH";
 		resultLog << result::newcol << "NUM_ITERS_LAST_IMPR";
 		resultLog << result::newcol << "CTIME_LAST_IMPR";
+		resultLog << result::newcol << "MAX_ALLOWED_CALC_TIME_MS";
 		resultLog << result::newcol << "RESULT_TARGET_IDS";
 		resultLogInitialized = true;
 	}
@@ -2084,8 +2097,9 @@ void VNSDOPN::fillResultRecord(int numIters, double length, int numItersLastImpr
 
 	double final_length = this->finalTourDOPN.getPathLength();
 
-	resultLog << result::newrec << name << getMethod() << t[0] << numIters << this->budget << radius << resolution << neighborhood_radius << neighborhood_resolution << final_reward << final_length
-			<< numItersLastImprovement << timeLastImprovement << tourNodes.str();
+	resultLog << result::newrec << name << getMethod() << t[0] << numIters << this->budget << radius << resolution << neighborhood_radius
+			<< neighborhood_resolution << final_reward << maximalRewardAll << final_length << numItersLastImprovement << timeLastImprovement
+			<< maximal_calculation_time_MS << tourNodes.str();
 
 }
 
