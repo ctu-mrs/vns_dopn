@@ -178,6 +178,8 @@ void VNSDOPN::iterate(int iter) {
 			double rewardBefore = actualDOPN.getReward();
 			double lengthBefore = actualDOPN.getPathLength();
 			INFO("randDoubleMinMax for shake");
+			srand(time(NULL));
+			INFO("after srand time null");
 			if (randDoubleMinMax(0, 1.0) > 0.1) {
 				shake(actualDOPN, actualVNS, k);
 				//NeighImrpovementValue imprValue = improveNeighLocations(actualDOPN, this->neighborhood_improvement_minimal_distance);
