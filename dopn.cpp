@@ -90,9 +90,13 @@ void DOPN::calcAllDistances(std::vector<GraphNode> allGraphNodes, double radius,
 					for (int idx1 = 0; idx1 < allSamples[gn1Id][neighID1].size(); ++idx1) {
 						//allDistances[gnid1][gnid2][idx1].resize(resolution);
 						for (int idx2 = 0; idx2 < allSamples[gn2Id][neighID2].size(); ++idx2) {
+							INFO("get sample "<<gn1Id<<" "<<neighID1<<" "<<idx1);
 							GraphNode_AngNeigh & from = allSamples[gn1Id][neighID1][idx1];
+							INFO("get sample "<<gn2Id<<" "<<gn2Id<<" "<<idx2);
 							GraphNode_AngNeigh & to = allSamples[gn2Id][neighID2][idx2];
+							INFO("calc dubins");
 							Dubins dub(from.toState(), to.toState(), radius);
+							INFO("save length");
 							allDistances[gn1Id][gn2Id][neighID1][neighID2][idx1][idx2] = dub.length;
 							numNodes++;
 							//allDubins[gn1.id][gn2.id][neighID1][neighID2][idx1][idx2] = dub;
@@ -187,7 +191,7 @@ void DOPN::checkDistancesAndSamples(double radius) {
 
 void DOPN::generateSamples(std::vector<std::vector<GraphNode_AngNeigh>> &samples, GraphNode p, double resolution, double neighborhood_radius,
 		int neighborhood_resolution, bool null_start_goal_radius, int startIndex, int goalIndex) {
-//INFO("generateSamples begin");
+	INFO("generateSamples begin");
 	double usedRadius = neighborhood_radius;
 	if (null_start_goal_radius && (p.id == startIndex || p.id == goalIndex)) {
 		samples.resize(1);
@@ -206,7 +210,7 @@ void DOPN::generateSamples(std::vector<std::vector<GraphNode_AngNeigh>> &samples
 			samples[neighID][ang_i] = GraphNode_AngNeigh(p_neigh, ang, neigh_ang);
 		}
 	}
-//INFO("generateSamples end");
+	INFO("generateSamples end");
 }
 
 int DOPN::getSize() const {
@@ -252,7 +256,7 @@ void DOPN::addPoint(std::vector<GraphNode> points, int idx) {
 	targets.insert(targets.begin() + idx, points.begin(), points.end());
 //update(); //min len 68.7228      31
 //INFO("addPoint multi end");
-	updateAfterInsert(idx, idx + points.size() - 1);	//min len 68.7228      17
+	updateAfterInsert(idx, idx + points.size() - 1); //min len 68.7228      17
 
 	/*
 	 double length = getPathLength();
@@ -287,7 +291,7 @@ void DOPN::addPoint(GraphNode p) {
 void DOPN::removePoint(int idx) {
 //INFO("removePoint single begin");
 
-	//INFO("removePoint id "<<samples[idx+1][0][0].node.id<<" that is between "<<samples[idx][0][0].node.id<<" and "<<samples[idx+2][0][0].node.id);
+//INFO("removePoint id "<<samples[idx+1][0][0].node.id<<" that is between "<<samples[idx][0][0].node.id<<" and "<<samples[idx+2][0][0].node.id);
 	if (idx >= targets.size() || idx < 0) {
 		INFO_RED("getTarget idx "<<idx<<" exceeds maximum "<<(targets.size()-1));
 		exit(1);
@@ -316,7 +320,7 @@ void DOPN::removePoint(int idxStart, int idxStop) {
 //INFO("removePoint multi begin");
 //INFO("removePoint("<<idxStart<<","<<idxStop<<")");
 
-	//double lengthBef = getPathLength();
+//double lengthBef = getPathLength();
 	targets.erase(targets.begin() + idxStart, targets.begin() + idxStop + 1);
 //INFO("targets.size()"<<targets.size());
 //update();
@@ -379,10 +383,10 @@ double DOPN::optimizeHeading(int targetId, double minimal_improvement_distance) 
 		double ang_to_set_2 = iterativeActualAngle - angleChange;
 		double distanceAfter_1 = angDistanceAfter(editingPosState, ang_to_set_1, previousState, nextState);
 		double distanceAfter_2 = angDistanceAfter(editingPosState, ang_to_set_2, previousState, nextState);
-		//angles2.push_back(ang_to_set_1);
-		//distances2.push_back(distanceAfter_1);
-		//angles2.push_back(ang_to_set_2);
-		//distances2.push_back(distanceAfter_2);
+//angles2.push_back(ang_to_set_1);
+//distances2.push_back(distanceAfter_1);
+//angles2.push_back(ang_to_set_2);
+//distances2.push_back(distanceAfter_2);
 		if (distanceAfter_1 < iterativeDistance || distanceAfter_2 < iterativeDistance) {
 
 			angleChange *= 2.0;
@@ -489,7 +493,7 @@ NeighImprovement DOPN::optimizeNeighborhoodPosition(int targetId, std::vector<do
 
 	std::vector<std::vector<GraphNode_AngNeigh>>& sample = this->samples.at(inSampleId);
 
-	//std::vector<NeighAngValuesIds> pathNeightIds = this->getPathNeighAngIds();
+//std::vector<NeighAngValuesIds> pathNeightIds = this->getPathNeighAngIds();
 
 	int neighId = originalNeighAngIds[inSampleId].idNeigh;
 	int angId = originalNeighAngIds[inSampleId].idAng;
@@ -503,7 +507,7 @@ NeighImprovement DOPN::optimizeNeighborhoodPosition(int targetId, std::vector<do
 
 	GraphNode_AngNeigh angNeighNext = samples[inSampleId + 1][neighIdNext][angIdNext];
 
-	//this defines the neighborhood
+//this defines the neighborhood
 	GraphNode previousTargetCenterNode;
 	State previousState;
 	previousState.ang = angNeighPrev.ang;
@@ -640,7 +644,7 @@ void DOPN::insertNeighSample(int inSampleId, int neighIdActual, int neighIdWhere
 	//INFO("add new samples done");
 
 //copy actual neigh id to neighIdWhereInsert for all other nodes
-	//INFO("resize distances");
+//INFO("resize distances");
 	for (int otherNodeId = 0; otherNodeId < allDistances[nodeId].size(); ++otherNodeId) {
 		std::vector<std::vector<std::vector<double>>>distances = allDistances[nodeId][otherNodeId][neighIdActual];
 		allDistances[nodeId][otherNodeId].insert(allDistances[nodeId][otherNodeId].begin()+neighIdWhereInsert,distances);
@@ -652,7 +656,7 @@ void DOPN::insertNeighSample(int inSampleId, int neighIdActual, int neighIdWhere
 	//INFO("resize distances done");
 
 //fill new distances
-	//INFO("fill distances");
+//INFO("fill distances");
 	for (int otherNodeId = 0; otherNodeId < allDistances[nodeId].size(); ++otherNodeId) {
 		//calc distances inside allDistances[nodeId][otherNodeId][neighIdWhereInsert] that was inserted before
 		for (int neighID2 = 0; neighID2 < allDistances[nodeId][otherNodeId][neighIdWhereInsert].size(); ++neighID2) {
@@ -750,17 +754,17 @@ SimpleTryResult DOPN::tryToAdd(GraphNode p, int idx) const {
 				for (int idx2 = 0; idx2 < actSamples[toNeighID].size(); idx2++) {
 					GraphNode_AngNeigh & from = fromSamples[fromNeighID][idx1];
 					GraphNode_AngNeigh & to = actSamples[toNeighID][idx2];
-					//double dl = Dubins(from.toState(), to.toState(), radius).length;
+//double dl = Dubins(from.toState(), to.toState(), radius).length;
 
 					double dl = allDistances[from.node.id][to.node.id][fromNeighID][toNeighID][idx1][idx2];
 					double nl = dl + fromLen[fromNeighID][idx1].distance;
 
-					//for the upper bound
-					//if (nl > actLenMax[toNeighID][idx2]) {
-					//	actLenMax[toNeighID][idx2] = nl;
-					//}
+//for the upper bound
+//if (nl > actLenMax[toNeighID][idx2]) {
+//	actLenMax[toNeighID][idx2] = nl;
+//}
 
-					//for the lower bound and act len
+//for the lower bound and act len
 					if (nl < actLen[toNeighID][idx2]) {
 						actLen[toNeighID][idx2] = nl;
 					}
@@ -771,7 +775,7 @@ SimpleTryResult DOPN::tryToAdd(GraphNode p, int idx) const {
 
 // find the shortest path from actual samples to next <toSamples>
 	double maxLen = -M;
-	//INFO_VAR(maxLen);
+//INFO_VAR(maxLen);
 	double minLen = M;
 	for (int fromNeighID = 0; fromNeighID < actSamples.size(); ++fromNeighID) {
 		for (int toNeighID = 0; toNeighID < toSamples.size(); ++toNeighID) {
@@ -779,7 +783,7 @@ SimpleTryResult DOPN::tryToAdd(GraphNode p, int idx) const {
 				for (int idx2 = 0; idx2 < toSamples[toNeighID].size(); idx2++) {
 					GraphNode_AngNeigh & from = actSamples[fromNeighID][idx1];
 					GraphNode_AngNeigh & to = toSamples[toNeighID][idx2];
-					//double dl = Dubins(from.toState(), to.toState(), radius).length;
+//double dl = Dubins(from.toState(), to.toState(), radius).length;
 
 					double dl = allDistances[from.node.id][to.node.id][fromNeighID][toNeighID][idx1][idx2];
 					double nl = dl + toLen[toNeighID][idx2].distance + actLen[fromNeighID][idx1];
@@ -787,8 +791,8 @@ SimpleTryResult DOPN::tryToAdd(GraphNode p, int idx) const {
 						minLen = nl;
 					}
 
-					//double nl_max = dl + toLen[toNeighID][idx2].distance + actLen[fromNeighID][idx1];
-					//INFO_VAR(nl_max);
+//double nl_max = dl + toLen[toNeighID][idx2].distance + actLen[fromNeighID][idx1];
+//INFO_VAR(nl_max);
 					if (nl > maxLen) {
 						//INFO_VAR(maxLen);
 						maxLen = nl;
@@ -993,7 +997,7 @@ SimpleTryResult DOPN::tryToReplace(GraphNode p, int idx, int numToReplace) const
 				for (int idx2 = 0; idx2 < replaceWSamples[toNeighID].size(); idx2++) {
 					GraphNode_AngNeigh & to = replaceWSamples[toNeighID][idx2];
 
-					//double dl = Dubins(from.toState(), to.toState(), radius).length;
+//double dl = Dubins(from.toState(), to.toState(), radius).length;
 					double dl = allDistances[from.node.id][to.node.id][fromNeighID][toNeighID][idx1][idx2];
 					double nl = dl + fromLen[fromNeighID][idx1].distance;
 					if (nl < newToDistances[toNeighID][idx2]) {
@@ -1016,7 +1020,7 @@ SimpleTryResult DOPN::tryToReplace(GraphNode p, int idx, int numToReplace) const
 			for (int toNeighID = 0; toNeighID < toSamples.size(); ++toNeighID) {
 				for (int idx2 = 0; idx2 < toSamples[toNeighID].size(); idx2++) {
 					GraphNode_AngNeigh & to = toSamples[toNeighID][idx2];
-					//double dl = Dubins(from.toState(), to.toState(), radius).length;
+//double dl = Dubins(from.toState(), to.toState(), radius).length;
 
 					double dl = allDistances[from.node.id][to.node.id][fromNeighID][toNeighID][idx1][idx2];
 					double nl = dl + toLen[toNeighID][idx2].distance + newToDistances[fromNeighID][idx1];
@@ -1024,7 +1028,7 @@ SimpleTryResult DOPN::tryToReplace(GraphNode p, int idx, int numToReplace) const
 						minLen = nl;
 					}
 
-					//INFO_VAR(nl_max);
+//INFO_VAR(nl_max);
 					if (nl > maxLen) {
 						//INFO_VAR(maxLen);
 						maxLen = nl;
@@ -1055,7 +1059,7 @@ double DOPN::tryToRemove(int idx) const {
 				for (int idx2 = 0; idx2 < toSamples.size(); idx2++) {
 					auto & from = fromSamples[idx1];
 					auto & to = toSamples[idx2];
-					//double dl = Dubins(from.toState(), to.toState(), radius).length;
+//double dl = Dubins(from.toState(), to.toState(), radius).length;
 
 					double dl = allDistances[from.node.id][to.node.id][fromNeighID][toNeighID][idx1][idx2];
 					double nl = dl + toLen[idx2].distance + fromLen[idx1].distance;
@@ -1083,7 +1087,7 @@ double DOPN::tryToRemove(int idxStart, int idxStop) const {
 				for (int idx2 = 0; idx2 < toSamples.size(); idx2++) {
 					auto & from = fromSamples[idx1];
 					auto & to = toSamples[idx2];
-					//double dl = Dubins(from.toState(), to.toState(), radius).length;
+//double dl = Dubins(from.toState(), to.toState(), radius).length;
 					double dl = allDistances[from.node.id][to.node.id][fromNeighID][toNeighID][idx1][idx2];
 					double nl = dl + toLen[idx2].distance + fromLen[idx1].distance;
 					if (nl < minLen) {
@@ -1151,12 +1155,12 @@ double DOPN::tryToExchange(int idx1, int idx2) {
 
 	int i = idxStartSamples - 1;
 	int j = idxEndSamples;
-	std::vector<std::vector<GraphNode_AngNeigh>> samples_I = samples[i];		//i
-	std::vector<std::vector<GraphNode_AngNeigh>> samples_I_p = samples[i + 1];		//i+1
-	std::vector<std::vector<GraphNode_AngNeigh>> samples_J_m = samples[j - 1];		//j -1
-	std::vector<std::vector<GraphNode_AngNeigh>> samples_J = samples[j];		//j
-	std::vector<std::vector<GraphNode_AngNeigh>> samples_J_p = samples[j + 1];		//j+1
-	std::vector<std::vector<GraphNode_AngNeigh>> samples_I_pp = samples[i + 2];		//i+2
+	std::vector<std::vector<GraphNode_AngNeigh>> samples_I = samples[i];					//i
+	std::vector<std::vector<GraphNode_AngNeigh>> samples_I_p = samples[i + 1];					//i+1
+	std::vector<std::vector<GraphNode_AngNeigh>> samples_J_m = samples[j - 1];					//j -1
+	std::vector<std::vector<GraphNode_AngNeigh>> samples_J = samples[j];					//j
+	std::vector<std::vector<GraphNode_AngNeigh>> samples_J_p = samples[j + 1];					//j+1
+	std::vector<std::vector<GraphNode_AngNeigh>> samples_I_pp = samples[i + 2];					//i+2
 	int idI = samples[i][0][0].node.id;
 	int idI_p = samples[i + 1][0][0].node.id;
 	int idI_pp = samples[i + 2][0][0].node.id;
@@ -1164,7 +1168,7 @@ double DOPN::tryToExchange(int idx1, int idx2) {
 	int idJ = samples[j][0][0].node.id;
 	int idJ_p = samples[j + 1][0][0].node.id;
 
-	dop_2d_matrix_triple normalOrderTotLen = shortest[i];		// need to use idxStart+1 as to the
+	dop_2d_matrix_triple normalOrderTotLen = shortest[i];					// need to use idxStart+1 as to the
 
 	dop_2d_matrix_triple normalOrderFromLen = shortest_back[j + 1];
 
@@ -1178,11 +1182,11 @@ double DOPN::tryToExchange(int idx1, int idx2) {
 	int numCityBetween = (idxEndSamples - idxStartSamples + 2);
 //INFO("numCityBetween "<<numCityBetween);
 	pathPartShortest.resize(numCityBetween);
-	pathPartShortest[0] = normalOrderTotLen;		// set actual shortest distance to idxStart
+	pathPartShortest[0] = normalOrderTotLen;					// set actual shortest distance to idxStart
 
 	int idxPathPartShortest = 1;
 //now calc shortest to reverseOrderFromSamples using distToReverseStart
-	//INFO("calc shortest from idI "<< idI <<" to idJ "<< idJ);
+//INFO("calc shortest from idI "<< idI <<" to idJ "<< idJ);
 //pathPartShortest[idxPathPartShortest].assign(reverseOrderFromSamples.size(), dst_pair(-1, M));
 	pathPartShortest[idxPathPartShortest].resize(samples_J.size());
 	for (int neighID = 0; neighID < pathPartShortest[idxPathPartShortest].size(); ++neighID) {
@@ -1207,7 +1211,7 @@ double DOPN::tryToExchange(int idx1, int idx2) {
 	}
 
 	idxPathPartShortest++; //2
-	//INFO("calc shortest from idJ "<< idJ <<" to idI_pp"<< idI_pp);
+//INFO("calc shortest from idJ "<< idJ <<" to idI_pp"<< idI_pp);
 //pathPartShortest[idxPathPartShortest].assign(reverseOrderFromSamples.size(), dst_pair(-1, M));
 	pathPartShortest[idxPathPartShortest].resize(samples_I_pp.size());
 	for (int neighID = 0; neighID < pathPartShortest[idxPathPartShortest].size(); ++neighID) {
@@ -1247,8 +1251,8 @@ double DOPN::tryToExchange(int idx1, int idx2) {
 		//INFO("idFrom " << samples[idFrom][0].node.id);
 		//INFO("idto "<< samples[idTo][0].node.id);
 
-		const int S1_neight = samples[idFrom].size();			// from neigh
-		const int S2_neight = samples[idTo].size();			//to neigh
+		const int S1_neight = samples[idFrom].size();		// from neigh
+		const int S2_neight = samples[idTo].size();		//to neigh
 		for (int neighID1 = 0; neighID1 < S1_neight; ++neighID1) {
 			for (int neighID2 = 0; neighID2 < S2_neight; ++neighID2) {
 				const int S1 = samples[idFrom][neighID1].size(); // from neigh
@@ -1265,7 +1269,7 @@ double DOPN::tryToExchange(int idx1, int idx2) {
 						auto nLen = len1 + len2;
 						//INFO(idx1<<" "<<idx2 <<" len1 "<<len1<<" len2 "<<len2<<" nLen "<<nLen);
 						//INFO(idx1<<" "<<idx2<<" len "<<len1<<" dist "<< distances[idTo][idx2][idx1]);
-						auto &len = pathPartShortest[idxPathPartShortest][neighID2][idx2];					// actual shortest path from start to [target][idx2]
+						auto &len = pathPartShortest[idxPathPartShortest][neighID2][idx2];	// actual shortest path from start to [target][idx2]
 
 						if (nLen < len.distance) {
 							len.idNeigh = neighID1;
@@ -1315,7 +1319,7 @@ double DOPN::tryToExchange(int idx1, int idx2) {
 					auto len1 = pathPartShortest[idxPathPartShortest - 1][neighID1][idx1].distance; //shortest dist from start to [target - 1][idx1]
 					auto len2 = allDistances[idI_p][idJ_p][neighID1][neighID2][idx1][idx2]; //dist from [target - 1][idx1] to [target][idx2]
 
-					//INFO("shortest "<<" len1 "<<len1 <<" len2 "<<len2<<" normalOrderFromLen[idx2].second "<<normalOrderFromLen[idx2].second);
+//INFO("shortest "<<" len1 "<<len1 <<" len2 "<<len2<<" normalOrderFromLen[idx2].second "<<normalOrderFromLen[idx2].second);
 					auto nLen = len1 + len2 + normalOrderFromLen[neighID2][idx2].distance;
 					if (nLen < minLen) {
 						minLen = nLen;
@@ -1464,28 +1468,28 @@ double DOPN::tryToMove(int idxWhatToMove, int idxWhereToMove) {
 	int i = idxFrom + 1;
 
 	int j = idxTo + 1;
-	//INFO("get samples");
+//INFO("get samples");
 	std::vector<std::vector<GraphNode_AngNeigh>> samples_i_m = samples[i - 1]; //i-
 	std::vector<std::vector<GraphNode_AngNeigh>> samples_i = samples[i]; //i
 	std::vector<std::vector<GraphNode_AngNeigh>> samples_i_p = samples[i + 1]; //i+1
 	std::vector<std::vector<GraphNode_AngNeigh>> samples_j_m = samples[j - 1]; //j-1
 	std::vector<std::vector<GraphNode_AngNeigh>> samples_j = samples[j]; //j
-	//INFO("get node ids");
+//INFO("get node ids");
 	int idI_m = samples[i - 1][0][0].node.id;
 	int idI = samples[i][0][0].node.id;
 	int idI_p = samples[i + 1][0][0].node.id;
 
 	int idJ_m = samples[j - 1][0][0].node.id;
 	int idJ = samples[j][0][0].node.id;
-	//INFO("get shortest");
-	dop_2d_matrix_triple normalOrderTotLen = shortest[i - 1];		// need to use idxStart+1 as to the
+//INFO("get shortest");
+	dop_2d_matrix_triple normalOrderTotLen = shortest[i - 1]; // need to use idxStart+1 as to the
 
 	dop_3d_matrix_triple pathPartShortest;
 	int numCityBetween = (idxEndSamples - idxStartSamples + 2);
-	//INFO("numCityBetween "<<numCityBetween);
+//INFO("numCityBetween "<<numCityBetween);
 	pathPartShortest.resize(numCityBetween);
 
-	pathPartShortest[0] = normalOrderTotLen;		// set actual shortest distance to idxStart
+	pathPartShortest[0] = normalOrderTotLen; // set actual shortest distance to idxStart
 	double minLen = M;
 	int idxPathPartShortest = 1;
 
@@ -1526,7 +1530,7 @@ double DOPN::tryToMove(int idxWhatToMove, int idxWhereToMove) {
 			}
 		}
 		idxPathPartShortest++; //2
-		//INFO("calc shortest from "<< idI_p <<" to other");
+//INFO("calc shortest from "<< idI_p <<" to other");
 		for (int target = i + 1; target < j - 1; target++) {
 			//INFO("target "<<target);
 			int idFrom = target;
@@ -1571,7 +1575,7 @@ double DOPN::tryToMove(int idxWhatToMove, int idxWhereToMove) {
 							//	INFO("nLen");
 							auto nLen = len1 + len2;
 
-							auto &len = pathPartShortest[idxPathPartShortest][neighID2][idx2];				// actual shortest path from start to [target][idx2]
+							auto &len = pathPartShortest[idxPathPartShortest][neighID2][idx2];		// actual shortest path from start to [target][idx2]
 
 							if (nLen < len.distance) {
 								len.idNeigh = neighID1;
@@ -1600,12 +1604,12 @@ double DOPN::tryToMove(int idxWhatToMove, int idxWhereToMove) {
 						//INFO_VAR(idx1);
 						//INFO_VAR(idx2);
 						//INFO("b get pathPartShortest");
-						auto len1 = pathPartShortest[idxPathPartShortest - 1][neighID1][idx1].distance;			//shortest dist from start to [target - 1][idx1]
+						auto len1 = pathPartShortest[idxPathPartShortest - 1][neighID1][idx1].distance;	//shortest dist from start to [target - 1][idx1]
 						//INFO("b get all distances");
-						auto len2 = allDistances[idJ_m][idI][neighID1][neighID2][idx1][idx2];					//dist from [target - 1][idx1] to [target][idx2]
+						auto len2 = allDistances[idJ_m][idI][neighID1][neighID2][idx1][idx2];	//dist from [target - 1][idx1] to [target][idx2]
 						auto nLen = len1 + len2;
 						//INFO("b get pathPartShortest2");
-						auto &len = pathPartShortest[idxPathPartShortest][neighID2][idx2];					// actual shortest path from start to [target][idx2]
+						auto &len = pathPartShortest[idxPathPartShortest][neighID2][idx2];	// actual shortest path from start to [target][idx2]
 						if (nLen < len.distance) {
 							len.idNeigh = neighID1;
 							len.idAng = idx1;
@@ -1661,12 +1665,12 @@ double DOPN::tryToMove(int idxWhatToMove, int idxWhereToMove) {
 						//INFO_VAR(neighID2);
 						//INFO_VAR(idx1);
 						//INFO_VAR(idx2);
-						auto len1 = pathPartShortest[idxPathPartShortest - 1][neighID1][idx1].distance;			//shortest dist from start to [target - 1][idx1]
+						auto len1 = pathPartShortest[idxPathPartShortest - 1][neighID1][idx1].distance;	//shortest dist from start to [target - 1][idx1]
 						//INFO("d get all distances");
-						auto len2 = allDistances[idI_m][idJ][neighID1][neighID2][idx1][idx2];					//dist from [target - 1][idx1] to [target][idx2]
+						auto len2 = allDistances[idI_m][idJ][neighID1][neighID2][idx1][idx2];	//dist from [target - 1][idx1] to [target][idx2]
 						auto nLen = len1 + len2;
 						//INFO("d get path part shortest");
-						auto &len = pathPartShortest[idxPathPartShortest][neighID2][idx2];					// actual shortest path from start to [target][idx2]
+						auto &len = pathPartShortest[idxPathPartShortest][neighID2][idx2];	// actual shortest path from start to [target][idx2]
 						//INFO("ok");
 						if (nLen < len.distance) {
 							len.idNeigh = neighID1;
@@ -1679,7 +1683,7 @@ double DOPN::tryToMove(int idxWhatToMove, int idxWhereToMove) {
 		}
 		idxPathPartShortest++; //2
 
-		//INFO("e calc shortest from idJ "<< idJ <<" to idI "<< idI);
+//INFO("e calc shortest from idJ "<< idJ <<" to idI "<< idI);
 		pathPartShortest[idxPathPartShortest].resize(samples_i.size());
 		for (int neighID = 0; neighID < samples_i.size(); ++neighID) {
 			pathPartShortest[idxPathPartShortest][neighID].assign(samples_i[neighID].size(), NeighAngDist(-1, -1, M));
@@ -1702,7 +1706,7 @@ double DOPN::tryToMove(int idxWhatToMove, int idxWhereToMove) {
 			}
 		}
 		idxPathPartShortest++; //3
-		//INFO("f calc shortest from idI "<< idI <<" to other");
+//INFO("f calc shortest from idI "<< idI <<" to other");
 		for (int target = i; target < j - 1; target++) {
 			//INFO("target "<<target);
 			int idFrom = target;
@@ -1731,7 +1735,7 @@ double DOPN::tryToMove(int idxWhatToMove, int idxWhereToMove) {
 							auto nLen = len1 + len2;
 							//INFO(idx1<<" "<<idx2 <<" len1 "<<len1<<" len2 "<<len2<<" nLen "<<nLen);
 							//INFO(idx1<<" "<<idx2<<" len "<<len1<<" dist "<< distances[idTo][idx2][idx1]);
-							auto &len = pathPartShortest[idxPathPartShortest][neighID2][idx2];				// actual shortest path from start to [target][idx2]
+							auto &len = pathPartShortest[idxPathPartShortest][neighID2][idx2];		// actual shortest path from start to [target][idx2]
 
 							if (nLen < len.distance) {
 								len.idNeigh = neighID1;
@@ -1821,10 +1825,10 @@ double DOPN::tryTwoOpt(int idxFrom, int idxTo) {
 
 	int i = idxStartSamples - 1;
 	int j = idxEndSamples;
-	std::vector<std::vector<GraphNode_AngNeigh>> normalOrderToSamples = samples[i];		//i
-	std::vector<std::vector<GraphNode_AngNeigh>> reverseOrderToSamples = samples[i + 1];		//i+1
-	std::vector<std::vector<GraphNode_AngNeigh>> reverseOrderFromSamples = samples[j];		//j
-	std::vector<std::vector<GraphNode_AngNeigh>> normalOrderFromSamples = samples[j + 1];		//j+1
+	std::vector<std::vector<GraphNode_AngNeigh>> normalOrderToSamples = samples[i]; //i
+	std::vector<std::vector<GraphNode_AngNeigh>> reverseOrderToSamples = samples[i + 1]; //i+1
+	std::vector<std::vector<GraphNode_AngNeigh>> reverseOrderFromSamples = samples[j]; //j
+	std::vector<std::vector<GraphNode_AngNeigh>> normalOrderFromSamples = samples[j + 1]; //j+1
 	int idI = samples[i][0][0].node.id;
 	int idI_p = samples[i + 1][0][0].node.id;
 	int idJ = samples[j][0][0].node.id;
@@ -1838,7 +1842,7 @@ double DOPN::tryTwoOpt(int idxFrom, int idxTo) {
 //INFO("..... " <<" "<<idxStartSamples-1<<" "<<idxEndSamples<<" ..... "<<idxStartSamples <<" "<<idxEndSamples + 1<<" .....")
 //INFO("shortest.size() "<<shortest.size());
 //INFO("shortest_back.size() "<<shortest_back.size());
-	dop_2d_matrix_triple normalOrderTotLen = shortest[i];		// need to use idxStart+1 as to the
+	dop_2d_matrix_triple normalOrderTotLen = shortest[i]; // need to use idxStart+1 as to the
 //INFO("shortest_back.size() "<<shortest_back.size());
 //INFO("(j+1) is "<<(j + 1));
 	dop_2d_matrix_triple normalOrderFromLen = shortest_back[j + 1];
@@ -1853,7 +1857,7 @@ double DOPN::tryTwoOpt(int idxFrom, int idxTo) {
 	int numCityBetween = (idxEndSamples - idxStartSamples + 2);
 //INFO("numCityBetween "<<numCityBetween);
 	pathPartShortest.resize(numCityBetween);
-	pathPartShortest[0] = normalOrderTotLen;		// set actual shortest distance to idxStart
+	pathPartShortest[0] = normalOrderTotLen; // set actual shortest distance to idxStart
 
 	int idxPathPartShortest = 1;
 //now calc shortest to reverseOrderFromSamples using distToReverseStart
@@ -1914,7 +1918,7 @@ double DOPN::tryTwoOpt(int idxFrom, int idxTo) {
 						auto nLen = len1 + len2;
 						//INFO(idx1<<" "<<idx2 <<" len1 "<<len1<<" len2 "<<len2<<" nLen "<<nLen);
 						//INFO(idx1<<" "<<idx2<<" len "<<len1<<" dist "<< distances[idTo][idx2][idx1]);
-						auto &len = pathPartShortest[idxPathPartShortest][neighID2][idx2];					// actual shortest path from start to [target][idx2]
+						auto &len = pathPartShortest[idxPathPartShortest][neighID2][idx2];	// actual shortest path from start to [target][idx2]
 
 						if (nLen < len.distance) {
 							len.idNeigh = neighID1;
@@ -1937,7 +1941,7 @@ double DOPN::tryTwoOpt(int idxFrom, int idxTo) {
 					auto len1 = pathPartShortest[idxPathPartShortest - 1][neighID1][idx1].distance; //shortest dist from start to [target - 1][idx1]
 					auto len2 = allDistances[idI_p][idJ_p][neighID1][neighID2][idx1][idx2]; //dist from [target - 1][idx1] to [target][idx2]
 
-					//INFO("shortest "<<" len1 "<<len1 <<" len2 "<<len2<<" normalOrderFromLen[idx2].second "<<normalOrderFromLen[idx2].second);
+//INFO("shortest "<<" len1 "<<len1 <<" len2 "<<len2<<" normalOrderFromLen[idx2].second "<<normalOrderFromLen[idx2].second);
 					auto nLen = len1 + len2 + normalOrderFromLen[neighID2][idx2].distance;
 					if (nLen < minLen) {
 						minLen = nLen;
@@ -2199,7 +2203,7 @@ void DOPN::updateAfterInsert(int idxStart, int idxEnd) {
 
 void DOPN::updateAfterRemove(int idxStart, int idxEnd) {
 //INFO("updateAfterRemove "<<idxStart<<" "<<idxEnd);
-	const int S = getSize();			//number of dubins maneuvers
+	const int S = getSize();		//number of dubins maneuvers
 //INFO("samples erase ");
 	samples.erase(samples.begin() + idxStart + 1, samples.begin() + idxEnd + 2);
 
