@@ -7,7 +7,7 @@ from shutil import copyfile
 
 #SCRIPT_OUTPUT_FOLDER = "generatedScripts/"
 SCRIPT_OUTPUT_FOLDER = "/storage/praha1/home/penicrob/generatedScripts/"
-PROBLEMS_PATH = "../etc/"
+PROBLEMS_PATH = "../"
 
 if not os.path.exists(SCRIPT_OUTPUT_FOLDER):
     os.makedirs(SCRIPT_OUTPUT_FOLDER)
@@ -44,7 +44,7 @@ NUM_ITERS = 10000
 RVNS = 1
 dict = {'NAME':'noname', 'RESOLUTION':RESOLUTION, 'MAX_COMP_TIME_MIN':MAX_COMP_TIME_MIN, 'NUM_ITERS_UNIMPR': NUM_ITERS_UNIMPR , 'NUM_ITERS':NUM_ITERS, 'NEIGHBORHOOD_RESOLUTION':NEIGHBORHOOD_RESOLUTION, 'NEIGHBORHOOD_RADIUS': '0.3', 'RVNS':RVNS, 'RADIUS':'1.3', 'PROBLEM':'etc/tsiligrides_problem1/tsiligirides_problem_1_budget_20.txt', 'OUTPUT_FOLDER':'out'}
 PROBLEM_NAMES = {'P1':'Tsiligirides Set 1', 'P2':'Tsiligirides Set 2', 'P3':'Tsiligirides Set 3', '64':'Chao diamond-shaped Set', '66':'Chao squared-shaped Set'}
-PROBLEM_FOLDERS = {'P1':'tsiligrides_problem1/', 'P2':'tsiligrides_problem2/', 'P3':'tsiligrides_problem3/', '64':'chao_set64-diamond/', '66':'chao_set66-square/'}
+PROBLEM_FOLDERS = {'P1':'etc/tsiligrides_problem1/', 'P2':'etc/tsiligrides_problem2/', 'P3':'etc/tsiligrides_problem3/', '64':'etc/chao_set64-diamond/', '66':'etc/chao_set66-square/'}
 
 templateFile = open(templateName, "r") 
 src = Template(templateFile.read()) 
