@@ -33,5 +33,5 @@ MAX_COMP_TIME_MIN=$MAX_COMP_TIME_MIN
 date
 
 mkdir -p /storage/praha1/home/penicrob/vns_dopn/results/$$OUTPUT_FOLDER
-cp -r $$SCRATCHDIR/h_dop/$$OUTPUT_FOLDER/* /storage/praha1/home/penicrob/vns_dopn/results/$$OUTPUT_FOLDER
+cp -r $$SCRATCHDIR/vns_dopn/$$OUTPUT_FOLDER/* /storage/praha1/home/penicrob/vns_dopn/results/$$OUTPUT_FOLDER
 
