@@ -180,18 +180,20 @@ void VNSDOPN::iterate(int iter) {
 			INFO("randDoubleMinMax for shake");
 			srand(time(NULL));
 			INFO("after srand time null");
-			if (randDoubleMinMax(0, 1.0) > 0.1) {
-				shake(actualDOPN, actualVNS, k);
-				//NeighImrpovementValue imprValue = improveNeighLocations(actualDOPN, this->neighborhood_improvement_minimal_distance);
-				//insertNeighborhoods(actualDOPN, imprValue.originalNeighAngIds, imprValue.improvedNode, imprValue.actualNeighAngles, imprValue.actualGraphNodes);
-			}
+			//double randomForshake = randDoubleMinMax(0, 1.0);
+			//if (randomForshake > 0.1) {
+			shake(actualDOPN, actualVNS, k);
+			//NeighImrpovementValue imprValue = improveNeighLocations(actualDOPN, this->neighborhood_improvement_minimal_distance);
+			//insertNeighborhoods(actualDOPN, imprValue.originalNeighAngIds, imprValue.improvedNode, imprValue.actualNeighAngles, imprValue.actualGraphNodes);
+			//}
 			//
+			INFO("before local search");
 			if (useRVNS) {
 				randomLocalSearch(actualDOPN, actualVNS, k);
 			} else {
 				localSearch(actualDOPN, actualVNS, k);
 			}
-			//INFO("after local search");
+			INFO("after local search");
 			//checkConsistency(actualDOP, actualVNS);
 
 			//twoopt(actualDOP, actualVNS);
