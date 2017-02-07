@@ -149,6 +149,7 @@ void VNSDOPN::iterate(int iter) {
 	stop = false;
 	int maximalNDepth = 2;
 	while (!stop) {
+		INFO("act_iter "<<act_iter);
 		act_iter++;
 		//INFO("itteration "<<numIttertation);
 		if (act_iter % 10 == 0) {
