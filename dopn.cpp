@@ -194,12 +194,15 @@ void DOPN::generateSamples(std::vector<std::vector<GraphNode_AngNeigh>> &samples
 	INFO("generateSamples begin");
 	double usedRadius = neighborhood_radius;
 	if (null_start_goal_radius && (p.id == startIndex || p.id == goalIndex)) {
+		INFO("resize to 1");
 		samples.resize(1);
 		usedRadius = 0;
 	} else {
+		INFO("resize to "<<neighborhood_resolution);
 		samples.resize(neighborhood_resolution);
 	}
 	for (int neighID = 0; neighID < samples.size(); neighID++) {
+		INFO("resize "<<neighID<<" to resolution")
 		samples[neighID].resize(resolution);
 		double neigh_ang = (2 * M_PI * neighID) / neighborhood_resolution;
 		GraphNode p_neigh = p;
