@@ -13,7 +13,7 @@ Dubins::Dubins(const State& newStart, const State& newEnd, const double& newRadi
 	radius = newRadius;
 	length = std::numeric_limits<double>::max();
 	type = DType::Unknown;
-	std::cout << "Dubins constructor" << std::endl;
+	//std::cout << "Dubins constructor" << std::endl;
 	init(newStart, newEnd);
 }
 

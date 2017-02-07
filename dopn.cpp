@@ -31,14 +31,14 @@ DOPN::~DOPN() {
 
 void DOPN::calcAllDistances(std::vector<GraphNode> allGraphNodes, double radius, int resolution, double neighborhood_radius, int neighborhood_resolution,
 		bool null_start_goal_radius, int startIndex, int goalIndex) {
-	INFO("calcAllDistances begin");
+	//INFO("calcAllDistances begin");
 	const int S = allGraphNodes.size();
 	allSamples.resize(S);
 	for (int var = 0; var < S; ++var) {
 		generateSamples(allSamples[var], allGraphNodes[var], resolution, neighborhood_radius, neighborhood_resolution, null_start_goal_radius, startIndex,
 				goalIndex);
 	}
-	INFO("samples generated");
+	//INFO("samples generated");
 	allDistances.resize(S);
 	//allDubins.resize(S);
 	for (int gnid1 = 0; gnid1 < allGraphNodes.size(); ++gnid1) {
@@ -90,13 +90,13 @@ void DOPN::calcAllDistances(std::vector<GraphNode> allGraphNodes, double radius,
 					for (int idx1 = 0; idx1 < allSamples[gn1Id][neighID1].size(); ++idx1) {
 						//allDistances[gnid1][gnid2][idx1].resize(resolution);
 						for (int idx2 = 0; idx2 < allSamples[gn2Id][neighID2].size(); ++idx2) {
-							INFO("get sample "<<gn1Id<<" "<<neighID1<<" "<<idx1);
+							//INFO("get sample "<<gn1Id<<" "<<neighID1<<" "<<idx1);
 							GraphNode_AngNeigh & from = allSamples[gn1Id][neighID1][idx1];
-							INFO("get sample "<<gn2Id<<" "<<gn2Id<<" "<<idx2);
+							//INFO("get sample "<<gn2Id<<" "<<gn2Id<<" "<<idx2);
 							GraphNode_AngNeigh & to = allSamples[gn2Id][neighID2][idx2];
-							INFO("calc dubins from "<<from.toState()<<" to "<<to.toState());
+							//INFO("calc dubins from "<<from.toState()<<" to "<<to.toState());
 							Dubins dub(from.toState(), to.toState(), radius);
-							INFO("save length");
+							//INFO("save length");
 							allDistances[gn1Id][gn2Id][neighID1][neighID2][idx1][idx2] = dub.length;
 							numNodes++;
 							//allDubins[gn1.id][gn2.id][neighID1][neighID2][idx1][idx2] = dub;
@@ -191,18 +191,18 @@ void DOPN::checkDistancesAndSamples(double radius) {
 
 void DOPN::generateSamples(std::vector<std::vector<GraphNode_AngNeigh>> &samples, GraphNode p, double resolution, double neighborhood_radius,
 		int neighborhood_resolution, bool null_start_goal_radius, int startIndex, int goalIndex) {
-	INFO("generateSamples begin");
+	//INFO("generateSamples begin");
 	double usedRadius = neighborhood_radius;
 	if (null_start_goal_radius && (p.id == startIndex || p.id == goalIndex)) {
-		INFO("resize to 1");
+		//INFO("resize to 1");
 		samples.resize(1);
 		usedRadius = 0;
 	} else {
-		INFO("resize to "<<neighborhood_resolution);
+		//INFO("resize to "<<neighborhood_resolution);
 		samples.resize(neighborhood_resolution);
 	}
 	for (int neighID = 0; neighID < samples.size(); neighID++) {
-		INFO("resize "<<neighID<<" to resolution")
+		//INFO("resize "<<neighID<<" to resolution")
 		samples[neighID].resize(resolution);
 		double neigh_ang = (2 * M_PI * neighID) / neighborhood_resolution;
 		GraphNode p_neigh = p;
@@ -213,7 +213,7 @@ void DOPN::generateSamples(std::vector<std::vector<GraphNode_AngNeigh>> &samples
 			samples[neighID][ang_i] = GraphNode_AngNeigh(p_neigh, ang, neigh_ang);
 		}
 	}
-	INFO("generateSamples end");
+	//INFO("generateSamples end");
 }
 
 int DOPN::getSize() const {
