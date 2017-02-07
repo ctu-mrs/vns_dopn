@@ -3,13 +3,18 @@ from string import Template
 import subprocess
 import re
 from __builtin__ import exit
+from shutil import copyfile
 
-
-SCRIPT_OUTPUT_FOLDER = "generatedScripts/"
+#SCRIPT_OUTPUT_FOLDER = "generatedScripts/"
+SCRIPT_OUTPUT_FOLDER = "/storage/praha1/home/penicrob/generatedScripts/"
 PROBLEMS_PATH = "../etc/"
 
 if not os.path.exists(SCRIPT_OUTPUT_FOLDER):
     os.makedirs(SCRIPT_OUTPUT_FOLDER)
+
+#copy start script
+START_SCRIPT_NAME = "startAllScripts.py"
+copyfile(START_SCRIPT_NAME, SCRIPT_OUTPUT_FOLDER+START_SCRIPT_NAME)
 
 scriptId = 0
 

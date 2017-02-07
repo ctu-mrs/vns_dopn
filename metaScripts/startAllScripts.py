@@ -4,6 +4,7 @@ import os
 import subprocess
 
 SCRIPT_OUTPUT_FOLDER = "generatedScripts/"
+SCRIPT_OUTPUT_FOLDER = "/storage/praha1/home/penicrob/generatedScripts/"
 
 scriptnames = next(os.walk(SCRIPT_OUTPUT_FOLDER))[2]
 print("test")
