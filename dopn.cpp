@@ -19,8 +19,8 @@ std::vector<std::vector<std::vector<GraphNode_AngNeigh>>>DOPN::allSamples;
 std::vector<std::vector<std::vector<std::vector<std::vector<std::vector<double>>>>> >DOPN::allDistances;
 
 DOPN::DOPN(GraphNode start, GraphNode end, double radius, int resolution, double neighborhood_radius, int neighborhood_resolution, bool null_start_goal_radius_) :
-		start(start), end(end), radius(radius), resolution(resolution), neighborhood_radius(neighborhood_radius), neighborhood_resolution(neighborhood_resolution), null_start_goal_radius(
-				null_start_goal_radius_) {
+		start(start), end(end), radius(radius), resolution(resolution), neighborhood_radius(neighborhood_radius), neighborhood_resolution(
+				neighborhood_resolution), null_start_goal_radius(null_start_goal_radius_) {
 	INFO("DOPN constructor");
 	update();
 }
@@ -29,13 +29,14 @@ DOPN::~DOPN() {
 
 }
 
-void DOPN::calcAllDistances(std::vector<GraphNode> allGraphNodes, double radius, int resolution, double neighborhood_radius, int neighborhood_resolution, bool null_start_goal_radius, int startIndex,
-		int goalIndex) {
-	//INFO("calcAllDistances begin");
+void DOPN::calcAllDistances(std::vector<GraphNode> allGraphNodes, double radius, int resolution, double neighborhood_radius, int neighborhood_resolution,
+		bool null_start_goal_radius, int startIndex, int goalIndex) {
+	INFO("calcAllDistances begin");
 	const int S = allGraphNodes.size();
 	allSamples.resize(S);
 	for (int var = 0; var < S; ++var) {
-		generateSamples(allSamples[var], allGraphNodes[var], resolution, neighborhood_radius, neighborhood_resolution, null_start_goal_radius, startIndex, goalIndex);
+		generateSamples(allSamples[var], allGraphNodes[var], resolution, neighborhood_radius, neighborhood_resolution, null_start_goal_radius, startIndex,
+				goalIndex);
 	}
 	INFO("samples generated");
 	allDistances.resize(S);
@@ -104,7 +105,7 @@ void DOPN::calcAllDistances(std::vector<GraphNode> allGraphNodes, double radius,
 	INFO("calc distances "<<(100)<<"%");
 	INFO("totally we have " << numNodes << " number of nodes");
 	//INFO("filled");
-	//INFO("calcAllDistances end");
+	INFO("calcAllDistances end");
 }
 
 std::vector<std::vector<std::vector<GraphNode_AngNeigh>>>* DOPN::getAllSamples() {
@@ -162,7 +163,8 @@ void DOPN::checkDistancesAndSamples(double radius) {
 							Dubins dub(from.toState(), to.toState(), radius);
 							if (gn1Id >= allDistances.size() || gn2Id >= allDistances[gn1Id].size() || neighID1 >= allDistances[gn1Id][gn2Id].size()
 									|| neighID2 >= allDistances[gn1Id][gn2Id][neighID1].size() || idx1 >= allDistances[gn1Id][gn2Id][neighID1][neighID2].size()
-									|| idx2 >= allDistances[gn1Id][gn2Id][neighID1][neighID2][idx1].size() || fabs(allDistances[gn1Id][gn2Id][neighID1][neighID2][idx1][idx2] - dub.length) > 0.01) {
+									|| idx2 >= allDistances[gn1Id][gn2Id][neighID1][neighID2][idx1].size()
+									|| fabs(allDistances[gn1Id][gn2Id][neighID1][neighID2][idx1][idx2] - dub.length) > 0.01) {
 								ERROR("bad distance at position ");
 								INFO_VAR(gn1Id);
 								INFO_VAR(gn2Id);
@@ -183,8 +185,8 @@ void DOPN::checkDistancesAndSamples(double radius) {
 	}
 }
 
-void DOPN::generateSamples(std::vector<std::vector<GraphNode_AngNeigh>> &samples, GraphNode p, double resolution, double neighborhood_radius, int neighborhood_resolution, bool null_start_goal_radius,
-		int startIndex, int goalIndex) {
+void DOPN::generateSamples(std::vector<std::vector<GraphNode_AngNeigh>> &samples, GraphNode p, double resolution, double neighborhood_radius,
+		int neighborhood_resolution, bool null_start_goal_radius, int startIndex, int goalIndex) {
 //INFO("generateSamples begin");
 	double usedRadius = neighborhood_radius;
 	if (null_start_goal_radius && (p.id == startIndex || p.id == goalIndex)) {
@@ -439,14 +441,15 @@ void DOPN::insertAngSample(int inSampleId, int neighId, int angIdActual, int ang
 	for (int otherNodeId = 0; otherNodeId < allDistances[nodeId].size(); ++otherNodeId) {
 		for (int neighID2 = 0; neighID2 < allDistances[nodeId][otherNodeId][neighId].size(); ++neighID2) {
 			std::vector<double> distancesAngles = allDistances[nodeId][otherNodeId][neighId][neighID2][angIdActual];
-			allDistances[nodeId][otherNodeId][neighId][neighID2].insert(allDistances[nodeId][otherNodeId][neighId][neighID2].begin() + angIdWhereInsert, distancesAngles);
+			allDistances[nodeId][otherNodeId][neighId][neighID2].insert(allDistances[nodeId][otherNodeId][neighId][neighID2].begin() + angIdWhereInsert,
+					distancesAngles);
 		}
 
 		for (int otherNeighId = 0; otherNeighId < allDistances[otherNodeId][nodeId].size(); ++otherNeighId) {
 			for (int otherAngId = 0; otherAngId < allDistances[otherNodeId][nodeId][otherNeighId][neighId].size(); ++otherAngId) {
 				double distancesAngle = allDistances[otherNodeId][nodeId][otherNeighId][neighId][otherAngId][angIdActual];
-				allDistances[otherNodeId][nodeId][otherNeighId][neighId][otherAngId].insert(allDistances[otherNodeId][nodeId][otherNeighId][neighId][otherAngId].begin() + angIdWhereInsert,
-						distancesAngle);
+				allDistances[otherNodeId][nodeId][otherNeighId][neighId][otherAngId].insert(
+						allDistances[otherNodeId][nodeId][otherNeighId][neighId][otherAngId].begin() + angIdWhereInsert, distancesAngle);
 			}
 		}
 	}
@@ -478,7 +481,8 @@ void DOPN::insertAngSample(int inSampleId, int neighId, int angIdActual, int ang
 	this->update();
 }
 
-NeighImprovement DOPN::optimizeNeighborhoodPosition(int targetId, std::vector<double> actualNeighAngles, std::vector<NeighAngValuesIds> originalNeighAngIds, double minimal_improvement_distance) {
+NeighImprovement DOPN::optimizeNeighborhoodPosition(int targetId, std::vector<double> actualNeighAngles, std::vector<NeighAngValuesIds> originalNeighAngIds,
+		double minimal_improvement_distance) {
 //INFO("optimizeNeighborhoodPosition: targetId="<<targetId);
 
 	int inSampleId = targetId + 1;
@@ -1430,7 +1434,8 @@ double DOPN::tryToMove(int idxWhatToMove, int idxWhereToMove) {
 	//INFO("tryToMove multi begin");
 //INFO_GREEN("tryToMove idxWhatToMove " << idxWhatToMove << " idxWhereToMove " << idxWhereToMove);
 //INFO("tryToMove getNumTargets "<<getNumTargets());
-	if (idxWhatToMove >= targets.size() || idxWhatToMove < 0 || idxWhereToMove > targets.size() || idxWhereToMove < 0 || abs(idxWhereToMove - idxWhatToMove) < 2) {
+	if (idxWhatToMove >= targets.size() || idxWhatToMove < 0 || idxWhereToMove > targets.size() || idxWhereToMove < 0
+			|| abs(idxWhereToMove - idxWhatToMove) < 2) {
 		INFO_RED("tryToMove idxWhatToMove " << idxWhatToMove << " idxWhereToMove " << idxWhereToMove);
 		INFO_RED("tryToMove getNumTargets "<<getNumTargets());
 		INFO_RED("tryToMove idxWhatToMove "<<idxWhatToMove<<" or idxWhereToMove "<<idxWhereToMove<<" exceeds maximum for target size"<<(targets.size()));

@@ -110,13 +110,16 @@ void VNSDOPN::iterate(int iter) {
 	this->nodesForInsertion.erase(nodesForInsertion.begin() + MIN(startIndex, goalIndex));
 	this->startGoalDistance = this->startNode.distanceTo(this->goalNode);
 	//firstly select points in eclipse
-
+	INFO("start timer")
 	Timer testTouring;
+	INFO("resetRealClock")
 	testTouring.resetRealClock();
+	INFO("calcAllDistances")
 	DOPN::calcAllDistances(nodesAll, radius, resolution, neighborhood_radius, neighborhood_resolution, null_start_goal_radius, startIndex, goalIndex);
-	if (radius == 0) {
-		DOPN::checkEucllideanDistances();
-	}
+	//if (radius == 0) {
+	//	DOPN::checkEucllideanDistances();
+	//}
+	INFO("drawNeighborhoodPoints")
 	drawNeighborhoodPoints();
 	this->reachableNodes = getReachableNodes();
 	this->nodesInEllipseWithStartGoal = this->reachableNodes;
