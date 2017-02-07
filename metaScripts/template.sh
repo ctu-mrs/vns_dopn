@@ -16,6 +16,9 @@ uname -a >> /storage/praha1/home/penicrob/run.log
 echo "scratchdir=$$SCRATCHDIR"
 date
 
+make clean
+make
+
 OUTPUT_FOLDER="$OUTPUT_FOLDER"
 PROBLEM="$PROBLEM"
 RADIUS=$RADIUS
