@@ -24,13 +24,16 @@ PROBLEMS=(
 
 #./fourphase --name="Tsiligirides Set 1" --problem="etc/tsiligrides_problem1/tsiligirides_problem_1_budget_75.txt"
 
-NUM_TESTS=1
-CONFIGS_NEIGHBORHOODS=(" --neighborhood-radius=0.0 " " --neighborhood-radius=0.2 " " --neighborhood-radius=0.5 " " --neighborhood-radius=1.0 " " --neighborhood-radius=1.5 ")
-CONFIGS_RADIUS=(" --dop-radius=0 " " --dop-radius=0.3 " " --dop-radius=0.5 " " --dop-radius=1.0 " " --dop-radius=1.5 " )
+TEST_IDS=( 6 )
+CONFIGS_NEIGHBORHOODS=("0.0" "0.2" "0.5" "1.0" "1.5")
+CONFIGS_RADIUS=("0.0" "0.3" "0.5" "1.0" "1.5" )
+
+
 
 COUNT_CONFIGS_NEIGHBORHOODS=${#CONFIGS_NEIGHBORHOODS[@]}
 COUNT_CONFIGS_RADIUS=${#CONFIGS_RADIUS[@]}
 COUNT_PROBLEMS=${#PROBLEMS[@]}
+COUNT_TEST_IDS=${#TEST_IDS[@]}
 
 for ((problemi=0; problemi<$COUNT_PROBLEMS; problemi++))
 do
@@ -38,22 +41,28 @@ do
 for ((configineihg=0; configineihg<$COUNT_CONFIGS_NEIGHBORHOODS; configineihg++))
 do
 
-config_neigh=${CONFIGS_NEIGHBORHOODS[configineihg]}
+neigh=${CONFIGS_NEIGHBORHOODS[configineihg]}
+config_neigh="--neighborhood-radius="$neigh
 
 for ((configirad=0; configirad<$COUNT_CONFIGS_RADIUS; configirad++))
 do
 
-config_rad=${CONFIGS_RADIUS[configirad]}
+radius=${CONFIGS_RADIUS[configirad]}
+config_rad="--dop-radius="$radius
 
 echo $config_neigh
 echo $config_rad
 
-for ((testi=0; testi<$NUM_TESTS; testi++))
+for ((testi=0; testi<$COUNT_TEST_IDS; testi++))
 do
-
+  TEST_ID=${TEST_IDS[$testi]}
   PROBLEM_NAME=${!PROBLEMS[problemi]:0:1}
   PROBLEM_PATH=${!PROBLEMS[problemi]:1:1}
-  PROBLEM_CONFIG=${!PROBLEMS[problemi]:1:2}	
+  outputFolder="results/resultsSet66_nr"$neigh"_r"$radius"_run_"$TEST_ID
+  echo $TEST_ID
+  echo $outputFolder
+  PROBLEM_CONFIG="--output="$outputFolder""
+  echo $PROBLEM_CONFIG
   PROBLEM_FILES=`ls ${PROBLEM_PATH}`
   echo "NAME ${PROBLEM_NAME}"
   echo "PATH ${PROBLEM_PATH}"
