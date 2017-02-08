@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+set -e 
+PROBLEM_0=("Tsiligirides Set 1" "../etc/tsiligrides_problem1/" "--output="resultsProblem1"")
+PROBLEM_1=("Tsiligirides Set 2" "../etc/tsiligrides_problem2/" "--output="resultsProblem2"")
+PROBLEM_2=("Tsiligirides Set 3" "../etc/tsiligrides_problem3/" "--output="resultsProblem3"")
+PROBLEM_3=("Chao diamond-shaped Set" "../etc/chao_set64-diamond/" "--output="resultsSet64"")
+PROBLEM_4=("Chao squared-shaped Set" "../etc/chao_set66-square/chao_set_66_1_060.txt" "--output="resultsSet66"")
+
+
+#PROBLEMS=(
+#  PROBLEM_0[@]
+#  PROBLEM_1[@]
+#  PROBLEM_2[@]
+#  PROBLEM_3[@]
+#  PROBLEM_4[@]
+#)
+
+#echo "$@"
+
+PROBLEMS=(
+  PROBLEM_4[@]
+)
+
+
+#./fourphase --name="Tsiligirides Set 1" --problem="etc/tsiligrides_problem1/tsiligirides_problem_1_budget_75.txt"
+
+NUM_TESTS=1
+CONFIGS_NEIGHBORHOODS=(" --neighborhood-radius=0.0 " " --neighborhood-radius=0.2 " " --neighborhood-radius=0.5 " " --neighborhood-radius=1.0 " " --neighborhood-radius=1.5 ")
+CONFIGS_RADIUS=(" --dop-radius=0 " " --dop-radius=0.3 " " --dop-radius=0.5 " " --dop-radius=1.0 " " --dop-radius=1.5 " )
+
+COUNT_CONFIGS_NEIGHBORHOODS=${#CONFIGS_NEIGHBORHOODS[@]}
+COUNT_CONFIGS_RADIUS=${#CONFIGS_RADIUS[@]}
+COUNT_PROBLEMS=${#PROBLEMS[@]}
+
+for ((problemi=0; problemi<$COUNT_PROBLEMS; problemi++))
+do
+
+for ((configineihg=0; configineihg<$COUNT_CONFIGS_NEIGHBORHOODS; configineihg++))
+do
+
+config_neigh=${CONFIGS_NEIGHBORHOODS[configineihg]}
+
+for ((configirad=0; configirad<$COUNT_CONFIGS_RADIUS; configirad++))
+do
+
+config_rad=${CONFIGS_RADIUS[configirad]}
+
+echo $config_neigh
+echo $config_rad
+
+for ((testi=0; testi<$NUM_TESTS; testi++))
+do
+
+  PROBLEM_NAME=${!PROBLEMS[problemi]:0:1}
+  PROBLEM_PATH=${!PROBLEMS[problemi]:1:1}
+  PROBLEM_CONFIG=${!PROBLEMS[problemi]:1:2}	
+  PROBLEM_FILES=`ls ${PROBLEM_PATH}`
+  echo "NAME ${PROBLEM_NAME}"
+  echo "PATH ${PROBLEM_PATH}"
+  #echo "FILES ${FILES_}"
+  for file_name in ${PROBLEM_FILES} ;
+  do
+	echo "test file ""$file_name"
+        echo "with additional config $config_neigh and $config_rad"
+        echo "problem name ""$PROBLEM_NAME"
+  	../main --name="$PROBLEM_NAME" --problem="$PROBLEM_PATH" "$@" $PROBLEM_CONFIG $config_neigh $config_rad
+  done
+
+done
+
+done
+
+done
+
+done
