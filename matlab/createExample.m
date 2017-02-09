@@ -9,17 +9,17 @@ set(0,'DefaultAxesFontSize', 14)
 set(0,'DefaultTextFontname', 'Times New Roman')
 set(0,'DefaultTextFontSize', 14)
 
-RESULT_PATH='../data/';
-PATH_FILENAME1='result_r_0.0_p_64_b_050_run_2-sampled-path.txt';
-PATH_FILENAME2='result_r_1.3_p_64_b_050_run_5-sampled-path.txt';
-TARGETS_FILENAME='targets_p_66.txt';
+RESULT_PATH='../localTests/results/';
+PATH_FILENAME1='resultsSet66_nr0.0_r1.0_run_4/sampled-path.txt';
+PATH_FILENAME2='resultsSet66_nr0.0_r1.0_run_4/sampled-path.txt';
+TARGETS_FILENAME='resultsSet66_nr0.0_r1.0_run_4/targets.txt';
 SAVE=true;
 output_filename = 'planDOPExample.pdf'
 output_filenamepng = 'planDOPExample.png'
 
-pathFileName1=strcat(RESULT_PATH,PATH_FILENAME1);
-pathFileName2=strcat(RESULT_PATH,PATH_FILENAME2);
-targetsFileName=strcat(RESULT_PATH,TARGETS_FILENAME);
+pathFileName1=strcat(RESULT_PATH,PATH_FILENAME1)
+pathFileName2=strcat(RESULT_PATH,PATH_FILENAME2)
+targetsFileName=strcat(RESULT_PATH,TARGETS_FILENAME)
 
 targets=csvread(targetsFileName);
 

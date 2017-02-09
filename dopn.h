@@ -220,8 +220,9 @@ public:
 
 	//prints out ids of nodes
 	void listIds();
-	/*
+
 	 std::vector<State> getPathSampled(double samplePath);
+	 /*
 	 std::vector<State> getPathSampled(double initialSpeed, double maximal_speed,
 	 double maximal_acceleration, double time_sample_rate, double finalSpeed);
 	 */

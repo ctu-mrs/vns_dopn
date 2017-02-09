@@ -19,8 +19,8 @@ std::vector<std::vector<std::vector<GraphNode_AngNeigh>>>DOPN::allSamples;
 std::vector<std::vector<std::vector<std::vector<std::vector<std::vector<double>>>>> >DOPN::allDistances;
 
 DOPN::DOPN(GraphNode start, GraphNode end, double radius, int resolution, double neighborhood_radius, int neighborhood_resolution, bool null_start_goal_radius_) :
-		start(start), end(end), radius(radius), resolution(resolution), neighborhood_radius(neighborhood_radius), neighborhood_resolution(
-				neighborhood_resolution), null_start_goal_radius(null_start_goal_radius_) {
+		start(start), end(end), radius(radius), resolution(resolution), neighborhood_radius(neighborhood_radius), neighborhood_resolution(neighborhood_resolution), null_start_goal_radius(
+				null_start_goal_radius_) {
 	INFO("DOPN constructor");
 	update();
 }
@@ -29,14 +29,13 @@ DOPN::~DOPN() {
 
 }
 
-void DOPN::calcAllDistances(std::vector<GraphNode> allGraphNodes, double radius, int resolution, double neighborhood_radius, int neighborhood_resolution,
-		bool null_start_goal_radius, int startIndex, int goalIndex) {
+void DOPN::calcAllDistances(std::vector<GraphNode> allGraphNodes, double radius, int resolution, double neighborhood_radius, int neighborhood_resolution, bool null_start_goal_radius, int startIndex,
+		int goalIndex) {
 	//INFO("calcAllDistances begin");
 	const int S = allGraphNodes.size();
 	allSamples.resize(S);
 	for (int var = 0; var < S; ++var) {
-		generateSamples(allSamples[var], allGraphNodes[var], resolution, neighborhood_radius, neighborhood_resolution, null_start_goal_radius, startIndex,
-				goalIndex);
+		generateSamples(allSamples[var], allGraphNodes[var], resolution, neighborhood_radius, neighborhood_resolution, null_start_goal_radius, startIndex, goalIndex);
 	}
 	//INFO("samples generated");
 	allDistances.resize(S);
@@ -167,8 +166,7 @@ void DOPN::checkDistancesAndSamples(double radius) {
 							Dubins dub(from.toState(), to.toState(), radius);
 							if (gn1Id >= allDistances.size() || gn2Id >= allDistances[gn1Id].size() || neighID1 >= allDistances[gn1Id][gn2Id].size()
 									|| neighID2 >= allDistances[gn1Id][gn2Id][neighID1].size() || idx1 >= allDistances[gn1Id][gn2Id][neighID1][neighID2].size()
-									|| idx2 >= allDistances[gn1Id][gn2Id][neighID1][neighID2][idx1].size()
-									|| fabs(allDistances[gn1Id][gn2Id][neighID1][neighID2][idx1][idx2] - dub.length) > 0.01) {
+									|| idx2 >= allDistances[gn1Id][gn2Id][neighID1][neighID2][idx1].size() || fabs(allDistances[gn1Id][gn2Id][neighID1][neighID2][idx1][idx2] - dub.length) > 0.01) {
 								ERROR("bad distance at position ");
 								INFO_VAR(gn1Id);
 								INFO_VAR(gn2Id);
@@ -189,8 +187,8 @@ void DOPN::checkDistancesAndSamples(double radius) {
 	}
 }
 
-void DOPN::generateSamples(std::vector<std::vector<GraphNode_AngNeigh>> &samples, GraphNode p, double resolution, double neighborhood_radius,
-		int neighborhood_resolution, bool null_start_goal_radius, int startIndex, int goalIndex) {
+void DOPN::generateSamples(std::vector<std::vector<GraphNode_AngNeigh>> &samples, GraphNode p, double resolution, double neighborhood_radius, int neighborhood_resolution, bool null_start_goal_radius,
+		int startIndex, int goalIndex) {
 	//INFO("generateSamples begin");
 	double usedRadius = neighborhood_radius;
 	if (null_start_goal_radius && (p.id == startIndex || p.id == goalIndex)) {
@@ -448,15 +446,14 @@ void DOPN::insertAngSample(int inSampleId, int neighId, int angIdActual, int ang
 	for (int otherNodeId = 0; otherNodeId < allDistances[nodeId].size(); ++otherNodeId) {
 		for (int neighID2 = 0; neighID2 < allDistances[nodeId][otherNodeId][neighId].size(); ++neighID2) {
 			std::vector<double> distancesAngles = allDistances[nodeId][otherNodeId][neighId][neighID2][angIdActual];
-			allDistances[nodeId][otherNodeId][neighId][neighID2].insert(allDistances[nodeId][otherNodeId][neighId][neighID2].begin() + angIdWhereInsert,
-					distancesAngles);
+			allDistances[nodeId][otherNodeId][neighId][neighID2].insert(allDistances[nodeId][otherNodeId][neighId][neighID2].begin() + angIdWhereInsert, distancesAngles);
 		}
 
 		for (int otherNeighId = 0; otherNeighId < allDistances[otherNodeId][nodeId].size(); ++otherNeighId) {
 			for (int otherAngId = 0; otherAngId < allDistances[otherNodeId][nodeId][otherNeighId][neighId].size(); ++otherAngId) {
 				double distancesAngle = allDistances[otherNodeId][nodeId][otherNeighId][neighId][otherAngId][angIdActual];
-				allDistances[otherNodeId][nodeId][otherNeighId][neighId][otherAngId].insert(
-						allDistances[otherNodeId][nodeId][otherNeighId][neighId][otherAngId].begin() + angIdWhereInsert, distancesAngle);
+				allDistances[otherNodeId][nodeId][otherNeighId][neighId][otherAngId].insert(allDistances[otherNodeId][nodeId][otherNeighId][neighId][otherAngId].begin() + angIdWhereInsert,
+						distancesAngle);
 			}
 		}
 	}
@@ -488,8 +485,7 @@ void DOPN::insertAngSample(int inSampleId, int neighId, int angIdActual, int ang
 	this->update();
 }
 
-NeighImprovement DOPN::optimizeNeighborhoodPosition(int targetId, std::vector<double> actualNeighAngles, std::vector<NeighAngValuesIds> originalNeighAngIds,
-		double minimal_improvement_distance) {
+NeighImprovement DOPN::optimizeNeighborhoodPosition(int targetId, std::vector<double> actualNeighAngles, std::vector<NeighAngValuesIds> originalNeighAngIds, double minimal_improvement_distance) {
 //INFO("optimizeNeighborhoodPosition: targetId="<<targetId);
 
 	int inSampleId = targetId + 1;
@@ -1441,8 +1437,7 @@ double DOPN::tryToMove(int idxWhatToMove, int idxWhereToMove) {
 	//INFO("tryToMove multi begin");
 //INFO_GREEN("tryToMove idxWhatToMove " << idxWhatToMove << " idxWhereToMove " << idxWhereToMove);
 //INFO("tryToMove getNumTargets "<<getNumTargets());
-	if (idxWhatToMove >= targets.size() || idxWhatToMove < 0 || idxWhereToMove > targets.size() || idxWhereToMove < 0
-			|| abs(idxWhereToMove - idxWhatToMove) < 2) {
+	if (idxWhatToMove >= targets.size() || idxWhatToMove < 0 || idxWhereToMove > targets.size() || idxWhereToMove < 0 || abs(idxWhereToMove - idxWhatToMove) < 2) {
 		INFO_RED("tryToMove idxWhatToMove " << idxWhatToMove << " idxWhereToMove " << idxWhereToMove);
 		INFO_RED("tryToMove getNumTargets "<<getNumTargets());
 		INFO_RED("tryToMove idxWhatToMove "<<idxWhatToMove<<" or idxWhereToMove "<<idxWhereToMove<<" exceeds maximum for target size"<<(targets.size()));
@@ -2457,108 +2452,103 @@ std::vector<GraphNode>::iterator DOPN::targetsEnd() {
 	return targets.end();
 }
 
+std::vector<State> DOPN::getPathSampled(double samplePath) {
+	std::vector<State> path;
+	std::vector<Dubins> dubinsPath = getPath();
+	//INFO("we have "<<dubinsPath.size()<<" dubins paths");
+	bool allSampled = false;
+	int dubinsIndex = 0;
+	double actualDistance = 0;
+	while (!allSampled) {
+		if (dubinsIndex < dubinsPath.size()) {
+			Dubins actualDubins = dubinsPath[dubinsIndex];
+			double actualDubinsLen = actualDubins.length;
+			if (actualDistance <= actualDubinsLen) {
+				State addState = actualDubins.getState(actualDistance);
+				path.push_back(addState);
+				actualDistance += samplePath;
+			} else {
+				actualDistance = actualDubinsLen - actualDubinsLen;
+				dubinsIndex++;
+			}
+		} else {
+			path.push_back(dubinsPath[dubinsPath.size() - 1].end);
+			allSampled = true;
+		}
+	}
+	return path;
+}
 /*
- std::vector<State> DOPN::getPathSampled(double samplePath) {
- std::vector<State> path;
- std::vector<Dubins> dubinsPath = getPath();
- //INFO("we have "<<dubinsPath.size()<<" dubins paths");
- bool allSampled = false;
- int dubinsIndex = 0;
- double actualDistance = 0;
- while (!allSampled) {
- if (dubinsIndex < dubinsPath.size()) {
- Dubins actualDubins = dubinsPath[dubinsIndex];
- double actualDubinsLen = actualDubins.length;
- if (actualDistance <= actualDubinsLen) {
- State addState = actualDubins.getState(actualDistance);
- path.push_back(addState);
- actualDistance += samplePath;
- } else {
- actualDistance = actualDubinsLen - actualDubinsLen;
- dubinsIndex++;
- }
- } else {
- path.push_back(dubinsPath[dubinsPath.size() - 1].end);
- allSampled = true;
- }
- }
- return path;
- }
+std::vector<State> DOPN::getPathSampled(double initialSpeed, double maximal_speed, double maximal_acceleration, double time_sample_rate, double finalSpeed) {
+	std::vector<State> path;
+	std::vector<Dubins> dubinsPath = getPath();
+	INFO("getPathSampled we have "<<dubinsPath.size()<<" dubins paths");
+	double wholePathLength = getPathLength();
+	bool allSampled = false;
+	double actualSpeed = initialSpeed;
+	int dubinsIndex = 0;
+	bool deceleration = false;
+	double decelerationAcc = -maximal_acceleration;
+	double actualDistanceWhole = 0;
+	double time = 0;
+	double actualDistance = 0;
+	if (dubinsPath.size() > 0) {
+		while (!allSampled) {
+			if (dubinsIndex < dubinsPath.size()) {
+				Dubins actualDubins = dubinsPath[dubinsIndex];
+				double actualDubinsLen = actualDubins.length;
+				if (actualDistance <= actualDubinsLen) {
 
- std::vector<State> DOPN::getPathSampled(double initialSpeed, double maximal_speed, double maximal_acceleration,
- double time_sample_rate, double finalSpeed) {
- std::vector<State> path;
- std::vector<Dubins> dubinsPath = getPath();
- INFO("getPathSampled we have "<<dubinsPath.size()<<" dubins paths");
- double wholePathLength = getPathLength();
- bool allSampled = false;
- double actualSpeed = initialSpeed;
- int dubinsIndex = 0;
- bool deceleration = false;
- double decelerationAcc = -maximal_acceleration;
- double actualDistanceWhole = 0;
- double time = 0;
- double actualDistance = 0;
- if (dubinsPath.size() > 0) {
- while (!allSampled) {
- if (dubinsIndex < dubinsPath.size()) {
- Dubins actualDubins = dubinsPath[dubinsIndex];
- double actualDubinsLen = actualDubins.length;
- if (actualDistance <= actualDubinsLen) {
-
- time += time_sample_rate;
- double distanceLeft = wholePathLength - (actualDistanceWhole + actualSpeed * time_sample_rate);
- double finalVelInSec = (actualSpeed - finalSpeed) / maximal_acceleration;
- double distanceToStop = 0.5 * (-maximal_acceleration) * finalVelInSec * finalVelInSec
- + actualSpeed * finalVelInSec;
- if (!deceleration && distanceLeft < distanceToStop) {
- //INFO("distanceLeft "<<distanceLeft);
- //INFO("finalVelInSec "<<finalVelInSec);
- //INFO("distanceToStop "<<distanceToStop);
- distanceLeft = wholePathLength - (actualDistanceWhole);
- deceleration = true;
- decelerationAcc = -(distanceLeft - (actualSpeed * finalVelInSec))
- / (0.5 * finalVelInSec * finalVelInSec);
- //INFO("decelerationAcc "<<decelerationAcc);
- }
- if (deceleration) {
- actualSpeed -= decelerationAcc * time_sample_rate;
- distanceLeft = wholePathLength - (actualDistanceWhole);
- decelerationAcc = -(distanceLeft - (actualSpeed * finalVelInSec))
- / (0.5 * finalVelInSec * finalVelInSec);
- if (decelerationAcc > maximal_acceleration) {
- decelerationAcc = maximal_acceleration;
- }
- //INFO("decelerationAcc "<<decelerationAcc);
- if (actualSpeed < decelerationAcc * time_sample_rate) {
- actualSpeed = decelerationAcc * time_sample_rate;
- }
- } else {
- actualSpeed += maximal_acceleration * time_sample_rate;
- actualSpeed = MIN(actualSpeed, maximal_speed);
- }
- INFO(time<<" - "<<actualSpeed);
- State addState = actualDubins.getState(actualDistance);
- path.push_back(addState);
- double actualSamle = actualSpeed * time_sample_rate;
- //INFO_BLUE("actualDistance " <<actualDistance<<"sample "<<actualSamle);
- actualDistance += actualSamle;
- actualDistanceWhole += actualSamle;
- } else {
- actualDistance = actualDistance - actualDubinsLen;
- dubinsIndex++;
- }
- } else {
- path.push_back(dubinsPath[dubinsPath.size() - 1].end);
- allSampled = true;
- }
- }
- } else {
- path.push_back(State(start.x, start.y, 0));
- }
- return path;
- }
- */
+					time += time_sample_rate;
+					double distanceLeft = wholePathLength - (actualDistanceWhole + actualSpeed * time_sample_rate);
+					double finalVelInSec = (actualSpeed - finalSpeed) / maximal_acceleration;
+					double distanceToStop = 0.5 * (-maximal_acceleration) * finalVelInSec * finalVelInSec + actualSpeed * finalVelInSec;
+					if (!deceleration && distanceLeft < distanceToStop) {
+						//INFO("distanceLeft "<<distanceLeft);
+						//INFO("finalVelInSec "<<finalVelInSec);
+						//INFO("distanceToStop "<<distanceToStop);
+						distanceLeft = wholePathLength - (actualDistanceWhole);
+						deceleration = true;
+						decelerationAcc = -(distanceLeft - (actualSpeed * finalVelInSec)) / (0.5 * finalVelInSec * finalVelInSec);
+						//INFO("decelerationAcc "<<decelerationAcc);
+					}
+					if (deceleration) {
+						actualSpeed -= decelerationAcc * time_sample_rate;
+						distanceLeft = wholePathLength - (actualDistanceWhole);
+						decelerationAcc = -(distanceLeft - (actualSpeed * finalVelInSec)) / (0.5 * finalVelInSec * finalVelInSec);
+						if (decelerationAcc > maximal_acceleration) {
+							decelerationAcc = maximal_acceleration;
+						}
+						//INFO("decelerationAcc "<<decelerationAcc);
+						if (actualSpeed < decelerationAcc * time_sample_rate) {
+							actualSpeed = decelerationAcc * time_sample_rate;
+						}
+					} else {
+						actualSpeed += maximal_acceleration * time_sample_rate;
+						actualSpeed = MIN(actualSpeed, maximal_speed);
+					}
+					INFO(time<<" - "<<actualSpeed);
+					State addState = actualDubins.getState(actualDistance);
+					path.push_back(addState);
+					double actualSamle = actualSpeed * time_sample_rate;
+					//INFO_BLUE("actualDistance " <<actualDistance<<"sample "<<actualSamle);
+					actualDistance += actualSamle;
+					actualDistanceWhole += actualSamle;
+				} else {
+					actualDistance = actualDistance - actualDubinsLen;
+					dubinsIndex++;
+				}
+			} else {
+				path.push_back(dubinsPath[dubinsPath.size() - 1].end);
+				allSampled = true;
+			}
+		}
+	} else {
+		path.push_back(State(start.x, start.y, 0));
+	}
+	return path;
+}
+*/
 
 double DOPN::getReward() {
 	double reward = 0;

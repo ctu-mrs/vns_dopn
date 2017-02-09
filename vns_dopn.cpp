@@ -2022,8 +2022,7 @@ void VNSDOPN::save(void) {
 	imr::assert_io(ofs2.good(), "Cannot create path '" + file2 + "'");
 	ofs2 << std::setprecision(14);
 
-	//TODO : uncomment
-	/*
+
 	 std::vector<Dubins> finalPath = finalTourDOPN.getPath();
 	 std::vector<State> samples = finalTourDOPN.getPathSampled(config.get<double>("sampled-path-distance"));
 	 for (int var = 0; var < samples.size(); ++var) {
@@ -2032,7 +2031,7 @@ void VNSDOPN::save(void) {
 	 for (int var = 0; var < samples.size(); ++var) {
 	 ofs2 << samples[var].point.x << " " << samples[var].point.y << " " << samples[var].ang << std::endl;
 	 }
-	 */
+
 	imr::assert_io(ofs.good(), "Error occur during path saving");
 	ofs.close();
 
