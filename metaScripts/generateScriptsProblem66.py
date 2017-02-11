@@ -47,11 +47,11 @@ templateName = "./template.sh"
 
 
 #radiueses = [0.0 , 0.3 , 0.5 , 0.9 , 1.1 , 1.3 ]
-radiueses = [ 0.3 , 0.5 , 0.9 ]
+#radiueses = [ 0.3 , 0.5 , 0.9 ]
 radiueses = [ 0.5 ]
 
 #neigh_radiuses = [0.0 , 0.2 , 0.5 , 1.0 , 1.5 , 2.0]
-neigh_radiuses = [ 0.2 , 0.5 , 1.0 ]
+#neigh_radiuses = [ 0.2 , 0.5 , 1.0 ]
 neigh_radiuses = [ 0.5 ]
 
 testIds = range(0, 10)
