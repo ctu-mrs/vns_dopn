@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -l select=1:ncpus=1:mem=4gb:scratch_local=1gb
-#PBS -l walltime=02:00:00
+#PBS -l walltime=04:00:00
 
 un=`uname -a`;
 
