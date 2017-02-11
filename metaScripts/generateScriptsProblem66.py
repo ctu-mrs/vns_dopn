@@ -6,12 +6,12 @@ from __builtin__ import exit
 from shutil import copyfile
 
 #for my PC
-SCRIPT_OUTPUT_FOLDER = "generatedScripts/"
-SCRIPT_START_FOLDER = "scriptStartFolder/"
+#SCRIPT_OUTPUT_FOLDER = "generatedScripts/"
+#SCRIPT_START_FOLDER = "scriptStartFolder/"
 
 #for metacenter
-#SCRIPT_OUTPUT_FOLDER = "/storage/praha1/home/penicrob/generatedScripts/"
-#SCRIPT_START_FOLDER = "/storage/praha1/home/penicrob/scriptStartFolder/"
+SCRIPT_OUTPUT_FOLDER = "/storage/praha1/home/penicrob/generatedScripts/"
+SCRIPT_START_FOLDER = "/storage/praha1/home/penicrob/scriptStartFolder/"
 
 PROBLEMS_PATH = "../"
 
