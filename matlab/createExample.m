@@ -122,12 +122,11 @@ text(default_text_pos(1),default_text_pos(2)+offsety,strcat('\fontsize{12}{0}\se
 
 text(default_text_pos(1)+offsetx,default_text_pos(2)+offsety,strcat('\fontsize{12}{0}\selectfont{DOPN}\fontsize{8}{0}\selectfont{',{' R='},num2str(result_path4.REWARDS),'}'),'Interpreter','latex')
 
-xlim([-8 , 28])
-ylim([-28.5 , 9.5])
+
 
 
 cb = colorbar('south')
-set(cb, 'Position', [0.08 0.004 0.84 0.03])
+set(cb, 'Position', [0.08 0.01 0.84 0.03])
 rewardTitle = title(cb,'reward')
 set(gca,'LooseInset',get(gca,'TightInset')); 
 set(rewardTitle,'FontSize',12)
@@ -135,11 +134,16 @@ set(rewardTitle,'FontSize',12)
 
 
 %axis equal
-axis off
-set(gca, 'visible', 'off'); 
+axis off;
+%axis tight;
+xlim([-7.5 , 26])
+ylim([-30 , 9.5])
+set(gca, 'YTick', []); 
+set(gca, 'XTick', []); 
 scale = 0.2;
 width = widthFig*scale
 height = heightFig*scale
+
 
 %tightfig
 %{
@@ -153,7 +157,10 @@ offsetYDown = 0
 
 tightfig
 
+%set(fig, 'PaperPosition', [é 0 width height]); %Position plot at left hand corner with width 5 and height 5.
+%set(fig, 'PaperSize', [width height]); %Set the paper to have width 5 and height 5.
+
 if SAVE
-save2pdf(output_filename,fig,300);
-%print2im(output_filenamepng, fig,'-alpha');
+ %print2im(output_filenamepng, fig,'-alpha');
+ save2pdf(output_filename,fig,300);
 end

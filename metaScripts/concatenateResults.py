@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import os
 
 #RESULT_PATH = '/storage/praha1/home/penicrob/icra17dop/results/'

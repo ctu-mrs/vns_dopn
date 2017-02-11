@@ -41,6 +41,8 @@
 #include <unordered_set>
 #include "dopn.h"
 
+#include <limits>
+
 #include <algorithm>    // std::random_shuffle
 
 #define OUTPUT_DEFAULT "\033[0m"

@@ -108,8 +108,8 @@ public:
 
 	}
 
-	static void calcAllDistances(std::vector<GraphNode> allGraphNodes, double radius, int resolution, double neighborhood_radius, int neighborhood_resolution,
-			bool null_start_goal_radius, int startIndex, int goalIndex);
+	static void calcAllDistances(std::vector<GraphNode> allGraphNodes, double radius, int resolution, double neighborhood_radius, int neighborhood_resolution, bool null_start_goal_radius,
+			int startIndex, int goalIndex);
 	static std::vector<std::vector<std::vector<GraphNode_AngNeigh>>>*getAllSamples();
 	static void checkDistancesAndSamples(double radius);
 	static void checkEucllideanDistances();
@@ -221,8 +221,8 @@ public:
 	//prints out ids of nodes
 	void listIds();
 
-	 std::vector<State> getPathSampled(double samplePath);
-	 /*
+	std::vector<State> getPathSampled(double samplePath);
+	/*
 	 std::vector<State> getPathSampled(double initialSpeed, double maximal_speed,
 	 double maximal_acceleration, double time_sample_rate, double finalSpeed);
 	 */
@@ -233,10 +233,13 @@ public:
 	void update();
 
 	double getReward();
+	//void evaluateUsage();
 
-protected:
-	static std::vector<std::vector<std::vector<GraphNode_AngNeigh>>> allSamples;
 	static std::vector<std::vector<std::vector<std::vector<std::vector<std::vector<double>>>>>> allDistances;
+	//static std::vector<std::vector<std::vector<std::vector<std::vector<std::vector<int>>>>>> allDistancesUsage;
+	static std::vector<std::vector<std::vector<GraphNode_AngNeigh>>> allSamples;
+protected:
+
 	//void initializeAllNodes();
 
 	typedef std::vector<std::vector<std::vector<double>>>dst_type;
@@ -250,6 +253,7 @@ protected:
 	//int getInverseId(int id);
 
 	static void generateSamples(std::vector<std::vector<GraphNode_AngNeigh>> & samples, GraphNode p,double resolution,double neighborhood_radius,int neighborhood_resolution,bool null_start_goal_radius, int startIndex, int goalIndex);
+
 	void updateAfterInsert(int idxStart,int idxEnd);
 	void updateAfterRemove(int idxStart,int idxEnd);
 	bool null_start_goal_radius;

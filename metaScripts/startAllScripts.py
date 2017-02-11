@@ -4,19 +4,23 @@ import subprocess
 import re
 from __builtin__ import exit
 from shutil import copyfile
+from sys import exit
 
 #for my PC
-SCRIPT_OUTPUT_FOLDER = "generatedScripts/"
+SCRIPT_OUTPUT_FOLDER = "../generatedScripts/"
+REAL_RUN = False
 
 #for metacenter
 #SCRIPT_OUTPUT_FOLDER = "/storage/praha1/home/penicrob/generatedScripts/"
 
 PROBLEMS_PATH = "../../"
 
-radiueses = [0.0 , 0.3 , 0.5 , 0.9 , 1.1 , 1.3 ]
-# radiueses = [0.0]
+#radiueses = [0.0 , 0.3 , 0.5 , 0.9 , 1.1 , 1.3 ]
+radiueses = [ 0.3 , 0.5 , 0.9 ]
 
-neigh_radiuses = [0.0 , 0.2 , 0.5 , 1.0 , 1.5 , 2.0]
+#neigh_radiuses = [0.0 , 0.2 , 0.5 , 1.0 , 1.5 , 2.0]
+neigh_radiuses = [ 0.2 , 0.5 , 1.0]
+
 testIds = range(0, 10)
 
 RESOLUTION = 16
@@ -32,7 +36,7 @@ PROBLEM_FOLDERS = {'P1':'etc/tsiligrides_problem1/', 'P2':'etc/tsiligrides_probl
 #PROBLEM_NAMES = {'P1':'Tsiligirides Set 1', 'P2':'Tsiligirides Set 2', 'P3':'Tsiligirides Set 3', '64':'Chao diamond-shaped Set', '66':'Chao squared-shaped Set'}
 PROBLEM_NAMES = {'66':'Chao squared-shaped Set'}
 
-
+num_created = 0
 for NEIGHBORHOOD_RADIUS in neigh_radiuses:
     for RADIUS in radiueses:
         for TEST_ID in testIds :
@@ -51,6 +55,21 @@ for NEIGHBORHOOD_RADIUS in neigh_radiuses:
                                 budget = s.group().zfill(3)
                                 break
                         scriptName = SCRIPT_OUTPUT_FOLDER + "start_r_" + str(RADIUS) + "_nr_" + str(NEIGHBORHOOD_RADIUS) + "_p_" + problem_key + "_b_" + budget + "_run_" + str(TEST_ID) + ".bash"
-                        print("starting",SCRIPT_OUTPUT_FOLDER+scriptName)
-                        #subprocess.call(["ls",fullname])
-                        #subprocess.call(["qsub",fullname])
+                        print("starting",scriptName)
+                        import os.path
+                        if os.path.exists(scriptName):
+                            num_created += 1
+                            print("run the "+scriptName)
+                            if REAL_RUN:
+                                subprocess.call(["qsub",scriptName])
+                            else:
+                                print("the real run would call qsub "+scriptName)
+                        else:
+                            print("file does not exists "+scriptName)
+                            exit(1)
+                            
+                            
+if not REAL_RUN:
+    print("we would run "+str(num_created)+" from "+SCRIPT_OUTPUT_FOLDER)
+else:
+    print("we ran "+str(num_created)+" from "+SCRIPT_OUTPUT_FOLDER)
