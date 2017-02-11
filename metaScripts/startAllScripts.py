@@ -6,14 +6,16 @@ from __builtin__ import exit
 from shutil import copyfile
 from sys import exit
 
+REAL_RUN = False
+
 #for my PC
 SCRIPT_OUTPUT_FOLDER = "../generatedScripts/"
-REAL_RUN = False
+PROBLEMS_PATH = "../../"
 
 #for metacenter
 #SCRIPT_OUTPUT_FOLDER = "/storage/praha1/home/penicrob/generatedScripts/"
+#PROBLEMS_PATH = "/storage/praha1/home/penicrob/gacr16/vns_dopn/etc/"
 
-PROBLEMS_PATH = "../../"
 
 #radiueses = [0.0 , 0.3 , 0.5 , 0.9 , 1.1 , 1.3 ]
 #radiueses = [ 0.3 , 0.5 , 0.9 ]
