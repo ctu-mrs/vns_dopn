@@ -160,6 +160,11 @@ private:
 	double getTourLength(std::vector<GraphNode> tour);
 	double getTourReward(std::vector<GraphNode> tour);
 
+
+	//just for generating examples
+	void exampleInsertRandom(DOPN &actualDOPN);
+	void saveSampled(std::string filename, DOPN &actualDOPN);
+
 	std::vector<std::vector<GraphNode>> initialPaths;
 	std::vector<std::vector<GraphNode>> nodesForInsertionInitialPaths;
 
