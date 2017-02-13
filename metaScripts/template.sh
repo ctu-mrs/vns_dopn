@@ -8,6 +8,7 @@ trap 'clean_scratch' TERM EXIT
 
 export LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:/storage/praha1/home/penicrob/opt/lib
 export PATH=/storage/praha1/home/penicrob/opt/bin:$$PATH
+export PKG_CONFIG_PATH=/storage/praha1/home/penicrob/opt/lib/pkgconfig:$$PKG_CONFIG_PATH
 cp -R /storage/praha1/home/penicrob/gacr16/* $$SCRATCHDIR
 cd $$SCRATCHDIR/vns_dopn
 
