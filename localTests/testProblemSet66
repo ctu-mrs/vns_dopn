@@ -24,7 +24,7 @@ PROBLEMS=(
 
 #./fourphase --name="Tsiligirides Set 1" --problem="etc/tsiligrides_problem1/tsiligirides_problem_1_budget_75.txt"
 
-TEST_IDS=( 6 )
+TEST_IDS=( 5 )
 CONFIGS_NEIGHBORHOODS=("0.0" "0.2" "0.5" "1.0" "1.5")
 CONFIGS_RADIUS=("0.0" "0.3" "0.5" "1.0" "1.5" )
 

@@ -3,13 +3,11 @@ import os
 #RESULT_PATH = '/storage/praha1/home/penicrob/icra17dop/results/'
 #RESULT_PATH =  '../data/resultsmetaDiffRes/'
 #RESULT_PATH = '../data/resultsDTSP/'
-RESULT_PATH = '../data/resultsDiffLMAXAdditional/'
+#RESULT_PATH = '../data/resultsDiffLMAXAdditional/'
+RESULT_PATH = '../data/results_dopn_66_nr0.5_r0.5/'
 #OUTPUT = '.log'
-OUTPUT = 'resultsDiffLMAXAdditional.log'
-#"noName"
-
-PROBLEM_NAMES = {'P1':'Tsiligirides Set 1','P2':'Tsiligirides Set 2','P3':'Tsiligirides Set 3','64':'Chao diamond-shaped Set','66':'Chao squared-shaped Set'}
-
+#OUTPUT = 'resultsDiffLMAXAdditional.log'
+OUTPUT = '../data/results_dopn_66_nr0.5_r0.5/resultsAll.log'
 
 with open(OUTPUT, "w")  as logAll:
     results = next(os.walk(RESULT_PATH))[1]
