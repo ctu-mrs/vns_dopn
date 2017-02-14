@@ -50,7 +50,7 @@ legendsTime={};
 %ylabel('Collected reward - R')
 ylim([0 1600])
 xlim([0 25])
-xlabel('Heading angle samples - m')
+xlabel('Neighborhood samples - n')
 
 ax1 = gca; % current axes
 set(gca, 'Color','none')
@@ -63,7 +63,8 @@ ax2 = axes('Position',get(ax1,'Position'),...
        'Color','none',...
        'XColor','k','YColor','k');
 
-ax2.XTick = [0]
+%ax2.XTick = [0]
+set(ax2, 'XTick', []);
 linkaxes([ax1 ax2],'x');
 ylim(ax2,[0 30000])
 

@@ -32,8 +32,8 @@ yellow = [0.99 0.99 0];
 
 neigh_radius = 0.5;
 dubins_radius = 0.5;
-neigh_sampling = 8;
-dub_sampling = 8;
+neigh_sampling = 4;
+dub_sampling = 4;
 dub_sample_line_length = 0.15;
 
 fig = figure(1)
