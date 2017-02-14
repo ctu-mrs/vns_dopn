@@ -163,6 +163,8 @@ private:
 
 	//just for generating examples
 	void exampleInsertRandom(DOPN &actualDOPN);
+	void exampleExchangeRandom(DOPN &actualDOPN);
+
 	void saveSampled(std::string filename, DOPN &actualDOPN);
 
 	std::vector<std::vector<GraphNode>> initialPaths;
