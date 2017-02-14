@@ -4,10 +4,10 @@ import os
 #RESULT_PATH =  '../data/resultsmetaDiffRes/'
 #RESULT_PATH = '../data/resultsDTSP/'
 #RESULT_PATH = '../data/resultsDiffLMAXAdditional/'
-RESULT_PATH = '../data/results_dopn_66_nr0.5_r0.5/'
+RESULT_PATH = '../data/resultsDiffNeighSampling/'
 #OUTPUT = '.log'
 #OUTPUT = 'resultsDiffLMAXAdditional.log'
-OUTPUT = '../data/results_dopn_66_nr0.5_r0.5/resultsAll.log'
+OUTPUT = '../data/resultsDiffNeighSampling/resultsAll.log'
 
 with open(OUTPUT, "w")  as logAll:
     results = next(os.walk(RESULT_PATH))[1]
