@@ -111,6 +111,8 @@ public:
 	static void calcAllDistances(std::vector<GraphNode> allGraphNodes, double radius, int resolution, double neighborhood_radius, int neighborhood_resolution, bool null_start_goal_radius,
 			int startIndex, int goalIndex);
 	static std::vector<std::vector<std::vector<GraphNode_AngNeigh>>>*getAllSamples();
+
+	std::vector<GraphNode> getAllTargets();
 	static void checkDistancesAndSamples(double radius);
 	static void checkEucllideanDistances();
 

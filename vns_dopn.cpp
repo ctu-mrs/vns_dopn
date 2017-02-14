@@ -208,6 +208,180 @@ void VNSDOPN::exampleExchangeRandom(DOPN &actualDOPN) {
 
 }
 
+void VNSDOPN::examplePathInsert(DOPN &actualDOPN) {
+	INFO("examplePathInsert");
+	int exchangeFromStart = 0;
+	int exchangeFromEnd = 2;
+	int insertTo = 5;
+
+	DOPN copyAdd = actualDOPN;
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+	bool insertUp = true;
+	std::vector<GraphNode> targets = copyAdd.getAllTargets();
+	if (insertUp) {
+		//insert up
+		std::vector<GraphNode> newVec(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
+		if (insertTo < copyAdd.getNumTargets()) {
+			copyAdd.addPoint(newVec, insertTo);
+			copyAdd.listIds();
+		}
+		if (exchangeFromStart < copyAdd.getNumTargets()) {
+			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.listIds();
+		}
+
+	} else {
+		//insert bellow
+		std::vector<GraphNode> newVec(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
+
+		if (exchangeFromStart < copyAdd.getNumTargets()) {
+			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
+		}
+		if (insertTo < copyAdd.getNumTargets()) {
+			copyAdd.addPoint(newVec, insertTo);
+		}
+	}
+
+	copyAdd.update();
+
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+
+	saveSampled("matlab/beforePathInsertRandom.txt", copyAdd);
+
+	exchangeFromStart = 2;
+	exchangeFromEnd = 4;
+	insertTo = 0;
+
+	insertUp = false;
+	targets = copyAdd.getAllTargets();
+	if (insertUp) {
+		//insert up
+		std::vector<GraphNode> newVec(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
+		if (insertTo < copyAdd.getNumTargets()) {
+			copyAdd.addPoint(newVec, insertTo);
+			copyAdd.listIds();
+		}
+		if (exchangeFromStart < copyAdd.getNumTargets()) {
+			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.listIds();
+		}
+
+	} else {
+		//insert bellow
+		std::vector<GraphNode> newVec(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
+
+		if (exchangeFromStart < copyAdd.getNumTargets()) {
+			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
+		}
+		if (insertTo < copyAdd.getNumTargets()) {
+			copyAdd.addPoint(newVec, insertTo);
+		}
+	}
+
+	copyAdd.update();
+
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+	saveSampled("matlab/afterPathInsertRandom.txt", copyAdd);
+}
+
+void VNSDOPN::examplePathExchange(DOPN &actualDOPN) {
+	INFO("examplePathExchange");
+	int exchangeFromStart = 0;
+	int exchangeFromEnd = 2;
+	int exchangeToStart = 4;
+	int exchangeToEnd = 5;
+
+	DOPN copyAdd = actualDOPN;
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+	bool exchangeUp = true;
+	std::vector<GraphNode> targets = copyAdd.getAllTargets();
+	if (exchangeUp) {
+		std::vector<GraphNode> newVecFrom(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);		//is below
+		std::vector<GraphNode> newVecTo(targets.begin() + exchangeToStart, targets.begin() + exchangeToEnd + 1);		//is above
+
+		if (exchangeToStart < copyAdd.getNumTargets()) {
+			copyAdd.removePoint(exchangeToStart, MIN(exchangeToEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.addPoint(newVecFrom, exchangeToStart);
+		}
+		//INFO("add newVecTo");
+		if (exchangeFromStart < copyAdd.getNumTargets()) {
+			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.addPoint(newVecTo, exchangeFromStart);
+		}
+
+	} else {
+		std::vector<GraphNode> newVecFrom(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
+		std::vector<GraphNode> newVecTo(targets.begin() + exchangeToStart, targets.begin() + exchangeToEnd + 1);
+
+		if (exchangeFromStart < copyAdd.getNumTargets()) {
+			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.addPoint(newVecTo, exchangeFromStart);
+		}
+
+		//INFO("add newVecFrom");
+		if (exchangeToStart < copyAdd.getNumTargets()) {
+			copyAdd.removePoint(exchangeToStart, MIN(exchangeToEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.addPoint(newVecFrom, exchangeToStart);
+		}
+
+	}
+
+	copyAdd.update();
+
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+
+	saveSampled("matlab/beforePathExchangeRandom.txt", copyAdd);
+
+	exchangeToStart = 0;
+	exchangeToEnd = 1;
+	exchangeFromStart = 3;
+	exchangeFromEnd = 5;
+
+	exchangeUp = false;
+	targets = copyAdd.getAllTargets();
+	if (exchangeUp) {
+		std::vector<GraphNode> newVecFrom(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);		//is below
+		std::vector<GraphNode> newVecTo(targets.begin() + exchangeToStart, targets.begin() + exchangeToEnd + 1);		//is above
+
+		if (exchangeToStart < copyAdd.getNumTargets()) {
+			copyAdd.removePoint(exchangeToStart, MIN(exchangeToEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.addPoint(newVecFrom, exchangeToStart);
+		}
+		//INFO("add newVecTo");
+		if (exchangeFromStart < copyAdd.getNumTargets()) {
+			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.addPoint(newVecTo, exchangeFromStart);
+		}
+
+	} else {
+		std::vector<GraphNode> newVecFrom(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
+		std::vector<GraphNode> newVecTo(targets.begin() + exchangeToStart, targets.begin() + exchangeToEnd + 1);
+
+		if (exchangeFromStart < copyAdd.getNumTargets()) {
+			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.addPoint(newVecTo, exchangeFromStart);
+		}
+
+		//INFO("add newVecFrom");
+		if (exchangeToStart < copyAdd.getNumTargets()) {
+			copyAdd.removePoint(exchangeToStart, MIN(exchangeToEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.addPoint(newVecFrom, exchangeToStart);
+		}
+
+	}
+
+	copyAdd.update();
+
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+	saveSampled("matlab/afterPathExchangeRandom.txt", copyAdd);
+}
+
 void VNSDOPN::saveSampled(std::string filename, DOPN &actualDOPN) {
 	std::string file = filename;
 	std::ofstream ofs(filename.c_str());
@@ -265,9 +439,10 @@ void VNSDOPN::iterate(int iter) {
 	//tourDOPN.evaluateUsage();
 
 	//for example generation of neighborhood operations
-	exampleInsertRandom(tourDOPN);
-	exampleExchangeRandom(tourDOPN);
-
+	//exampleInsertRandom(tourDOPN);
+	//exampleExchangeRandom(tourDOPN);
+	//examplePathInsert(tourDOPN);
+	examplePathExchange(tourDOPN);
 	exit(0);
 
 	int numItersLastImprovement = 1;

@@ -123,6 +123,10 @@ std::vector<std::vector<std::vector<GraphNode_AngNeigh>>>* DOPN::getAllSamples()
 	return &allSamples;
 }
 
+std::vector<GraphNode> DOPN::getAllTargets() {
+	return targets;
+}
+
 void DOPN::checkEucllideanDistances() {
 	for (int gnid1 = 0; gnid1 < allSamples.size(); ++gnid1) {
 		//allDistances[gnid1].resize(S);
