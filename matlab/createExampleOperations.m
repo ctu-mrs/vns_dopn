@@ -11,12 +11,18 @@ set(0,'DefaultTextFontSize', 14)
 
 PROBLEM_FILE_NAME = '../etc/example_problem_dopn/example_problem_dopn_1_25.txt';
 
+startText='s_{1} (start)'
+endText='s_{8} (end)'
+
 grey = [0.4,0.4,0.4];
 yellow = [0.99 0.99 0.3];
 red = [0.99 0 0];
 blue = [0 0 0.99];
 black= [0 0 0 ];
 green = [0 1 0];
+
+widthFig = 350
+heightFig = 450
 
 neighborhood_color = yellow;
 neighborhood_samples_color = red;
@@ -26,7 +32,9 @@ path_bef_color = black;
 path_aftr_color = green;
 path_line_width = 1.5
 
-%{
+start_goal_label_text_pos = [0.3 0.1]
+
+
 %% example for insert
 output_filename = 'exampleInsertOperationDOPN.pdf'
 output_filenamepng = 'exampleInsertOperationDOPN.png'
@@ -42,7 +50,7 @@ start = problem_data(2,:)
 goal = problem_data(3,:)
 targets = problem_data(4:end,:);
 
-start_goal_label_text_pos = [0.3 0]
+
 target_label_offset = [-0.05,0.17]
 
 neigh_radius = 0.5;
@@ -52,8 +60,7 @@ dub_sampling = 6;
 dub_sample_line_length = 0.15;
 
 fig1 = figure(1)
-widthFig = 320
-heightFig = 500
+
 set(fig1,'Position', [0 0 widthFig heightFig]);
 
 circles(targets(:,1),targets(:,2),ones(size(targets,1),1)*neigh_radius,'edgecolor',neighborhood_color,'facecolor',neighborhood_color);
@@ -71,8 +78,9 @@ end
 plot(start(1),start(2),'.','Color',target_center_color,'MarkerSize',20);
 plot(goal(1),goal(2),'.','Color',target_center_color,'MarkerSize',20);
 
-text(start(1)+start_goal_label_text_pos(1),start(2)+start_goal_label_text_pos(2),'start')
-text(goal(1)+start_goal_label_text_pos(1),goal(2)+start_goal_label_text_pos(2),'goal')
+
+text(start(1)+start_goal_label_text_pos(1),start(2)+start_goal_label_text_pos(2),startText)
+text(goal(1)+start_goal_label_text_pos(1),goal(2)+start_goal_label_text_pos(2),endText)
 
 for tId = 1:size(targets,1)
     for neigh_sample = 0:(neigh_sampling-1)
@@ -120,7 +128,6 @@ goal = problem_data(3,:)
 targets = problem_data(4:end,:);
 
 
-start_goal_label_text_pos = [0.3 0]
 target_label_offset = [-0.05,0.17]
 
 neigh_radius = 0.5;
@@ -130,8 +137,6 @@ dub_sampling = 6;
 dub_sample_line_length = 0.15;
 
 fig2 = figure(2)
-widthFig = 320
-heightFig = 500
 set(fig2,'Position', [0 0 widthFig heightFig]);
 
 circles(targets(:,1),targets(:,2),ones(size(targets,1),1)*neigh_radius,'edgecolor',neighborhood_color,'facecolor',neighborhood_color);
@@ -149,8 +154,9 @@ end
 plot(start(1),start(2),'.','Color',target_center_color,'MarkerSize',20);
 plot(goal(1),goal(2),'.','Color',target_center_color,'MarkerSize',20);
 
-text(start(1)+start_goal_label_text_pos(1),start(2)+start_goal_label_text_pos(2),'start')
-text(goal(1)+start_goal_label_text_pos(1),goal(2)+start_goal_label_text_pos(2),'goal')
+
+text(start(1)+start_goal_label_text_pos(1),start(2)+start_goal_label_text_pos(2),startText)
+text(goal(1)+start_goal_label_text_pos(1),goal(2)+start_goal_label_text_pos(2),endText)
 
 for tId = 1:size(targets,1)
     for neigh_sample = 0:(neigh_sampling-1)
@@ -200,7 +206,6 @@ goal = problem_data(3,:)
 targets = problem_data(4:end,:);
 
 
-start_goal_label_text_pos = [0.3 0]
 target_label_offset = [-0.05,0.17]
 
 neigh_radius = 0.5;
@@ -210,8 +215,6 @@ dub_sampling = 6;
 dub_sample_line_length = 0.15;
 
 fig3 = figure(3)
-widthFig = 320
-heightFig = 500
 set(fig3,'Position', [0 0 widthFig heightFig]);
 
 circles(targets(:,1),targets(:,2),ones(size(targets,1),1)*neigh_radius,'edgecolor',neighborhood_color,'facecolor',neighborhood_color);
@@ -229,8 +232,9 @@ end
 plot(start(1),start(2),'.','Color',target_center_color,'MarkerSize',20);
 plot(goal(1),goal(2),'.','Color',target_center_color,'MarkerSize',20);
 
-text(start(1)+start_goal_label_text_pos(1),start(2)+start_goal_label_text_pos(2),'start')
-text(goal(1)+start_goal_label_text_pos(1),goal(2)+start_goal_label_text_pos(2),'goal')
+
+text(start(1)+start_goal_label_text_pos(1),start(2)+start_goal_label_text_pos(2),startText)
+text(goal(1)+start_goal_label_text_pos(1),goal(2)+start_goal_label_text_pos(2),endText)
 
 for tId = 1:size(targets,1)
     for neigh_sample = 0:(neigh_sampling-1)
@@ -261,7 +265,7 @@ set(gca, 'YTick', []);
 set(gca, 'XTick', []);
 tightfig
 save2pdf(output_filename,fig3,300);
-%}
+
 
 %% example for path exchange
 
@@ -280,7 +284,6 @@ goal = problem_data(3,:)
 targets = problem_data(4:end,:);
 
 
-start_goal_label_text_pos = [0.3 0]
 target_label_offset = [-0.05,0.17]
 
 neigh_radius = 0.5;
@@ -290,8 +293,6 @@ dub_sampling = 6;
 dub_sample_line_length = 0.15;
 
 fig4 = figure(4)
-widthFig = 320
-heightFig = 500
 set(fig4,'Position', [0 0 widthFig heightFig]);
 
 circles(targets(:,1),targets(:,2),ones(size(targets,1),1)*neigh_radius,'edgecolor',neighborhood_color,'facecolor',neighborhood_color);
@@ -309,8 +310,8 @@ end
 plot(start(1),start(2),'.','Color',target_center_color,'MarkerSize',20);
 plot(goal(1),goal(2),'.','Color',target_center_color,'MarkerSize',20);
 
-text(start(1)+start_goal_label_text_pos(1),start(2)+start_goal_label_text_pos(2),'start')
-text(goal(1)+start_goal_label_text_pos(1),goal(2)+start_goal_label_text_pos(2),'goal')
+text(start(1)+start_goal_label_text_pos(1),start(2)+start_goal_label_text_pos(2),startText)
+text(goal(1)+start_goal_label_text_pos(1),goal(2)+start_goal_label_text_pos(2),endText)
 
 for tId = 1:size(targets,1)
     for neigh_sample = 0:(neigh_sampling-1)
