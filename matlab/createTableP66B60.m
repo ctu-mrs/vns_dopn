@@ -10,7 +10,7 @@ files = dir(LOG_FOLDER);
 directoryNames = {files([files.isdir]).name};
 directoryNames = directoryNames(~ismember(directoryNames,{'.','..'}))
 
-caption = 'Comparison Problem 66'
+caption = 'Comparison of DOPN for different neighborhood radius and turning radius on Set 66 with $T_{max}$=60'
 label = 'problem66Comparison'
 resultTableFile = 'comparisonRadiiProblem66.tex'
 
