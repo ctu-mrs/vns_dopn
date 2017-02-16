@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -l select=1:ncpus=1:mem=4gb:scratch_local=1gb
+#PBS -l select=1:ncpus=1:mem=$MEM_PBS:scratch_local=1gb
 #PBS -l walltime=$WALLTIME_PBS
 
 un=`uname -a`;
