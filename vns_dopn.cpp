@@ -439,11 +439,11 @@ void VNSDOPN::iterate(int iter) {
 	//tourDOPN.evaluateUsage();
 
 	//for example generation of neighborhood operations
-	exampleInsertRandom(tourDOPN);
-	exampleExchangeRandom(tourDOPN);
-	examplePathInsert(tourDOPN);
-	examplePathExchange(tourDOPN);
-	exit(0);
+	//exampleInsertRandom(tourDOPN);
+	//exampleExchangeRandom(tourDOPN);
+	//examplePathInsert(tourDOPN);
+	//examplePathExchange(tourDOPN);
+	//exit(0);
 
 	int numItersLastImprovement = 1;
 	long timeLastImprovement = testTouring.getRTimeMS();

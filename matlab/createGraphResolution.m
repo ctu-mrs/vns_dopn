@@ -50,7 +50,7 @@ legendsTime={};
 %ylabel('Collected reward - R')
 ylim([0 1600])
 xlim([0 25])
-xlabel('Neighborhood samples - n')
+xlabel('Neighborhood samples - o')
 
 ax1 = gca; % current axes
 set(gca, 'Color','none')

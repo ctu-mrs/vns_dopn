@@ -24,8 +24,8 @@ for DIR_ID = 1:size(directoryNames,2)
     %size(allLogs)
 end
 
-radiuses = unique([allLogs(:).RADIUS])
-possible_n_radiuses = unique([allLogs(:).NEIGHBORHOOD_RADIUS])
+radiuses = sort(unique([allLogs(:).RADIUS]))
+possible_n_radiuses = sort(unique([allLogs(:).NEIGHBORHOOD_RADIUS]))
 
 
 
@@ -33,14 +33,21 @@ resultID = 1;
 comparisonStruct = struct;
 
 for radius=radiuses
-    comparisonStruct(resultID).radius = radius;
+    radius_str =  strcat('\multirow{4}{*}{$\rho$=',sprintf('%.1f',radius),'}') ;
+    comparisonStruct(resultID).radius = radius_str;
+    comparisonStruct(resultID).dataformat = '$R_{max}$';
+    comparisonStruct(resultID+1).dataformat = '$R_{avg}$';
+    comparisonStruct(resultID+2).dataformat = '$R_{std}$';
+    comparisonStruct(resultID+3).dataformat = '\textit{comp. time}';
+    %comparisonStruct(resultID+5).radius = '\hline \\ [-1.8ex]';
     for neigh_radius = possible_n_radiuses
-        fieldName_rew = strcat('reward_nr', strrep(num2str(neigh_radius), '.', '_'));
-        fieldName_time =  strcat('time_nr', strrep(num2str(neigh_radius), '.', '_'));
-        comparisonStruct(resultID).(fieldName_rew) = 0;
-        comparisonStruct(resultID).(fieldName_time) = '';
+        %fieldName_rew = strcat('reward_nr', strrep(num2str(neigh_radius), '.', '_'));
+        %fieldName_time =  strcat('time_nr', strrep(num2str(neigh_radius), '.', '_'));
+        fieldName_value =  strcat('value_nr', strrep(num2str(neigh_radius), '.', '_'));
+        comparisonStruct(resultID).(fieldName_value) = '';
+        comparisonStruct(resultID+1).(fieldName_value) = '';
     end
-    resultID = resultID+1;
+    resultID = resultID+4;
 end
 
 resultID = 1;
@@ -54,18 +61,26 @@ for radius=radiuses
     
     neigh_radiuses =  sort(unique([sameRadiusResults(:).NEIGHBORHOOD_RADIUS]));
     
-    comparisonStruct(resultID).radius = radius;
+    %comparisonStruct(resultID).radius = radius;
+
     
     for neigh_radius = neigh_radiuses
         sameBothRadiusIDs = find([sameRadiusResults(:).NEIGHBORHOOD_RADIUS]==neigh_radius);
         sameBothRadiusResults = sameRadiusResults(sameBothRadiusIDs);
         rew_max = max([sameBothRadiusResults(:).REWARDS])
+        rew_mean = mean([sameBothRadiusResults(:).REWARDS])
+        rew_std = std([sameBothRadiusResults(:).REWARDS])
         rew_mean_ctime_last_impr_max_rew = mean([sameBothRadiusResults(:).CTIME_LAST_IMPR])
-        fieldName_rew = strcat('reward_nr', strrep(num2str(neigh_radius), '.', '_'));
-        fieldName_time =  strcat('time_nr', strrep(num2str(neigh_radius), '.', '_'));
-       
+        %fieldName_rew = strcat('value', strrep(num2str(neigh_radius), '.', '_'));
+        %fieldName_time =  strcat('time_nr', strrep(num2str(neigh_radius), '.', '_'));
+        fieldName_value =  strcat('value_nr', strrep(num2str(neigh_radius), '.', '_'));
+        
+        
         if(size(rew_max,2)>0)
-            comparisonStruct(resultID).(fieldName_rew) = rew_max;
+            comparisonStruct(resultID).(fieldName_value) = sprintf('\\textbf{%i}',rew_max);
+            comparisonStruct(resultID+1).(fieldName_value) = sprintf('%i',rew_mean);
+            comparisonStruct(resultID+2).(fieldName_value) = sprintf('%.1f',rew_std);
+            
             
             if(rew_mean_ctime_last_impr_max_rew<100)
                 if rew_mean_ctime_last_impr_max_rew<1
@@ -82,12 +97,12 @@ for radius=radiuses
                 rew_mean_ctime_str = sprintf('%.1fm',rew_mean_ctime_last_impr_max_rew/60000);           
             end
             
-            comparisonStruct(resultID).(fieldName_time) = rew_mean_ctime_str;
+            comparisonStruct(resultID+3).(fieldName_value) = rew_mean_ctime_str;
         end
     end
     
     
-    resultID = resultID+1;
+    resultID = resultID+4;
     
     
 end
@@ -95,18 +110,20 @@ end
 
 input.data = comparisonStruct;
 
-input.dataFormat.radius = '$\\rho$=%.1f';
+input.dataFormat.radius = '%s';
+input.dataFormat.dataformat = '%s';
 for neigh_radius = possible_n_radiuses
-        fieldName_rew = strcat('reward_nr', strrep(num2str(neigh_radius), '.', '_'));
-        fieldName_time =  strcat('time_nr', strrep(num2str(neigh_radius), '.', '_'));
-        input.dataFormat.(fieldName_rew) = '%i';
-        input.dataFormat.(fieldName_time) = '%s';
+        %fieldName_rew = strcat('reward_nr', strrep(num2str(neigh_radius), '.', '_'));
+        %fieldName_time =  strcat('time_nr', strrep(num2str(neigh_radius), '.', '_'));
+        fieldName_value =  strcat('value_nr', strrep(num2str(neigh_radius), '.', '_'));
+        input.dataFormat.(fieldName_value) = '%s';
+        %input.dataFormat.(fieldName_time) = '%s';
 end
     
-radiusHeaders=' ';
+radiusHeaders=' & ';
 for radiusID = 1:size(possible_n_radiuses,2)
     %radiuses(1,radiusID)
-    text =  sprintf('& \\multicolumn{2}{c}{$\\delta$=%0.1f}',possible_n_radiuses(1,radiusID));
+    text =  sprintf('& $\\delta$=%0.1f',possible_n_radiuses(1,radiusID));
     radiusHeaders= strcat(radiusHeaders, text );
 end
 
@@ -122,7 +139,8 @@ input.tableColumnAlignment = 'r';
 input.header = {'%!TEX root = ../main.tex';...
     '\begin{table}[!htb]';...
     '\centering';...
-    '{\renewcommand{\tabcolsep}{2pt}';...
+    '{';...
+    %'\renewcommand{\tabcolsep}{2pt}';... %add if require smaller table
     ['\caption{',caption,'\label{',label,'}','}']; ...
     '\vspace{-0.75em}';...
     ['\begin{tabular}{l|',repmat( input.tableColumnAlignment ,1,length(fieldnames(comparisonStruct))-1),'}'];...
@@ -134,8 +152,8 @@ input.footer = {' \hline';...
     '}';...
     '\end{table}'};
 
-
-input.tableBorders = 0;
+input.tableBordersPeriod = 4
+input.tableBorders = 1;
 input.makeCompleteLatexDocument = 0;
 input.tableFloat = '[!htb]';
 latex1 = latexTable(input);
