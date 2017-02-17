@@ -6,12 +6,12 @@ from __builtin__ import exit
 from shutil import copyfile
 
 #for my PC
-#SCRIPT_OUTPUT_FOLDER = "generatedScripts/"
-#SCRIPT_START_FOLDER = "scriptStartFolder/"
+SCRIPT_OUTPUT_FOLDER = "generatedScripts/"
+SCRIPT_START_FOLDER = "scriptStartFolder/"
 
 #for metacenter
-SCRIPT_OUTPUT_FOLDER = "/storage/praha1/home/penicrob/generatedScripts/"
-SCRIPT_START_FOLDER = "/storage/praha1/home/penicrob/scriptStartFolder/"
+#SCRIPT_OUTPUT_FOLDER = "/storage/praha1/home/penicrob/generatedScripts/"
+#SCRIPT_START_FOLDER = "/storage/praha1/home/penicrob/scriptStartFolder/"
 
 PROBLEMS_PATH = "../"
 
@@ -38,7 +38,7 @@ for oldFilename in filelist:
     os.remove(SCRIPT_START_FOLDER + oldFilename)
 
 #copy start script
-START_SCRIPT_NAME = "startAllScriptsProblem66.py"
+START_SCRIPT_NAME = "startAllScriptsProblemsP36466.py"
 copyfile(START_SCRIPT_NAME, SCRIPT_START_FOLDER+START_SCRIPT_NAME)
 
 
@@ -48,11 +48,11 @@ templateName = "./template.sh"
 
 #radiueses = [0.0 , 0.3 , 0.5 , 0.9 , 1.1 , 1.3 ]
 #radiueses = [ 0.3 , 0.5 , 0.9 ]
-radiueses = [ 0.5 ]
+radiueses = [ 0.0 , 1.0 ]
 
 #neigh_radiuses = [0.0 , 0.2 , 0.5 , 1.0 , 1.5 , 2.0]
 #neigh_radiuses = [ 0.2 , 0.5 , 1.0 ]
-neigh_radiuses = [ 0.5 ]
+neigh_radiuses = [ 0.0 , 0.5 ]
 
 testIds = range(0, 10)
 
@@ -69,7 +69,7 @@ dict = {'NAME':'noname', 'RESOLUTION':RESOLUTION, 'MEM_PBS':MEM_PBS, 'WALLTIME_P
 PROBLEM_FOLDERS = {'P1':'etc/tsiligrides_problem1/', 'P2':'etc/tsiligrides_problem2/', 'P3':'etc/tsiligrides_problem3/', '64':'etc/chao_set64-diamond/', '66':'etc/chao_set66-square/'}
 
 #PROBLEM_NAMES = {'P1':'Tsiligirides Set 1', 'P2':'Tsiligirides Set 2', 'P3':'Tsiligirides Set 3', '64':'Chao diamond-shaped Set', '66':'Chao squared-shaped Set'}
-PROBLEM_NAMES = {'66':'Chao squared-shaped Set'}
+PROBLEM_NAMES = {  '64':'Chao diamond-shaped Set', '66':'Chao squared-shaped Set'}
 
 templateFile = open(templateName, "r") 
 src = Template(templateFile.read()) 
@@ -84,7 +84,7 @@ for NEIGHBORHOOD_RADIUS in neigh_radiuses:
             for problem_key in PROBLEM_NAMES.iterkeys():
                 problem_path = PROBLEM_FOLDERS[problem_key]
                 problem_name = PROBLEM_NAMES[problem_key]
-                print problem_path
+                print(problem_path)
                 filenames = next(os.walk(PROBLEMS_PATH + problem_path))[2]
                 for problem_filename in filenames:
                     problem_with_path = problem_path + problem_filename
@@ -95,9 +95,7 @@ for NEIGHBORHOOD_RADIUS in neigh_radiuses:
                             if s:
                                 budget = s.group().zfill(3)
                                 break
-                    # print budget
-                    # templateFile = open("../"+problem_with_path, "r")
-                    # print problem_with_path
+                    
                         num_created += 1
                         dict['PROBLEM_NAME'] = problem_name
                         dict['NEIGHBORHOOD_RADIUS'] = NEIGHBORHOOD_RADIUS
@@ -106,7 +104,7 @@ for NEIGHBORHOOD_RADIUS in neigh_radiuses:
                         dict['PROBLEM'] = problem_with_path
                         dict['NAME'] = "dop_r_" + str(RADIUS) + "_nr_" + str(NEIGHBORHOOD_RADIUS) + "_p_" + problem_key + "_b_" + budget + "_run_" + str(TEST_ID)
                         scriptName = SCRIPT_OUTPUT_FOLDER + "start_r_" + str(RADIUS) + "_nr_" + str(NEIGHBORHOOD_RADIUS) + "_p_" + problem_key + "_b_" + budget + "_run_" + str(TEST_ID) + ".bash"
-                        print "create " + scriptName
+                        print("create " + scriptName)
                         result = src.substitute(dict)
                         scriptFile = open(scriptName , "w")
                         scriptFile.write(result)
