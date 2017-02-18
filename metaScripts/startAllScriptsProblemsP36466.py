@@ -10,12 +10,12 @@ import os.path
 REAL_RUN = False
 
 #for my PC
-SCRIPT_OUTPUT_FOLDER = "../generatedScripts/"
-PROBLEMS_PATH = "../../"
+#SCRIPT_OUTPUT_FOLDER = "../generatedScripts/"
+#PROBLEMS_PATH = "../../"
 
 #for metacenter
-#SCRIPT_OUTPUT_FOLDER = "/storage/praha1/home/penicrob/generatedScripts/"
-#PROBLEMS_PATH = "/storage/praha1/home/penicrob/gacr16/vns_dopn/"
+SCRIPT_OUTPUT_FOLDER = "/storage/praha1/home/penicrob/generatedScripts/"
+PROBLEMS_PATH = "/storage/praha1/home/penicrob/gacr16/vns_dopn/"
 
 
 #radiueses = [0.0 , 0.3 , 0.5 , 0.9 , 1.1 , 1.3 ]
