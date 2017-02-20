@@ -9,8 +9,8 @@ set(0,'DefaultAxesFontSize', 14)
 set(0,'DefaultTextFontname', 'Times New Roman')
 set(0,'DefaultTextFontSize', 14)
 
-outputFilename = 'grapDiffNeighResolution.pdf';
-outputFilenamepng = 'grapDiffNeighResolution.png';
+outputFilename = 'graphDiffNeighResolution.pdf';
+outputFilenamepng = 'graphDiffNeighResolution.png';
 SAVE_TO_FILE = true;
 %{
 sets={{'Tsiligirides Set 3','../data/resultsDiffResolutionsP3/results.txt','Set 3, T_{max}= 55','+-r'},...
