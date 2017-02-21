@@ -145,7 +145,8 @@ ylabel(ax1,'Collected reward - R')
 %ylabel(ax2,'Computational time [s]')
 
 [legend_h,object_h,plot_h,text_strings] = columnlegend(2,[rewardPlots rewardPlotsSOM],{legendsRew{:},legendsRewSOM{:}},'northoutside','boxon','interpeter','latex');
-legend_h.set('Position',[0.11 0.78 0.89 0.03])
+%legend_h.set('Position',[0.11 0.78 0.89 0.03])
+legend_h.set('Position',[0.15 0.78 0.75 0.03])
 
 tightfig
 %legend(rewardPlots,legends,'location','northoutside','Orientation','horizontal')

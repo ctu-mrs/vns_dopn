@@ -146,7 +146,7 @@ end
 %legend(ax1,legends,'Location','southeast');
 %legend(ax2,legends,'Location','southeast');
 %legend('boxoff');
-ylabel(ax1,'Collected reward - R')
+ylabel(ax1,'Maximal collected reward - R_{max}')
 ylabel(ax2,'Computational time [s]')
 
 [legend_h,object_h,plot_h,text_strings] = columnlegend(2,[rewardPlots,timePlots],{legendsRew{:},legendsCT{:}},'northoutside','boxon');

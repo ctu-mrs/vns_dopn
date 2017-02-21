@@ -13,6 +13,8 @@ set(0,'DefaultTextFontSize', 14)
 grey = [0.4,0.4,0.4];
 yellow = [0.9 0.9 0];
 
+neighborhoodColor = [0.8,0.8,0.8];
+
 RESULT_PATH='../localTests/results/';
 
 sampledPathFile = 'sampled-path.txt';
@@ -65,7 +67,7 @@ offsety = -4 - ( max(targets(:,3)) - min(targets(:,3)));
 
 additionalwidth = 2
 radius = 0.5
-sca = scatter(targets(3:end,2)+ones(size(targets,1)-2,1)*offsetx,targets(3:end,3),5,'MarkerFaceColor',yellow,'MarkerEdgeColor',grey,'LineWidth',0.2)
+sca = scatter(targets(3:end,2)+ones(size(targets,1)-2,1)*offsetx,targets(3:end,3),5,'MarkerFaceColor',neighborhoodColor,'MarkerEdgeColor',grey,'LineWidth',0.2)
 currentunits = get(gca,'Units');
 set(gca, 'Units', 'Points');
 axpos = get(gca,'Position');
@@ -76,7 +78,7 @@ set(sca, 'SizeData', markerWidth^2)
 %circles(targets(:,2)+ones(size(targets,1),1)*offsetx,targets(:,3),ones(size(targets,1),1)*radius,'edgecolor',grey,'facecolor',yellow);
 
 radius = 0.5
-sca = scatter(targets(3:end,2)+ones(size(targets,1)-2,1)*offsetx,targets(3:end,3)+ones(size(targets,1)-2,1)*offsety,5,'MarkerFaceColor',yellow,'MarkerEdgeColor',grey,'LineWidth',0.2)
+sca = scatter(targets(3:end,2)+ones(size(targets,1)-2,1)*offsetx,targets(3:end,3)+ones(size(targets,1)-2,1)*offsety,5,'MarkerFaceColor',neighborhoodColor,'MarkerEdgeColor',grey,'LineWidth',0.2)
 currentunits = get(gca,'Units');
 set(gca, 'Units', 'Points');
 axpos = get(gca,'Position');
