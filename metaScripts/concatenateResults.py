@@ -6,12 +6,12 @@ import os
 #RESULT_PATH = '../data/resultsDiffLMAXAdditional/'
 #RESULT_PATH = '../data/resultsDiffNeighSampling/'
 #RESULT_PATH = '../data/results_OPN/'
-RESULT_PATH = '../data/resultsP36466_v2/'
+RESULT_PATH = '../data/resultsLocalTest/'
 #OUTPUT = '.log'
 #OUTPUT = 'resultsDiffLMAXAdditional.log'
 #OUTPUT = '../data/resultsDiffNeighSampling/resultsAll.log'
 #OUTPUT = '../data/results_OPN/resultsAll.log'
-OUTPUT = '../data/resultsP36466_v2/resultsAll.log'
+OUTPUT = '../data/resultsLocalTest/resultsAll.log'
 
 with open(OUTPUT, "w")  as logAll:
     results = next(os.walk(RESULT_PATH))[1]

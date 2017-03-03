@@ -12,7 +12,7 @@ set(0,'DefaultTextFontSize', 14)
 PROBLEM_FILE_NAME = '../etc/example_problem_dopn/example_problem_dopn_1_25.txt';
 
 startText='s_{1} (start)'
-endText='s_{8} (end)'
+endText='s_{10} (end)'
 
 grey = [0.4,0.4,0.4];
 yellow = [0.99 0.99 0.3];
