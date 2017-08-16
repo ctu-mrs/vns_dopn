@@ -19,6 +19,8 @@ using namespace opendubins;
 #define DD " , "
 #define DEBUG_DOP_TRY_OPERATIONS false
 
+#define SAVE_ITER_PATHS false
+
 VNSDOPN::VNSDOPN(imr::CConfig& config, const std::string& problemFile) :
 		Base(config), SAVE_RESULTS(config.get<bool>("save-results")), SAVE_SETTINGS(config.get<bool>("save-settings")), BORDER(config.get<double>("canvas-border")), SAVE_INFO(
 				config.get<bool>("save-info")), SAVE_TARGETS(config.get<bool>("save-targets")), SAVE_SAMPLED_PATH(config.get<bool>("save-sampled-path")) {
@@ -434,7 +436,7 @@ void VNSDOPN::iterate(int iter) {
 	tourDOPN = DOPN(startNode, goalNode, radius, resolution, neighborhood_radius, neighborhood_resolution, null_start_goal_radius);
 	INFO("tourDOPN created");
 	drawPath(2000);
-
+	path_var = 1;
 	generateInitialSolution(tourDOPN, vnsVector);
 	//tourDOPN.evaluateUsage();
 
@@ -462,7 +464,7 @@ void VNSDOPN::iterate(int iter) {
 		//INFO("act_iter "<<act_iter);
 		act_iter++;
 		//INFO("itteration "<<numIttertation);
-		if (act_iter % 10 == 0) {
+		if (act_iter % 50 == 0) {
 			INFO("itteration "<<act_iter <<" with best reward "<<tourDOPN.getReward()<<" at time "<<testTouring.getRTimeMS()<<" ms");
 		}
 		if (act_iter >= numIterations) {
@@ -515,6 +517,7 @@ void VNSDOPN::iterate(int iter) {
 			//actualDOPN.update();
 			double newReward = actualDOPN.getReward();
 			double newLength = actualDOPN.getPathLength();
+			savePaths(&actualDOPN);
 			//INFO_GREEN("actual best  "<<tourDOPN.getReward());
 			if (newReward > rewardBefore) {
 
@@ -1917,6 +1920,7 @@ void VNSDOPN::insertion(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS) {
 	INFO("insertion begin");
 	int waitTimeus = 1000;
 	bool somethingAdded = true;
+	savePaths(&actualDOPN);
 
 	while (somethingAdded) {
 		//INFO("inserting");
@@ -1952,7 +1956,7 @@ void VNSDOPN::insertion(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS) {
 
 			GraphNode inserting = actualVNS[idAvNodeMinimal];
 			actualDOPN.addPoint(actualVNS[idAvNodeMinimal], idTourNodeMinimal);
-
+			savePaths(&actualDOPN);
 			//INFO("improveNeighLocations after insert");
 			//improveNeighLocations(actualDOPN, actualVNS, 1);
 			//INFO("improveNeighLocations after insert end");
@@ -2284,6 +2288,46 @@ std::string VNSDOPN::getRevision(void) {
 
 void VNSDOPN::after_init(void) {
 
+}
+
+
+void VNSDOPN::savePaths(DOPN * toShow) {
+	//INFO("savePaths");
+	if (SAVE_ITER_PATHS && toShow != NULL) {
+		//INFO("getPathSampled robot"<<var);
+		std::vector<State> states = toShow->getPathSampled(0.5);
+		std::stringstream ss;
+		ss << "paths/pathRobot" << path_var << ".my";
+		saveToFile(states, ss.str());
+		std::stringstream ss_rew;
+		ss_rew << "paths/pathRobot" << path_var << ".reward";
+		saveRewToFile(toShow->getReward(), toShow->getPathLength(), ss_rew.str());
+		path_var++;
+	}
+}
+
+void VNSDOPN::saveToFile(std::vector<State> &toSave, std::string filename) {
+	//std::cout << "saveToFile " << filename << std::endl << std::flush;
+	std::ofstream out(filename);
+	if (out.is_open()) {
+		for (int var = 0; var < toSave.size(); ++var) {
+			out << toSave[var].point.x << " " << toSave[var].point.y << " " << toSave[var].ang << std::endl;
+		}
+		out.close();
+	} else {
+		std::cerr << "Cannot open " << filename << std::endl;
+	}
+}
+
+void VNSDOPN::saveRewToFile(double reward, double length, std::string filename) {
+//	std::cout << "saveToFile " << filename << std::endl << std::flush;
+	std::ofstream out(filename);
+	if (out.is_open()) {
+		out << reward << " " << length << std::endl;
+		out.close();
+	} else {
+		std::cerr << "Cannot open " << filename << std::endl;
+	}
 }
 
 /// - protected method ---------------------------------------------------------

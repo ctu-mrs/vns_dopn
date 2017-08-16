@@ -167,6 +167,12 @@ private:
 	void examplePathInsert(DOPN &actualDOPN);
 	void examplePathExchange(DOPN &actualDOPN);
 
+	void savePaths(DOPN * toShow);
+	void saveToFile(std::vector<State> &toSave, std::string filename);
+	void saveRewToFile(double reward, double length, std::string filename);
+
+	int path_var;
+
 	void saveSampled(std::string filename, DOPN &actualDOPN);
 
 	std::vector<std::vector<GraphNode>> initialPaths;
