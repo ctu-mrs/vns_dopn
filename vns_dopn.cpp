@@ -22,11 +22,13 @@ using namespace opendubins;
 #define SAVE_ITER_PATHS false
 
 VNSDOPN::VNSDOPN(imr::CConfig& config, const std::string& problemFile) :
-		Base(config), SAVE_RESULTS(config.get<bool>("save-results")), SAVE_SETTINGS(config.get<bool>("save-settings")), BORDER(config.get<double>("canvas-border")), SAVE_INFO(
+		Base(config), SAVE_RESULTS(config.get<bool>("save-results")), SAVE_SETTINGS(config.get<bool>("save-settings")), BORDER(
+				config.get<double>("canvas-border")), SAVE_INFO(
 				config.get<bool>("save-info")), SAVE_TARGETS(config.get<bool>("save-targets")), SAVE_SAMPLED_PATH(config.get<bool>("save-sampled-path")) {
 
 	DatasetOP loadedDataset = DatasetLoader::loadDataset(problemFile);
-	INFO("testing dataset with " << loadedDataset.graph.size() << " nodes, " << loadedDataset.Tmax << " max time budget and " << loadedDataset.P << " paths to find");
+	INFO(
+			"testing dataset with " << loadedDataset.graph.size() << " nodes, " << loadedDataset.Tmax << " max time budget and " << loadedDataset.P << " paths to find");
 	INFO("use budget " << loadedDataset.Tmax);
 	INFO("use startIndex " << loadedDataset.startID);
 	INFO("use goalIndex " << loadedDataset.goalID);
@@ -59,18 +61,18 @@ VNSDOPN::VNSDOPN(imr::CConfig& config, const std::string& problemFile) :
 	INFO_GREEN("heading_improvement_minimal_distance "<<heading_improvement_minimal_distance);
 	INFO_GREEN("neighborhood_improvement_minimal_distance "<<neighborhood_improvement_minimal_distance);
 
-	if (neighborhood_radius == 0) {
+	if ( neighborhood_radius == 0 ) {
 		INFO_GREEN("setting neighborhood_resolution to 1 with neighborhood_radius " << neighborhood_radius);
 		neighborhood_resolution = 1;
 	}
 
-	if (radius == 0) {
+	if ( radius == 0 ) {
 		INFO_GREEN("setting resolution to 1 with radius " << radius);
 		resolution = 1;
 	}
 
 	maximalRewardAll = 0;
-	for (int var = 0; var < nodesAll.size(); ++var) {
+	for ( int var = 0 ; var < nodesAll.size() ; ++var ) {
 		maximalRewardAll += nodesAll[var].reward;
 	}
 	INFO_GREEN("maximalRewardAll "<<maximalRewardAll);
@@ -92,309 +94,6 @@ VNSDOPN::~VNSDOPN() {
 
 void VNSDOPN::solve() {
 	Base::solve();
-}
-
-void VNSDOPN::exampleInsertRandom(DOPN &actualDOPN) {
-	INFO("exampleInsertRandom");
-	int targetIDFrom = 5;
-	int targetIDTo = 2;
-
-	DOPN copyAdd = actualDOPN;
-	copyAdd.listIds();
-	drawPath(1000000, &copyAdd);
-	//double lengthBeforeAddCopy = copyAdd.getPathLength();
-	GraphNode testingRelocate = copyAdd.getTarget(targetIDFrom);
-	INFO("to relocate "<<testingRelocate.id)
-	if (targetIDTo > targetIDFrom) {
-		copyAdd.addPoint(testingRelocate, targetIDTo);
-		if (targetIDFrom < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(targetIDFrom);
-		}
-	} else {
-		if (targetIDFrom < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(targetIDFrom);
-		}
-		copyAdd.addPoint(testingRelocate, targetIDTo);
-	}
-	copyAdd.update();
-	double lengthBeforeAddCopy = copyAdd.getPathLength();
-	copyAdd.listIds();
-	drawPath(1000000, &copyAdd);
-	saveSampled("matlab/beforeInsertRandom.txt", copyAdd);
-	//do it back
-	targetIDFrom = 2;
-	targetIDTo = 6; //old +1
-	testingRelocate = copyAdd.getTarget(targetIDFrom);
-	INFO("to relocate "<<testingRelocate.id)
-	if (targetIDTo > targetIDFrom) {
-		INFO("add to "<<targetIDTo);
-		copyAdd.addPoint(testingRelocate, targetIDTo);
-		if (targetIDFrom < copyAdd.getNumTargets()) {
-			INFO("add "<<targetIDFrom);
-			copyAdd.removePoint(targetIDFrom);
-		}
-	} else {
-		if (targetIDFrom < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(targetIDFrom);
-		}
-		copyAdd.addPoint(testingRelocate, targetIDTo);
-	}
-	copyAdd.update();
-	double lengthAfterAddCopy = copyAdd.getPathLength();
-	copyAdd.listIds();
-	drawPath(1000000, &copyAdd);
-	saveSampled("matlab/afterInsertRandom.txt", copyAdd);
-
-}
-
-void VNSDOPN::exampleExchangeRandom(DOPN &actualDOPN) {
-	INFO("exampleExchangeRandom");
-	int targetIDFrom = 5;
-	int targetIDTo = 2;
-
-	DOPN copyAdd = actualDOPN;
-	copyAdd.listIds();
-	drawPath(1000000, &copyAdd);
-
-	GraphNode testingRelocateFromCopy = copyAdd.getTarget(targetIDFrom);
-	GraphNode testingRelocateToCopy = copyAdd.getTarget(targetIDTo);
-
-	if (targetIDTo > targetIDFrom) {
-		copyAdd.removePoint(targetIDTo);
-		copyAdd.addPoint(testingRelocateFromCopy, targetIDTo);
-		if (targetIDFrom < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(targetIDFrom);
-			copyAdd.addPoint(testingRelocateToCopy, targetIDFrom);
-		}
-	} else {
-		if (targetIDFrom < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(targetIDFrom);
-			copyAdd.addPoint(testingRelocateToCopy, targetIDFrom);
-		}
-		copyAdd.removePoint(targetIDTo);
-		copyAdd.addPoint(testingRelocateFromCopy, targetIDTo);
-	}
-	copyAdd.update();
-
-	copyAdd.listIds();
-	drawPath(1000000, &copyAdd);
-	saveSampled("matlab/beforeExchangeRandom.txt", copyAdd);
-
-	//do it back
-	targetIDFrom = 2;
-	targetIDTo = 5; //old +1
-
-	testingRelocateFromCopy = copyAdd.getTarget(targetIDFrom);
-	testingRelocateToCopy = copyAdd.getTarget(targetIDTo);
-
-	if (targetIDTo > targetIDFrom) {
-		copyAdd.removePoint(targetIDTo);
-		copyAdd.addPoint(testingRelocateFromCopy, targetIDTo);
-		if (targetIDFrom < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(targetIDFrom);
-			copyAdd.addPoint(testingRelocateToCopy, targetIDFrom);
-		}
-	} else {
-		if (targetIDFrom < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(targetIDFrom);
-			copyAdd.addPoint(testingRelocateToCopy, targetIDFrom);
-		}
-		copyAdd.removePoint(targetIDTo);
-		copyAdd.addPoint(testingRelocateFromCopy, targetIDTo);
-	}
-	copyAdd.update();
-
-	copyAdd.listIds();
-	drawPath(1000000, &copyAdd);
-	saveSampled("matlab/afterExchangeRandom.txt", copyAdd);
-
-}
-
-void VNSDOPN::examplePathInsert(DOPN &actualDOPN) {
-	INFO("examplePathInsert");
-	int exchangeFromStart = 0;
-	int exchangeFromEnd = 2;
-	int insertTo = 5;
-
-	DOPN copyAdd = actualDOPN;
-	copyAdd.listIds();
-	drawPath(1000000, &copyAdd);
-	bool insertUp = true;
-	std::vector<GraphNode> targets = copyAdd.getAllTargets();
-	if (insertUp) {
-		//insert up
-		std::vector<GraphNode> newVec(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
-		if (insertTo < copyAdd.getNumTargets()) {
-			copyAdd.addPoint(newVec, insertTo);
-			copyAdd.listIds();
-		}
-		if (exchangeFromStart < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
-			copyAdd.listIds();
-		}
-
-	} else {
-		//insert bellow
-		std::vector<GraphNode> newVec(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
-
-		if (exchangeFromStart < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
-		}
-		if (insertTo < copyAdd.getNumTargets()) {
-			copyAdd.addPoint(newVec, insertTo);
-		}
-	}
-
-	copyAdd.update();
-
-	copyAdd.listIds();
-	drawPath(1000000, &copyAdd);
-
-	saveSampled("matlab/beforePathInsertRandom.txt", copyAdd);
-
-	exchangeFromStart = 2;
-	exchangeFromEnd = 4;
-	insertTo = 0;
-
-	insertUp = false;
-	targets = copyAdd.getAllTargets();
-	if (insertUp) {
-		//insert up
-		std::vector<GraphNode> newVec(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
-		if (insertTo < copyAdd.getNumTargets()) {
-			copyAdd.addPoint(newVec, insertTo);
-			copyAdd.listIds();
-		}
-		if (exchangeFromStart < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
-			copyAdd.listIds();
-		}
-
-	} else {
-		//insert bellow
-		std::vector<GraphNode> newVec(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
-
-		if (exchangeFromStart < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
-		}
-		if (insertTo < copyAdd.getNumTargets()) {
-			copyAdd.addPoint(newVec, insertTo);
-		}
-	}
-
-	copyAdd.update();
-
-	copyAdd.listIds();
-	drawPath(1000000, &copyAdd);
-	saveSampled("matlab/afterPathInsertRandom.txt", copyAdd);
-}
-
-void VNSDOPN::examplePathExchange(DOPN &actualDOPN) {
-	INFO("examplePathExchange");
-	int exchangeFromStart = 0;
-	int exchangeFromEnd = 2;
-	int exchangeToStart = 4;
-	int exchangeToEnd = 5;
-
-	DOPN copyAdd = actualDOPN;
-	copyAdd.listIds();
-	drawPath(1000000, &copyAdd);
-	bool exchangeUp = true;
-	std::vector<GraphNode> targets = copyAdd.getAllTargets();
-	if (exchangeUp) {
-		std::vector<GraphNode> newVecFrom(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);		//is below
-		std::vector<GraphNode> newVecTo(targets.begin() + exchangeToStart, targets.begin() + exchangeToEnd + 1);		//is above
-
-		if (exchangeToStart < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(exchangeToStart, MIN(exchangeToEnd, copyAdd.getNumTargets() - 1));
-			copyAdd.addPoint(newVecFrom, exchangeToStart);
-		}
-		//INFO("add newVecTo");
-		if (exchangeFromStart < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
-			copyAdd.addPoint(newVecTo, exchangeFromStart);
-		}
-
-	} else {
-		std::vector<GraphNode> newVecFrom(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
-		std::vector<GraphNode> newVecTo(targets.begin() + exchangeToStart, targets.begin() + exchangeToEnd + 1);
-
-		if (exchangeFromStart < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
-			copyAdd.addPoint(newVecTo, exchangeFromStart);
-		}
-
-		//INFO("add newVecFrom");
-		if (exchangeToStart < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(exchangeToStart, MIN(exchangeToEnd, copyAdd.getNumTargets() - 1));
-			copyAdd.addPoint(newVecFrom, exchangeToStart);
-		}
-
-	}
-
-	copyAdd.update();
-
-	copyAdd.listIds();
-	drawPath(1000000, &copyAdd);
-
-	saveSampled("matlab/beforePathExchangeRandom.txt", copyAdd);
-
-	exchangeToStart = 0;
-	exchangeToEnd = 1;
-	exchangeFromStart = 3;
-	exchangeFromEnd = 5;
-
-	exchangeUp = false;
-	targets = copyAdd.getAllTargets();
-	if (exchangeUp) {
-		std::vector<GraphNode> newVecFrom(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);		//is below
-		std::vector<GraphNode> newVecTo(targets.begin() + exchangeToStart, targets.begin() + exchangeToEnd + 1);		//is above
-
-		if (exchangeToStart < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(exchangeToStart, MIN(exchangeToEnd, copyAdd.getNumTargets() - 1));
-			copyAdd.addPoint(newVecFrom, exchangeToStart);
-		}
-		//INFO("add newVecTo");
-		if (exchangeFromStart < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
-			copyAdd.addPoint(newVecTo, exchangeFromStart);
-		}
-
-	} else {
-		std::vector<GraphNode> newVecFrom(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
-		std::vector<GraphNode> newVecTo(targets.begin() + exchangeToStart, targets.begin() + exchangeToEnd + 1);
-
-		if (exchangeFromStart < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
-			copyAdd.addPoint(newVecTo, exchangeFromStart);
-		}
-
-		//INFO("add newVecFrom");
-		if (exchangeToStart < copyAdd.getNumTargets()) {
-			copyAdd.removePoint(exchangeToStart, MIN(exchangeToEnd, copyAdd.getNumTargets() - 1));
-			copyAdd.addPoint(newVecFrom, exchangeToStart);
-		}
-
-	}
-
-	copyAdd.update();
-
-	copyAdd.listIds();
-	drawPath(1000000, &copyAdd);
-	saveSampled("matlab/afterPathExchangeRandom.txt", copyAdd);
-}
-
-void VNSDOPN::saveSampled(std::string filename, DOPN &actualDOPN) {
-	std::string file = filename;
-	std::ofstream ofs(filename.c_str());
-	imr::assert_io(ofs.good(), "Cannot create path '" + filename + "'");
-	ofs << std::setprecision(14);
-	std::vector<State> samples = actualDOPN.getPathSampled(config.get<double>("sampled-path-distance"));
-	for (int var = 0; var < samples.size(); ++var) {
-		ofs << samples[var].point.x << DD << samples[var].point.y << DD << samples[var].ang << DD << std::endl;
-	}
-	imr::assert_io(ofs.good(), "Error occur during path saving");
-	ofs.close();
 }
 
 void VNSDOPN::iterate(int iter) {
@@ -460,28 +159,30 @@ void VNSDOPN::iterate(int iter) {
 
 	stop = false;
 	int maximalNDepth = 2;
-	while (!stop) {
+	while ( !stop ) {
 		//INFO("act_iter "<<act_iter);
 		act_iter++;
 		//INFO("itteration "<<numIttertation);
-		if (act_iter % 50 == 0) {
-			INFO("itteration "<<act_iter <<" with best reward "<<tourDOPN.getReward()<<" at time "<<testTouring.getRTimeMS()<<" ms");
+		if ( act_iter % 50 == 0 ) {
+			INFO(
+					"itteration "<<act_iter <<" with best reward "<<tourDOPN.getReward()<<" and budget "<<budget<<" at time "<<testTouring.getRTimeMS()<<" ms");
 		}
-		if (act_iter >= numIterations) {
+		if ( act_iter >= numIterations ) {
 			INFO("stop after maximal number of iterattion "<<numIterations);
 			stop = true;
 		}
-		if (testTouring.getRTimeMS() >= maximal_calculation_time_MS) {
-			INFO("stop at "<<testTouring.getRTimeMS()<<" after maximal number of misiliseconds "<<maximal_calculation_time_MS<< " obtained from "<<maximal_calculation_time_min<<" maximal minutes");
+		if ( testTouring.getRTimeMS() >= maximal_calculation_time_MS ) {
+			INFO(
+					"stop at "<<testTouring.getRTimeMS()<<" after maximal number of misiliseconds "<<maximal_calculation_time_MS<< " obtained from "<<maximal_calculation_time_min<<" maximal minutes");
 			stop = true;
 		}
-		if (act_iter - numItersLastImprovement >= numIterationsUnimproved) {
+		if ( act_iter - numItersLastImprovement >= numIterationsUnimproved ) {
 			INFO("stop after maximal number of iterattion without improvement "<<numIterationsUnimproved);
 			stop = true;
 		}
 		int k = 1;
 		//INFO("k "<<k);
-		while (k <= maximalNDepth) {
+		while ( k <= maximalNDepth ) {
 			//INFO("k "<<k);
 			DOPN actualDOPN = tourDOPN;
 
@@ -499,7 +200,7 @@ void VNSDOPN::iterate(int iter) {
 			//}
 			//
 			//INFO("before local search");
-			if (useRVNS) {
+			if ( useRVNS ) {
 				randomLocalSearch(actualDOPN, actualVNS, k);
 			} else {
 				localSearch(actualDOPN, actualVNS, k);
@@ -517,19 +218,19 @@ void VNSDOPN::iterate(int iter) {
 			//actualDOPN.update();
 			double newReward = actualDOPN.getReward();
 			double newLength = actualDOPN.getPathLength();
-			savePaths(&actualDOPN);
+			//savePaths(&actualDOPN);
 			//INFO_GREEN("actual best  "<<tourDOPN.getReward());
-			if (newReward > rewardBefore) {
+			if ( newReward > rewardBefore ) {
 
 				//actualDOPN.evaluateUsage();
 				//if (newReward > rewardBefore || (newReward == rewardBefore && (lengthBefore - newLength) > MIN_CHANGE_EPS)) {
-				INFO_GREEN("improved to reward "<<newReward<<" with length "<<newLength<<" at time "<<testTouring.getRTimeMS()<<" ms");
+				INFO_GREEN("improved to reward "<<newReward<<" with length "<<newLength<<" and budget "<<budget<<" at time "<<testTouring.getRTimeMS()<<" ms");
 				timeLastImprovement = testTouring.getRTimeMS();
 				numItersLastImprovement = act_iter;
 				tourDOPN = actualDOPN;
 				vnsVector = actualVNS;
 				drawPath(2000, &actualDOPN);
-				saveCanvas();
+				//saveCanvas();
 				k = 1;
 			} else {
 				k++;
@@ -553,12 +254,12 @@ void VNSDOPN::iterate(int iter) {
 
 void VNSDOPN::shake(DOPN &actualDOP, std::vector<GraphNode> &actualVNS, int k) {
 	//INFO("shake "<<k);
-	if (k % 2 == 1) {
+	if ( k % 2 == 1 ) {
 		pathInsert(actualDOP, actualVNS, 1);
 	} else {
 		pathExchange(actualDOP, actualVNS, 1);
 	}
-	if (DEBUG_DOP_TRY_OPERATIONS) {
+	if ( DEBUG_DOP_TRY_OPERATIONS ) {
 		INFO_VAR(DEBUG_DOP_TRY_OPERATIONS);
 		checkConsistency(actualDOP, actualVNS);
 	}
@@ -568,21 +269,21 @@ void VNSDOPN::shake(DOPN &actualDOP, std::vector<GraphNode> &actualVNS, int k) {
 bool VNSDOPN::localSearch(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, int k) {
 	//INFO("localSearch "<<k);
 	int numImprovements = 0;
-	if (k == 1) {
+	if ( k == 1 ) {
 		bool improved = true;
-		while (improved) {
+		while ( improved ) {
 			improved = insertSystematic(actualDOPN, actualVNS, k);
 			numImprovements++;
 		}
 	} else {
 		bool improved = true;
-		while (improved) {
+		while ( improved ) {
 			improved = exchangeSystematic(actualDOPN, actualVNS, k);
 			numImprovements++;
 		}
 	}
 	//INFO("localSearch done with improvements "<<numImprovements);
-	if (DEBUG_DOP_TRY_OPERATIONS) {
+	if ( DEBUG_DOP_TRY_OPERATIONS ) {
 		INFO_VAR(DEBUG_DOP_TRY_OPERATIONS);
 		checkConsistency(actualDOPN, actualVNS);
 	}
@@ -594,18 +295,18 @@ bool VNSDOPN::randomLocalSearch(DOPN &actualDOPN, std::vector<GraphNode> &actual
 	//INFO("randomLocalSearch "<<k);
 
 	int numIters = numAvailableNodes * numAvailableNodes;
-	if (k == 1) {
+	if ( k == 1 ) {
 		insertRandom(actualDOPN, actualVNS, numIters);
-	} else if (k == 2) {
+	} else if ( k == 2 ) {
 		exchangeRandom(actualDOPN, actualVNS, numIters);
-	} else if (k == 3) {
+	} else if ( k == 3 ) {
 		improveNeighLocations(actualDOPN, this->neighborhood_improvement_minimal_distance);
 	} else {
 		improveHeadings(actualDOPN, actualVNS, this->heading_improvement_minimal_distance);
 	}
 	//INFO("length "<<actualDOPN.getPathLength());
 //INFO("localSearch done with improvements "<<numImprovements);
-	if (DEBUG_DOP_TRY_OPERATIONS) {
+	if ( DEBUG_DOP_TRY_OPERATIONS ) {
 		INFO_VAR(DEBUG_DOP_TRY_OPERATIONS);
 		checkConsistency(actualDOPN, actualVNS);
 	}
@@ -615,19 +316,19 @@ bool VNSDOPN::randomLocalSearch(DOPN &actualDOPN, std::vector<GraphNode> &actual
 
 void VNSDOPN::fitDOPtoBudget(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS) {
 //remove nodes over budget
-	while (actualDOPN.getPathLength() > budget) {
+	while ( actualDOPN.getPathLength() > budget ) {
 		actualDOPN.removePoint(actualDOPN.getNumTargets() - 1);
 	}
 	bool canAdd = true;
 
 //add nodes to fill budget
-	while (canAdd) {
+	while ( canAdd ) {
 		canAdd = false;
 		int idToAdd = actualDOPN.getNumTargets();
-		if (idToAdd < actualVNS.size()) {
+		if ( idToAdd < actualVNS.size() ) {
 			GraphNode testingNode = actualVNS[idToAdd];
 			double testAdd = actualDOPN.tryToAdd(testingNode, idToAdd).actual_len;
-			if (testAdd <= budget) {
+			if ( testAdd <= budget ) {
 				actualDOPN.addPoint(testingNode, idToAdd);
 				canAdd = true;
 			}
@@ -646,14 +347,14 @@ void VNSDOPN::onePointMove(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS) 
 	double minimalLength = actualPathLength;
 	double maximalReward = actualPathReward;
 
-	for (int targetIDFrom = actualDOPN.getNumTargets(); targetIDFrom < actualVNS.size(); ++targetIDFrom) {
+	for ( int targetIDFrom = actualDOPN.getNumTargets() ; targetIDFrom < actualVNS.size() ; ++targetIDFrom ) {
 		GraphNode testingRelocate = actualVNS[targetIDFrom];
 
-		for (int targetIDTo = 0; targetIDTo <= actualDOPN.getNumTargets(); ++targetIDTo) {
-			if (targetIDFrom != targetIDTo) {
+		for ( int targetIDTo = 0 ; targetIDTo <= actualDOPN.getNumTargets() ; ++targetIDTo ) {
+			if ( targetIDFrom != targetIDTo ) {
 				double addedLength = 0;
 				double addedReward = 0;
-				if (targetIDTo <= actualDOPN.getNumTargets()) {
+				if ( targetIDTo <= actualDOPN.getNumTargets() ) {
 					addedLength = actualDOPN.tryToAdd(testingRelocate, targetIDTo).actual_len;
 					addedReward = testingRelocate.reward;
 				}
@@ -666,7 +367,7 @@ void VNSDOPN::onePointMove(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS) 
 				 INFO("lengthChange "<<(addedLength - removedLength));
 				 }
 				 */
-				if (lengthAfter <= budget && (rewardAfter > maximalReward || (rewardAfter == maximalReward && lengthAfter < minimalLength))) {
+				if ( lengthAfter <= budget && (rewardAfter > maximalReward || (rewardAfter == maximalReward && lengthAfter < minimalLength)) ) {
 					bestTargetIDFrom = targetIDFrom;
 					bestTargetIDTo = targetIDTo;
 					maximalReward = rewardAfter;
@@ -676,29 +377,29 @@ void VNSDOPN::onePointMove(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS) 
 		}
 	}
 
-	if (bestTargetIDFrom != -1) {
+	if ( bestTargetIDFrom != -1 ) {
 		INFO("bestTargetIDFrom "<<bestTargetIDFrom);
 		INFO("bestTargetIDTo "<<bestTargetIDTo);
 		INFO("maximalReward "<<maximalReward);
 		INFO("minimalLength "<<minimalLength);
 		GraphNode testingRelocate = actualVNS[bestTargetIDFrom];
-		if (bestTargetIDFrom > bestTargetIDTo) {
-			if (bestTargetIDFrom < actualDOPN.getNumTargets()) {
+		if ( bestTargetIDFrom > bestTargetIDTo ) {
+			if ( bestTargetIDFrom < actualDOPN.getNumTargets() ) {
 				actualDOPN.removePoint(bestTargetIDFrom);
 			}
 			actualVNS.erase(actualVNS.begin() + bestTargetIDFrom);
 
-			if (bestTargetIDTo <= actualDOPN.getNumTargets()) {
+			if ( bestTargetIDTo <= actualDOPN.getNumTargets() ) {
 				actualDOPN.addPoint(testingRelocate, bestTargetIDTo);
 			}
 			actualVNS.insert(actualVNS.begin() + bestTargetIDTo, testingRelocate);
 		} else {
-			if (bestTargetIDTo <= actualDOPN.getNumTargets()) {
+			if ( bestTargetIDTo <= actualDOPN.getNumTargets() ) {
 				actualDOPN.addPoint(testingRelocate, bestTargetIDTo);
 			}
 			actualVNS.insert(actualVNS.begin() + bestTargetIDTo, testingRelocate);
 
-			if (bestTargetIDFrom < actualDOPN.getNumTargets()) {
+			if ( bestTargetIDFrom < actualDOPN.getNumTargets() ) {
 				actualDOPN.removePoint(bestTargetIDFrom);
 			}
 			actualVNS.erase(actualVNS.begin() + bestTargetIDFrom);
@@ -717,17 +418,17 @@ void VNSDOPN::or_opt(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, int nu
 	double minimalLength = actualPathLength;
 	double maximalReward = actualPathReward;
 
-	for (int targetIDFrom = actualDOPN.getNumTargets(); targetIDFrom < actualVNS.size() - num; ++targetIDFrom) {
+	for ( int targetIDFrom = actualDOPN.getNumTargets() ; targetIDFrom < actualVNS.size() - num ; ++targetIDFrom ) {
 		//targetIDFrom num = 2 -> testingRelocate size = 2
 		std::vector<GraphNode> testingRelocate = std::vector<GraphNode>(actualVNS.begin() + targetIDFrom, actualVNS.begin() + targetIDFrom + num);
 		//INFO("testingRelocate.size()"<<testingRelocate.size());
 
-		for (int targetIDTo = 0; targetIDTo <= actualDOPN.getNumTargets(); ++targetIDTo) {
+		for ( int targetIDTo = 0 ; targetIDTo <= actualDOPN.getNumTargets() ; ++targetIDTo ) {
 			double addedLength = 0;
 			double addedReward = 0;
-			if (targetIDTo <= actualDOPN.getNumTargets()) {
+			if ( targetIDTo <= actualDOPN.getNumTargets() ) {
 				addedLength = actualDOPN.tryToAdd(testingRelocate, targetIDTo);
-				for (int var = 0; var < testingRelocate.size(); ++var) {
+				for ( int var = 0 ; var < testingRelocate.size() ; ++var ) {
 					addedReward += testingRelocate[var].reward;
 				}
 
@@ -736,7 +437,7 @@ void VNSDOPN::or_opt(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, int nu
 			double rewardAfter = actualPathReward + addedReward;
 			double lengthAfter = actualPathLength + addedLength;
 
-			if (lengthAfter <= budget && (rewardAfter > maximalReward || (rewardAfter == maximalReward && lengthAfter < minimalLength))) {
+			if ( lengthAfter <= budget && (rewardAfter > maximalReward || (rewardAfter == maximalReward && lengthAfter < minimalLength)) ) {
 				bestTargetIDFrom = targetIDFrom;
 				bestTargetIDTo = targetIDTo;
 				maximalReward = rewardAfter;
@@ -745,29 +446,29 @@ void VNSDOPN::or_opt(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, int nu
 		}
 	}
 
-	if (bestTargetIDFrom != -1) {
+	if ( bestTargetIDFrom != -1 ) {
 		INFO("bestTargetIDFrom "<<bestTargetIDFrom);
 		INFO("bestTargetIDTo "<<bestTargetIDTo);
 		INFO("maximalReward "<<maximalReward);
 		INFO("minimalLength "<<minimalLength);
 		std::vector<GraphNode> testingRelocate = std::vector<GraphNode>(actualVNS.begin() + bestTargetIDFrom, actualVNS.begin() + bestTargetIDFrom + num);
-		if (bestTargetIDFrom > bestTargetIDTo) {
-			if (bestTargetIDFrom < actualDOPN.getNumTargets()) {
+		if ( bestTargetIDFrom > bestTargetIDTo ) {
+			if ( bestTargetIDFrom < actualDOPN.getNumTargets() ) {
 				actualDOPN.removePoint(bestTargetIDFrom);
 			}
 			actualVNS.erase(actualVNS.begin() + bestTargetIDFrom);
 
-			if (bestTargetIDTo <= actualDOPN.getNumTargets()) {
+			if ( bestTargetIDTo <= actualDOPN.getNumTargets() ) {
 				actualDOPN.addPoint(testingRelocate, bestTargetIDTo);
 			}
 			actualVNS.insert(actualVNS.begin() + bestTargetIDTo, testingRelocate.begin(), testingRelocate.end());
 		} else {
-			if (bestTargetIDTo <= actualDOPN.getNumTargets()) {
+			if ( bestTargetIDTo <= actualDOPN.getNumTargets() ) {
 				actualDOPN.addPoint(testingRelocate, bestTargetIDTo);
 			}
 			actualVNS.insert(actualVNS.begin() + bestTargetIDTo, testingRelocate.begin(), testingRelocate.end());
 
-			if (bestTargetIDFrom < actualDOPN.getNumTargets()) {
+			if ( bestTargetIDFrom < actualDOPN.getNumTargets() ) {
 				actualDOPN.removePoint(bestTargetIDFrom);
 			}
 			actualVNS.erase(actualVNS.begin() + bestTargetIDFrom);
@@ -809,7 +510,7 @@ void VNSDOPN::largestRewardInsertion(DOPN &actualDOPN, std::vector<GraphNode> &a
 	 INFO("id"<<var<<" "<<actualVNS[var].id<<" "<<actualVNS[var].reward);
 	 }
 	 */
-	for (int insertingID = 0; insertingID < actualVNS.size(); ++insertingID) {
+	for ( int insertingID = 0 ; insertingID < actualVNS.size() ; ++insertingID ) {
 
 		double minDistanceAfterAdd = DBL_MAX;
 		int minIdTourNode = -1;
@@ -817,10 +518,10 @@ void VNSDOPN::largestRewardInsertion(DOPN &actualDOPN, std::vector<GraphNode> &a
 		int startInsertingID = insertingID;
 		do {
 
-			for (int idTourNode = 0; idTourNode < actualDOPN.getSize() && actualVNS.size() > 0; ++idTourNode) {
+			for ( int idTourNode = 0 ; idTourNode < actualDOPN.getSize() && actualVNS.size() > 0 ; ++idTourNode ) {
 				//INFO("try to add to position "<<idTourNode);
 				double newDistance = actualDOPN.tryToAdd(actualVNS[insertingID], idTourNode).actual_len;
-				if (newDistance < minDistanceAfterAdd) {
+				if ( newDistance < minDistanceAfterAdd ) {
 
 					minDistanceAfterAdd = newDistance;
 					minIdTourNode = idTourNode;
@@ -830,10 +531,10 @@ void VNSDOPN::largestRewardInsertion(DOPN &actualDOPN, std::vector<GraphNode> &a
 			}
 
 			insertingID++;
-		} while (insertingID < actualVNS.size() && actualVNS[insertingID - 1].reward == actualVNS[insertingID].reward);
+		} while ( insertingID < actualVNS.size() && actualVNS[insertingID - 1].reward == actualVNS[insertingID].reward );
 
 		insertingID = startInsertingID;
-		if (minDistanceAfterAdd <= budget) {
+		if ( minDistanceAfterAdd <= budget ) {
 
 			GraphNode inserting = actualVNS[minInsertingID];
 			actualDOPN.addPoint(inserting, minIdTourNode);
@@ -863,11 +564,11 @@ bool VNSDOPN::insertRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, 
 	//double maxDiffTryToAdd = 0;
 	//int numTestOverPossible = 0;
 	//int numErrors = 0;
-	if (actualVNS.size() >= 3) {
-		for (int var = 0; var < num_changes; ++var) {
+	if ( actualVNS.size() >= 3 ) {
+		for ( int var = 0 ; var < num_changes ; ++var ) {
 			int targetIDFrom = randIntMinMax(0, actualVNS.size() - 1);
 			int targetIDTo = randIntMinMax(0, actualDOPN.getNumTargets());
-			while (abs(targetIDFrom - targetIDTo) <= 1) {
+			while ( abs(targetIDFrom - targetIDTo) <= 1 ) {
 				targetIDFrom = randIntMinMax(0, actualVNS.size() - 1);
 				targetIDTo = randIntMinMax(0, actualDOPN.getNumTargets());
 				//INFO("targetIDFrom "<<targetIDFrom);
@@ -876,13 +577,13 @@ bool VNSDOPN::insertRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, 
 			GraphNode testingRelocate = actualVNS[targetIDFrom];
 
 			double lengthAfterRemove = actualLength;
-			if (targetIDFrom < actualDOPN.getNumTargets()) {
+			if ( targetIDFrom < actualDOPN.getNumTargets() ) {
 				lengthAfterRemove = actualDOPN.tryToRemove(targetIDFrom);
 			}
 			double lengthRemoved = actualLength - lengthAfterRemove;
 			double lengthAfterMove = 0;
 			double addedReward = 0;
-			if (targetIDFrom < actualDOPN.getNumTargets() && targetIDTo <= actualDOPN.getNumTargets()) {
+			if ( targetIDFrom < actualDOPN.getNumTargets() && targetIDTo <= actualDOPN.getNumTargets() ) {
 				//INFO("both inside num targets "<<actualDOPN.getNumTargets());
 				//INFO("cheeeeeeeeck try to move!!!!!!!!!!!!!!!!!!!!!!!");
 				//double testTryToRemoveSaved = actualLength - actualDOPN.tryToRemove(targetIDFrom);
@@ -933,25 +634,25 @@ bool VNSDOPN::insertRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, 
 				 */
 
 				//check outcome
-				if (DEBUG_DOP_TRY_OPERATIONS) {
+				if ( DEBUG_DOP_TRY_OPERATIONS ) {
 					INFO_VAR(DEBUG_DOP_TRY_OPERATIONS);
 					//DEBUG part
 					//TODO erase debug
 					DOPN copyAdd = actualDOPN;
-					if (targetIDTo > targetIDFrom) {
+					if ( targetIDTo > targetIDFrom ) {
 						copyAdd.addPoint(testingRelocate, targetIDTo);
-						if (targetIDFrom < copyAdd.getNumTargets()) {
+						if ( targetIDFrom < copyAdd.getNumTargets() ) {
 							copyAdd.removePoint(targetIDFrom);
 						}
 					} else {
-						if (targetIDFrom < copyAdd.getNumTargets()) {
+						if ( targetIDFrom < copyAdd.getNumTargets() ) {
 							copyAdd.removePoint(targetIDFrom);
 						}
 						copyAdd.addPoint(testingRelocate, targetIDTo);
 					}
 					copyAdd.update();
 					double lengthAfterAddCopy = copyAdd.getPathLength();
-					if (fabs(lengthAfterAddCopy - lengthAfterMove) > 0.1) {
+					if ( fabs(lengthAfterAddCopy - lengthAfterMove) > 0.1 ) {
 						ERROR("lengthAfterMove does not match lengthAfterAdd");
 						ERROR("insertRandom from "<<targetIDFrom<<" to "<<targetIDTo);
 						ERROR("id "<<testingRelocate.id);
@@ -970,15 +671,15 @@ bool VNSDOPN::insertRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, 
 
 			}
 
-			if (lengthAfterMove <= budget && (addedReward > 0 || (fabs(addedReward) < MIN_CHANGE_EPS && (actualLength - lengthAfterMove) > MIN_CHANGE_EPS))) {
+			if ( lengthAfterMove <= budget && (addedReward > 0 || (fabs(addedReward) < MIN_CHANGE_EPS && (actualLength - lengthAfterMove) > MIN_CHANGE_EPS)) ) {
 				lastImprovementIndex = var;
 				GraphNode testingRelocate = actualVNS[targetIDFrom];
 
-				if (targetIDTo > targetIDFrom) {
+				if ( targetIDTo > targetIDFrom ) {
 					//INFO("add point "<<targetIDTo);
 					actualDOPN.addPoint(testingRelocate, targetIDTo);
 
-					if (targetIDFrom < actualDOPN.getNumTargets()) {
+					if ( targetIDFrom < actualDOPN.getNumTargets() ) {
 						//INFO("remove point "<<targetIDFrom);
 						actualDOPN.removePoint(targetIDFrom);
 					}
@@ -986,7 +687,7 @@ bool VNSDOPN::insertRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, 
 					actualVNS.erase(actualVNS.begin() + targetIDFrom);
 				} else {
 
-					if (targetIDFrom < actualDOPN.getNumTargets()) {
+					if ( targetIDFrom < actualDOPN.getNumTargets() ) {
 						//INFO("remove point "<<targetIDFrom);
 						actualDOPN.removePoint(targetIDFrom);
 					}
@@ -1000,26 +701,26 @@ bool VNSDOPN::insertRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, 
 
 				//DEBUG TESTING
 				actualLength = actualDOPN.getPathLength();
-				if (actualLength - lengthAfterMove > 0.25) {
+				if ( actualLength - lengthAfterMove > 0.25 ) {
 					INFO("wrongly calculated random insert");
 					INFO_VAR(actualLength);
 					INFO_VAR(lengthAfterMove);
 					exit(1);
 				}
 
-			} else if (improve_neigh_during_local_search && addedReward > 0 && lengthAfterMove <= budget * (1.0 + actualVNS.size() * 0.0002)) {
+			} else if ( improve_neigh_during_local_search && addedReward > 0 && lengthAfterMove <= budget * (1.0 + actualVNS.size() * 0.0002) ) {
 				//INFO("length after move is "<<lengthAfterMove<<" the budget is "<<budget<<" allowing "<<(actualVNS.size() * 0.0001 ));
 				GraphNode testingRelocate = actualVNS[targetIDFrom];
 				DOPN dopnCopy = actualDOPN;
-				if (targetIDTo > targetIDFrom) {
+				if ( targetIDTo > targetIDFrom ) {
 					//INFO("add point "<<targetIDTo);
 					dopnCopy.addPoint(testingRelocate, targetIDTo);
-					if (targetIDFrom < actualDOPN.getNumTargets()) {
+					if ( targetIDFrom < actualDOPN.getNumTargets() ) {
 						//INFO("remove point "<<targetIDFrom);
 						dopnCopy.removePoint(targetIDFrom);
 					}
 				} else {
-					if (targetIDFrom < actualDOPN.getNumTargets()) {
+					if ( targetIDFrom < actualDOPN.getNumTargets() ) {
 						dopnCopy.removePoint(targetIDFrom);
 					}
 					dopnCopy.addPoint(testingRelocate, targetIDTo);
@@ -1027,20 +728,21 @@ bool VNSDOPN::insertRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, 
 				NeighImrpovementValue improvedValue = this->improveNeighLocations(dopnCopy, 0);
 				double lengthAfterImprovement = lengthAfterMove - improvedValue.distanceImprovement;
 				num_test_improve++;
-				if (lengthAfterImprovement <= budget) {
+				if ( lengthAfterImprovement <= budget ) {
 					num_improvable++;
 					double overbudget = (lengthAfterMove - budget) / ((double) actualVNS.size()) / budget;
-					if (overbudget > maxOverbudget) {
+					if ( overbudget > maxOverbudget ) {
 						maxOverbudget = overbudget;
 					}
 					//INFO_GREEN("the neighborhood improvement fixed overbudget from "<<lengthAfterMove<<" to "<<lengthAfterImprovement);
 					lengthAfterMove = lengthAfterImprovement;
-					insertNeighborhoods(dopnCopy, improvedValue.originalNeighAngIds, improvedValue.improvedNode, improvedValue.actualNeighAngles, improvedValue.actualGraphNodes);
+					insertNeighborhoods(dopnCopy, improvedValue.originalNeighAngIds, improvedValue.improvedNode, improvedValue.actualNeighAngles,
+							improvedValue.actualGraphNodes);
 					actualDOPN.update();
 					//INFO_VAR(dopnCopy.getPathLength());
 					//lengthAfterMove = lengthAfterImprovement;
 					actualDOPN = dopnCopy;
-					if (targetIDTo > targetIDFrom) {
+					if ( targetIDTo > targetIDFrom ) {
 
 						actualVNS.insert(actualVNS.begin() + targetIDTo, testingRelocate);
 						actualVNS.erase(actualVNS.begin() + targetIDFrom);
@@ -1105,8 +807,8 @@ bool VNSDOPN::exchangeRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS
 	//double maxDifference = -99999999999999999999.0;
 	//int numTestOverPossible = 0;
 	//int numErrors = 0;
-	if (actualVNS.size() >= 4) {
-		for (int var = 0; var < num_changes; ++var) {
+	if ( actualVNS.size() >= 4 ) {
+		for ( int var = 0 ; var < num_changes ; ++var ) {
 			//INFO("var "<<var);
 
 			double minLength = actualLength;
@@ -1115,7 +817,7 @@ bool VNSDOPN::exchangeRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS
 			int targetIDFrom = randIntMinMax(0, actualVNS.size() - 1);
 			int targetIDTo = randIntMinMax(0, actualDOPN.getNumTargets() - 1);
 			//int whileIters = 0;
-			while (abs(targetIDFrom - targetIDTo) <= 2) {
+			while ( abs(targetIDFrom - targetIDTo) <= 2 ) {
 				targetIDFrom = randIntMinMax(0, actualVNS.size() - 1);
 				targetIDTo = randIntMinMax(0, actualDOPN.getNumTargets() - 1);
 
@@ -1124,11 +826,11 @@ bool VNSDOPN::exchangeRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS
 			}
 			GraphNode testingRelocateFrom = actualVNS[targetIDFrom];
 
-			if (abs(targetIDFrom - targetIDTo) > 2) {
+			if ( abs(targetIDFrom - targetIDTo) > 2 ) {
 				GraphNode testingRelocateTo = actualVNS[targetIDTo];
 				double addedReward = 0;
 				double lengthAfterMove = 0;
-				if (targetIDFrom < actualDOPN.getNumTargets() && targetIDTo < actualDOPN.getNumTargets()) {
+				if ( targetIDFrom < actualDOPN.getNumTargets() && targetIDTo < actualDOPN.getNumTargets() ) {
 					//SimpleTryResult tryReplace1 = actualDOPN.tryToReplace(testingRelocateTo, targetIDFrom);
 					//double saveReplace1 = actualLength - tryReplace1.actual_len;
 					//double saveReplace2 = actualLength - actualDOPN.tryToReplace(testingRelocateFrom, targetIDTo).actual_len;
@@ -1168,20 +870,20 @@ bool VNSDOPN::exchangeRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS
 					 }
 					 */
 
-					if (DEBUG_DOP_TRY_OPERATIONS) {
+					if ( DEBUG_DOP_TRY_OPERATIONS ) {
 						DOPN copyAdd = actualDOPN;
 						GraphNode testingRelocateFromCopy = actualVNS[targetIDFrom];
 						GraphNode testingRelocateToCopy = actualVNS[targetIDTo];
 
-						if (targetIDTo > targetIDFrom) {
+						if ( targetIDTo > targetIDFrom ) {
 							copyAdd.removePoint(targetIDTo);
 							copyAdd.addPoint(testingRelocateFrom, targetIDTo);
-							if (targetIDFrom < copyAdd.getNumTargets()) {
+							if ( targetIDFrom < copyAdd.getNumTargets() ) {
 								copyAdd.removePoint(targetIDFrom);
 								copyAdd.addPoint(testingRelocateTo, targetIDFrom);
 							}
 						} else {
-							if (targetIDFrom < copyAdd.getNumTargets()) {
+							if ( targetIDFrom < copyAdd.getNumTargets() ) {
 								copyAdd.removePoint(targetIDFrom);
 								copyAdd.addPoint(testingRelocateTo, targetIDFrom);
 							}
@@ -1190,7 +892,7 @@ bool VNSDOPN::exchangeRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS
 						}
 						copyAdd.update();
 						double lengthAfterAddCopy = copyAdd.getPathLength();
-						if (fabs(lengthAfterAddCopy - lengthAfterMove) > 0.1) {
+						if ( fabs(lengthAfterAddCopy - lengthAfterMove) > 0.1 ) {
 							ERROR("lengthAfterMove does not match lengthAfterAdd");
 							ERROR("exchangeRandom from "<<targetIDFrom<<" to "<<targetIDTo);
 							ERROR(lengthAfterAddCopy<< " and "<< lengthAfterMove);
@@ -1202,14 +904,14 @@ bool VNSDOPN::exchangeRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS
 				} else {
 					double lengthAfterReplaceTo = actualLength;
 					double addedAfterReplaceTo = 0;
-					if (targetIDTo < actualDOPN.getNumTargets()) {
+					if ( targetIDTo < actualDOPN.getNumTargets() ) {
 						lengthAfterReplaceTo = actualDOPN.tryToReplace(testingRelocateFrom, targetIDTo).actual_len;
 						addedAfterReplaceTo = lengthAfterReplaceTo - actualLength;
 						addedReward += testingRelocateFrom.reward - testingRelocateTo.reward;
 					}
 					double lengthAfterReplaceFrom = actualLength;
 					double addedAfterReplaceFrom = 0;
-					if (targetIDFrom < actualDOPN.getNumTargets()) {
+					if ( targetIDFrom < actualDOPN.getNumTargets() ) {
 						lengthAfterReplaceFrom = actualDOPN.tryToReplace(testingRelocateTo, targetIDFrom).actual_len;
 						addedAfterReplaceFrom = lengthAfterReplaceFrom - actualLength;
 						addedReward += testingRelocateTo.reward - testingRelocateFrom.reward;
@@ -1219,15 +921,16 @@ bool VNSDOPN::exchangeRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS
 					lengthAfterMove = actualLength + addedAfterReplaceTo + addedAfterReplaceFrom;
 				}
 
-				if (lengthAfterMove <= budget && (addedReward > maxAddReward || (fabs(addedReward - maxAddReward) < MIN_CHANGE_EPS && (minLength - lengthAfterMove) > MIN_CHANGE_EPS))) {
+				if ( lengthAfterMove <= budget
+						&& (addedReward > maxAddReward || (fabs(addedReward - maxAddReward) < MIN_CHANGE_EPS && (minLength - lengthAfterMove) > MIN_CHANGE_EPS)) ) {
 					lastImprovementIndex = var;
 					GraphNode testingRelocateFrom = actualVNS[targetIDFrom];
 					GraphNode testingRelocateTo = actualVNS[targetIDTo];
 
-					if (targetIDTo > targetIDFrom) {
+					if ( targetIDTo > targetIDFrom ) {
 						actualDOPN.removePoint(targetIDTo);
 						actualDOPN.addPoint(testingRelocateFrom, targetIDTo);
-						if (targetIDFrom < actualDOPN.getNumTargets()) {
+						if ( targetIDFrom < actualDOPN.getNumTargets() ) {
 							actualDOPN.removePoint(targetIDFrom);
 							actualDOPN.addPoint(testingRelocateTo, targetIDFrom);
 						}
@@ -1235,7 +938,7 @@ bool VNSDOPN::exchangeRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS
 						actualVNS[targetIDTo] = actualVNS[targetIDFrom];
 						actualVNS[targetIDFrom] = temp;
 					} else {
-						if (targetIDFrom < actualDOPN.getNumTargets()) {
+						if ( targetIDFrom < actualDOPN.getNumTargets() ) {
 							actualDOPN.removePoint(targetIDFrom);
 							actualDOPN.addPoint(testingRelocateTo, targetIDFrom);
 						}
@@ -1250,25 +953,25 @@ bool VNSDOPN::exchangeRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS
 					//actualDOPN.evaluateUsage();
 
 					actualLength = actualDOPN.getPathLength();
-					if (actualLength - lengthAfterMove > 0.01) {
+					if ( actualLength - lengthAfterMove > 0.01 ) {
 						INFO("wrongly calculated random exchange");
 						INFO_VAR(actualLength);
 						INFO_VAR(lengthAfterMove);
 						exit(1);
 					}
-				} else if (improve_neigh_during_local_search && addedReward > 0 && lengthAfterMove <= budget * (1.0 + actualVNS.size() * 0.0002)) {
+				} else if ( improve_neigh_during_local_search && addedReward > 0 && lengthAfterMove <= budget * (1.0 + actualVNS.size() * 0.0002) ) {
 					//INFO("length after move is "<<lengthAfterMove<<" the budget is "<<budget<<" allowing "<<(actualVNS.size() * 0.0001 ));
 					GraphNode testingRelocate = actualVNS[targetIDFrom];
 					DOPN dopnCopy = actualDOPN;
-					if (targetIDTo > targetIDFrom) {
+					if ( targetIDTo > targetIDFrom ) {
 						dopnCopy.removePoint(targetIDTo);
 						dopnCopy.addPoint(testingRelocateFrom, targetIDTo);
-						if (targetIDFrom < dopnCopy.getNumTargets()) {
+						if ( targetIDFrom < dopnCopy.getNumTargets() ) {
 							dopnCopy.removePoint(targetIDFrom);
 							dopnCopy.addPoint(testingRelocateTo, targetIDFrom);
 						}
 					} else {
-						if (targetIDFrom < dopnCopy.getNumTargets()) {
+						if ( targetIDFrom < dopnCopy.getNumTargets() ) {
 							dopnCopy.removePoint(targetIDFrom);
 							dopnCopy.addPoint(testingRelocateTo, targetIDFrom);
 						}
@@ -1278,7 +981,7 @@ bool VNSDOPN::exchangeRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS
 					NeighImrpovementValue improvedValue = this->improveNeighLocations(dopnCopy, 0);
 					double lengthAfterImprovement = lengthAfterMove - improvedValue.distanceImprovement;
 					num_test_improve++;
-					if (lengthAfterImprovement <= budget) {
+					if ( lengthAfterImprovement <= budget ) {
 						num_improvable++;
 						double overbudget = (lengthAfterMove - budget) / ((double) actualVNS.size()) / budget;
 						//if (overbudget > maxOverbudget) {
@@ -1286,12 +989,13 @@ bool VNSDOPN::exchangeRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS
 						//}
 						//INFO_GREEN("the neighborhood improvement fixed overbudget from "<<lengthAfterMove<<" to "<<lengthAfterImprovement);
 						lengthAfterMove = lengthAfterImprovement;
-						insertNeighborhoods(dopnCopy, improvedValue.originalNeighAngIds, improvedValue.improvedNode, improvedValue.actualNeighAngles, improvedValue.actualGraphNodes);
+						insertNeighborhoods(dopnCopy, improvedValue.originalNeighAngIds, improvedValue.improvedNode, improvedValue.actualNeighAngles,
+								improvedValue.actualGraphNodes);
 						actualDOPN.update();
 						//INFO_VAR(dopnCopy.getPathLength());
 						//lengthAfterMove = lengthAfterImprovement;
 						actualDOPN = dopnCopy;
-						if (targetIDTo > targetIDFrom) {
+						if ( targetIDTo > targetIDFrom ) {
 							GraphNode temp = actualVNS[targetIDTo];
 							actualVNS[targetIDTo] = actualVNS[targetIDFrom];
 							actualVNS[targetIDFrom] = temp;
@@ -1336,7 +1040,7 @@ bool VNSDOPN::exchangeRandom(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS
 NeighImrpovementValue VNSDOPN::improveNeighLocations(DOPN &actualDOPN, double minimal_improvement_distance) {
 	NeighImrpovementValue neighImprovement;
 	neighImprovement.distanceImprovement = 0;
-	if (neighborhood_radius > 0.0) {
+	if ( neighborhood_radius > 0.0 ) {
 		//INFO("improveNeighLocations begin");
 		int targetSize = actualDOPN.getNumTargets();
 		double lengthBefore = actualDOPN.getPathLength();
@@ -1350,7 +1054,7 @@ NeighImrpovementValue VNSDOPN::improveNeighLocations(DOPN &actualDOPN, double mi
 		std::vector<double> actualNeighAngles(targetSize);
 		std::vector<GraphNode> actualGraphNodes(targetSize);
 		std::vector<bool> improvedNode(targetSize);
-		for (int var = 0; var < targetSize; ++var) {
+		for ( int var = 0 ; var < targetSize ; ++var ) {
 			actualNeighAngles[var] = originalNeighAngIds[var + 1].neigh_ang;
 			actualGraphNodes[var] = originalNeighAngIds[var + 1].node;
 			improvedNode[var] = false;
@@ -1359,17 +1063,17 @@ NeighImrpovementValue VNSDOPN::improveNeighLocations(DOPN &actualDOPN, double mi
 
 		bool someImprovement = true;
 		int impriter = 0;
-		while (someImprovement) {
+		while ( someImprovement ) {
 			someImprovement = false;
 			double oldImprovedAllBy = improvedAllBy;
 
 			std::vector<int> random_order_of_targets(targetSize);
-			for (int var = 0; var < targetSize; ++var) {
+			for ( int var = 0 ; var < targetSize ; ++var ) {
 				random_order_of_targets[var] = var;
 			}
 			std::random_shuffle(random_order_of_targets.begin(), random_order_of_targets.end());
 
-			for (int targetID = 0; targetID < targetSize; ++targetID) {
+			for ( int targetID = 0 ; targetID < targetSize ; ++targetID ) {
 				int shuffled_target_id = random_order_of_targets[targetID];
 				//int actualNeightAng =
 
@@ -1377,14 +1081,15 @@ NeighImrpovementValue VNSDOPN::improveNeighLocations(DOPN &actualDOPN, double mi
 				//INFO("optimize targetID:"<<shuffled_target_id<<"out of "<<targetSize<<" targets");
 				//INFO("target position "<<testingTarget.x<<" "<<testingTarget.y);
 
-				NeighImprovement neighImprovement = actualDOPN.optimizeNeighborhoodPosition(shuffled_target_id, actualNeighAngles, originalNeighAngIds, minimal_improvement_distance);
+				NeighImprovement neighImprovement = actualDOPN.optimizeNeighborhoodPosition(shuffled_target_id, actualNeighAngles, originalNeighAngIds,
+						minimal_improvement_distance);
 				//INFO("target "<<shuffled_target_id<<" improved by "<<neighImprovement.improvementLength<<" to ang "<<neighImprovement.neigh_ang<<" from ang "<<actualNeighAngles[shuffled_target_id]);
 				//INFO("actual node "<<actualGraphNodes[shuffled_target_id].x<<" "<<actualGraphNodes[shuffled_target_id].y <<" from original node " << originalGraphNodes[shuffled_target_id].x <<" "<<originalGraphNodes[shuffled_target_id].y);
 
 				improvedAllBy += neighImprovement.improvementLength;
 				actualNeighAngles[shuffled_target_id] = neighImprovement.neigh_ang;
 				actualGraphNodes[shuffled_target_id] = neighImprovement.nodeInNeigh;
-				if (neighImprovement.improvementLength > 0) {
+				if ( neighImprovement.improvementLength > 0 ) {
 					improvedNode[shuffled_target_id] = true;
 					//actualDOPN.update();
 					//tourDOPN.update();
@@ -1394,7 +1099,7 @@ NeighImrpovementValue VNSDOPN::improveNeighLocations(DOPN &actualDOPN, double mi
 			//INFO_GREEN("improvedAllBy "<<impriter<<":"<<improvedAllBy);
 			//INFO_GREEN("improvedAllBy "<<impriter<<":"<<(100*improvedAllBy/lengthBefore)<<"%");
 			impriter++;
-			if (improvedAllBy > oldImprovedAllBy) {
+			if ( improvedAllBy > oldImprovedAllBy ) {
 				someImprovement = true;
 			}
 		}
@@ -1414,19 +1119,20 @@ NeighImrpovementValue VNSDOPN::improveNeighLocations(DOPN &actualDOPN, double mi
 	return neighImprovement;
 }
 
-bool VNSDOPN::insertNeighborhoods(DOPN &actualDOPN, std::vector<NeighAngValuesIds> originalNeighAngIds, std::vector<bool> improvedNode, std::vector<double> actualNeighAngles,
+bool VNSDOPN::insertNeighborhoods(DOPN &actualDOPN, std::vector<NeighAngValuesIds> originalNeighAngIds, std::vector<bool> improvedNode,
+		std::vector<double> actualNeighAngles,
 		std::vector<GraphNode> actualGraphNodes) {
 	int targetSize = actualDOPN.getNumTargets();
 	int numAddedNeighbours = 0;
 	bool anythingImproved = false;
-	for (int targetID = 0; targetID < targetSize; ++targetID) {
-		if (improvedNode[targetID]) {
+	for ( int targetID = 0 ; targetID < targetSize ; ++targetID ) {
+		if ( improvedNode[targetID] ) {
 			//INFO("imrpove node "<<targetID);
 			double neigh_ang_min = originalNeighAngIds[targetID].neigh_ang;
 			//double neigh_ang_max = normalizeAngle(originalNeighAngIds[targetID + 2].neigh_ang, neigh_ang_min, neigh_ang_min + M_2PI);
 			double actual_neigh_ang = normalizeAngle(originalNeighAngIds[targetID + 1].neigh_ang, neigh_ang_min, neigh_ang_min + M_2PI);
 
-			if (actualNeighAngles[targetID] < actual_neigh_ang) {
+			if ( actualNeighAngles[targetID] < actual_neigh_ang ) {
 				//insert before neighId for target in stample - at position inSampleId
 				anythingImproved = true;
 				numAddedNeighbours++;
@@ -1434,9 +1140,10 @@ bool VNSDOPN::insertNeighborhoods(DOPN &actualDOPN, std::vector<NeighAngValuesId
 				//INFO("inset sample "<<normalizeAngle(actualNeighAngles[targetID], 0, M_2PI)<<" imrpoved from "<<originalNeighAngIds[targetID + 1].neigh_ang);
 				//INFO("actual node "<<actualGraphNodes[targetID].x<<" "<<actualGraphNodes[targetID].y <<" from original node " << originalGraphNodes[targetID].x <<" "<<originalGraphNodes[targetID].y);
 
-				actualDOPN.insertNeighSample(targetID + 1, originalNeighAngIds[targetID + 1].idNeigh, originalNeighAngIds[targetID + 1].idNeigh, normalizeAngle(actualNeighAngles[targetID], 0, M_2PI),
+				actualDOPN.insertNeighSample(targetID + 1, originalNeighAngIds[targetID + 1].idNeigh, originalNeighAngIds[targetID + 1].idNeigh,
+						normalizeAngle(actualNeighAngles[targetID], 0, M_2PI),
 						actualGraphNodes[targetID]);
-			} else if (actualNeighAngles[targetID] > actual_neigh_ang) {
+			} else if ( actualNeighAngles[targetID] > actual_neigh_ang ) {
 				//insert after neighId
 				anythingImproved = true;
 				numAddedNeighbours++;
@@ -1449,7 +1156,7 @@ bool VNSDOPN::insertNeighborhoods(DOPN &actualDOPN, std::vector<NeighAngValuesId
 		}
 
 	}
-	if (anythingImproved) {
+	if ( anythingImproved ) {
 		//INFO_GREEN("imrpoved neighborhood positions");
 		actualDOPN.update();
 		tourDOPN.update();
@@ -1461,19 +1168,19 @@ bool VNSDOPN::insertNeighborhoods(DOPN &actualDOPN, std::vector<NeighAngValuesId
 }
 
 bool VNSDOPN::improveHeadings(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, double minimal_improvement_distance) {
-	if (radius > 0.0) {
+	if ( radius > 0.0 ) {
 		//INFO("improveHeadings begin");
 		int targetSize = actualDOPN.getNumTargets();
 		double lengthBefore = actualDOPN.getPathLength();
 		double improvedAllHeadingsBy = 0;
 
 		std::vector<int> random_order_of_targets(targetSize);
-		for (int var = 0; var < targetSize; ++var) {
+		for ( int var = 0 ; var < targetSize ; ++var ) {
 			random_order_of_targets[var] = var;
 		}
 		std::random_shuffle(random_order_of_targets.begin(), random_order_of_targets.end());
 
-		for (int targetID = 0; targetID < targetSize; ++targetID) {
+		for ( int targetID = 0 ; targetID < targetSize ; ++targetID ) {
 			int shuffled_target_id = random_order_of_targets[targetID];
 			//GraphNode testingTarget = actualDOPN.getTarget(shuffled_target_id);
 			//INFO("optimize targetID:"<<targetID<<"out of "<<targetSize<<" targets");
@@ -1501,20 +1208,20 @@ bool VNSDOPN::insertSystematic(DOPN &actualDOPN, std::vector<GraphNode> &actualV
 	int bestTargetIDFrom = -1;
 	int bestTargetIDTo = -1;
 
-	for (int targetIDFrom = 0; targetIDFrom < actualVNS.size(); ++targetIDFrom) {
+	for ( int targetIDFrom = 0 ; targetIDFrom < actualVNS.size() ; ++targetIDFrom ) {
 		GraphNode testingRelocate = actualVNS[targetIDFrom];
 		double lengthAfterRemove = actualLength;
-		if (targetIDFrom < actualDOPN.getNumTargets()) {
+		if ( targetIDFrom < actualDOPN.getNumTargets() ) {
 			lengthAfterRemove = actualDOPN.tryToRemove(targetIDFrom);
 		}
 		double lengthRemoved = actualLength - lengthAfterRemove;
 
-		for (int targetIDTo = 0; targetIDTo <= actualDOPN.getNumTargets(); ++targetIDTo) {
-			if (abs(targetIDFrom - targetIDTo) > 1) {
+		for ( int targetIDTo = 0 ; targetIDTo <= actualDOPN.getNumTargets() ; ++targetIDTo ) {
+			if ( abs(targetIDFrom - targetIDTo) > 1 ) {
 				double lengthAfterMove = 0;
 				double addedReward = 0;
 				double lengthAfterAdd = 0;
-				if (targetIDFrom < actualDOPN.getNumTargets() && targetIDTo <= actualDOPN.getNumTargets()) {
+				if ( targetIDFrom < actualDOPN.getNumTargets() && targetIDTo <= actualDOPN.getNumTargets() ) {
 					//INFO("both inside num targets "<<actualDOPN.getNumTargets());
 					lengthAfterMove = actualDOPN.tryToMove(targetIDFrom, targetIDTo);
 				} else {
@@ -1525,7 +1232,8 @@ bool VNSDOPN::insertSystematic(DOPN &actualDOPN, std::vector<GraphNode> &actualV
 
 					lengthAfterMove = actualLength - lengthRemoved + lengthAdded;
 				}
-				if (lengthAfterMove <= budget && (addedReward > maxAddReward || (fabs(addedReward - maxAddReward) < MIN_CHANGE_EPS && (minLength - lengthAfterMove) > MIN_CHANGE_EPS))) {
+				if ( lengthAfterMove <= budget
+						&& (addedReward > maxAddReward || (fabs(addedReward - maxAddReward) < MIN_CHANGE_EPS && (minLength - lengthAfterMove) > MIN_CHANGE_EPS)) ) {
 					//INFO("improved lengthAfterMove "<< lengthAfterMove);
 					//INFO("improved minLength "<< minLength);
 					//INFO("imrpoved addedReward "<< addedReward);
@@ -1536,24 +1244,24 @@ bool VNSDOPN::insertSystematic(DOPN &actualDOPN, std::vector<GraphNode> &actualV
 					bestTargetIDFrom = targetIDFrom;
 					bestTargetIDTo = targetIDTo;
 
-					if (DEBUG_DOP_TRY_OPERATIONS) {
+					if ( DEBUG_DOP_TRY_OPERATIONS ) {
 						INFO_VAR(DEBUG_DOP_TRY_OPERATIONS);
 						//DEBUG part
 						//TODO erase debug
 						DOPN copyAdd = actualDOPN;
-						if (bestTargetIDTo > bestTargetIDFrom) {
+						if ( bestTargetIDTo > bestTargetIDFrom ) {
 							copyAdd.addPoint(testingRelocate, bestTargetIDTo);
-							if (bestTargetIDFrom < actualDOPN.getNumTargets()) {
+							if ( bestTargetIDFrom < actualDOPN.getNumTargets() ) {
 								copyAdd.removePoint(bestTargetIDFrom);
 							}
 						} else {
-							if (bestTargetIDFrom < actualDOPN.getNumTargets()) {
+							if ( bestTargetIDFrom < actualDOPN.getNumTargets() ) {
 								copyAdd.removePoint(bestTargetIDFrom);
 							}
 							copyAdd.addPoint(testingRelocate, bestTargetIDTo);
 						}
 						double lengthAfterAddCopy = copyAdd.getPathLength();
-						if (fabs(lengthAfterAddCopy - lengthAfterMove) > 0.1) {
+						if ( fabs(lengthAfterAddCopy - lengthAfterMove) > 0.1 ) {
 							ERROR("lengthAfterAddCopy does not match lengthAfterAdd");
 							ERROR("insertSystematic from "<<bestTargetIDFrom<<" to "<<bestTargetIDTo);
 							ERROR("id "<<testingRelocate.id);
@@ -1570,7 +1278,7 @@ bool VNSDOPN::insertSystematic(DOPN &actualDOPN, std::vector<GraphNode> &actualV
 		}
 	}
 
-	if (bestTargetIDFrom != -1) {
+	if ( bestTargetIDFrom != -1 ) {
 
 		GraphNode testingRelocate = actualVNS[bestTargetIDFrom];
 
@@ -1578,18 +1286,18 @@ bool VNSDOPN::insertSystematic(DOPN &actualDOPN, std::vector<GraphNode> &actualV
 		//INFO("relocate id "<<testingRelocate.id);
 		//INFO("from "<<bestTargetIDFrom<<" to "<<bestTargetIDTo);
 
-		if (bestTargetIDTo > bestTargetIDFrom) {
+		if ( bestTargetIDTo > bestTargetIDFrom ) {
 			//INFO("add point "<<bestTargetIDTo);
 			actualDOPN.addPoint(testingRelocate, bestTargetIDTo);
 			//INFO("remove point "<<bestTargetIDFrom);
-			if (bestTargetIDFrom < actualDOPN.getNumTargets()) {
+			if ( bestTargetIDFrom < actualDOPN.getNumTargets() ) {
 				actualDOPN.removePoint(bestTargetIDFrom);
 			}
 			actualVNS.insert(actualVNS.begin() + bestTargetIDTo, testingRelocate);
 			actualVNS.erase(actualVNS.begin() + bestTargetIDFrom);
 		} else {
 			//INFO("remove point "<<bestTargetIDFrom);
-			if (bestTargetIDFrom < actualDOPN.getNumTargets()) {
+			if ( bestTargetIDFrom < actualDOPN.getNumTargets() ) {
 				actualDOPN.removePoint(bestTargetIDFrom);
 			}
 			//INFO("add point "<<bestTargetIDTo);
@@ -1598,14 +1306,14 @@ bool VNSDOPN::insertSystematic(DOPN &actualDOPN, std::vector<GraphNode> &actualV
 			actualVNS.insert(actualVNS.begin() + bestTargetIDTo, testingRelocate);
 		}
 		double afterChangeLength = actualDOPN.getPathLength();
-		if (fabs(afterChangeLength - minLength) > 0.1) {
+		if ( fabs(afterChangeLength - minLength) > 0.1 ) {
 			ERROR("diff in afterChangeLength and minLength");
 			ERROR("insertSystematic from "<<bestTargetIDFrom<<" to "<<bestTargetIDTo);
 			ERROR("id "<<testingRelocate.id);
 			ERROR(afterChangeLength <<" and "<<minLength);
 			exit(1);
 		}
-		if (fabs(actualReward + maxAddReward - actualDOPN.getReward()) > 0.1) {
+		if ( fabs(actualReward + maxAddReward - actualDOPN.getReward()) > 0.1 ) {
 			ERROR("reward does not match");
 			ERROR("insertSystematic from "<<bestTargetIDFrom<<" to "<<bestTargetIDTo);
 			ERROR("id "<<testingRelocate.id);
@@ -1628,27 +1336,27 @@ bool VNSDOPN::exchangeSystematic(DOPN &actualDOPN, std::vector<GraphNode> &actua
 	int bestTargetIDFrom = -1;
 	int bestTargetIDTo = -1;
 
-	for (int targetIDFrom = 0; targetIDFrom < actualVNS.size(); ++targetIDFrom) {
+	for ( int targetIDFrom = 0 ; targetIDFrom < actualVNS.size() ; ++targetIDFrom ) {
 		GraphNode testingRelocateFrom = actualVNS[targetIDFrom];
 
-		for (int targetIDTo = 0; targetIDTo < actualDOPN.getNumTargets(); ++targetIDTo) {
-			if (abs(targetIDFrom - targetIDTo) > 2) {
+		for ( int targetIDTo = 0 ; targetIDTo < actualDOPN.getNumTargets() ; ++targetIDTo ) {
+			if ( abs(targetIDFrom - targetIDTo) > 2 ) {
 				GraphNode testingRelocateTo = actualVNS[targetIDTo];
 				double addedReward = 0;
 				double lengthAfterMove = 0;
-				if (targetIDFrom < actualDOPN.getNumTargets() && targetIDTo < actualDOPN.getNumTargets()) {
+				if ( targetIDFrom < actualDOPN.getNumTargets() && targetIDTo < actualDOPN.getNumTargets() ) {
 					lengthAfterMove = actualDOPN.tryToExchange(targetIDFrom, targetIDTo);
 				} else {
 					double lengthAfterReplaceTo = actualLength;
 					double addedAfterReplaceTo = 0;
-					if (targetIDTo < actualDOPN.getNumTargets()) {
+					if ( targetIDTo < actualDOPN.getNumTargets() ) {
 						lengthAfterReplaceTo = actualDOPN.tryToReplace(testingRelocateFrom, targetIDTo).actual_len;
 						addedAfterReplaceTo = lengthAfterReplaceTo - actualLength;
 						addedReward += testingRelocateFrom.reward - testingRelocateTo.reward;
 					}
 					double lengthAfterReplaceFrom = actualLength;
 					double addedAfterReplaceFrom = 0;
-					if (targetIDFrom < actualDOPN.getNumTargets()) {
+					if ( targetIDFrom < actualDOPN.getNumTargets() ) {
 						lengthAfterReplaceFrom = actualDOPN.tryToReplace(testingRelocateTo, targetIDFrom).actual_len;
 						addedAfterReplaceFrom = lengthAfterReplaceFrom - actualLength;
 						addedReward += testingRelocateTo.reward - testingRelocateFrom.reward;
@@ -1657,31 +1365,32 @@ bool VNSDOPN::exchangeSystematic(DOPN &actualDOPN, std::vector<GraphNode> &actua
 					lengthAfterMove = actualLength + addedAfterReplaceTo + addedAfterReplaceFrom;
 				}
 
-				if (lengthAfterMove <= budget && (addedReward > maxAddReward || (fabs(addedReward - maxAddReward) < MIN_CHANGE_EPS && (minLength - lengthAfterMove) > MIN_CHANGE_EPS))) {
+				if ( lengthAfterMove <= budget
+						&& (addedReward > maxAddReward || (fabs(addedReward - maxAddReward) < MIN_CHANGE_EPS && (minLength - lengthAfterMove) > MIN_CHANGE_EPS)) ) {
 
 					maxAddReward = addedReward;
 					minLength = lengthAfterMove;
 					bestTargetIDFrom = targetIDFrom;
 					bestTargetIDTo = targetIDTo;
 
-					if (DEBUG_DOP_TRY_OPERATIONS) {
+					if ( DEBUG_DOP_TRY_OPERATIONS ) {
 						INFO_VAR(DEBUG_DOP_TRY_OPERATIONS);
 						//debug
 						//TODO erase debug
 						DOPN copyAdd = actualDOPN;
 						//copyAdd.listIds();
-						if (bestTargetIDTo > bestTargetIDFrom) {
+						if ( bestTargetIDTo > bestTargetIDFrom ) {
 
 							copyAdd.removePoint(bestTargetIDTo);
 							copyAdd.addPoint(testingRelocateFrom, bestTargetIDTo);
 
-							if (bestTargetIDFrom < actualDOPN.getNumTargets()) {
+							if ( bestTargetIDFrom < actualDOPN.getNumTargets() ) {
 								copyAdd.removePoint(bestTargetIDFrom);
 								copyAdd.addPoint(testingRelocateTo, bestTargetIDFrom);
 								//INFO("lengthAfterReplaceFrom copy "<<copyAdd.getPathLength());
 							}
 						} else {
-							if (bestTargetIDFrom < actualDOPN.getNumTargets()) {
+							if ( bestTargetIDFrom < actualDOPN.getNumTargets() ) {
 								copyAdd.removePoint(bestTargetIDFrom);
 								copyAdd.addPoint(testingRelocateTo, bestTargetIDFrom);
 
@@ -1691,7 +1400,7 @@ bool VNSDOPN::exchangeSystematic(DOPN &actualDOPN, std::vector<GraphNode> &actua
 
 						}
 						double lengthAfterAddCopy = copyAdd.getPathLength();
-						if (fabs(lengthAfterAddCopy - lengthAfterMove) > 0.1) {
+						if ( fabs(lengthAfterAddCopy - lengthAfterMove) > 0.1 ) {
 							ERROR("lengthAfterAddCopy does not match lengthAfterAdd");
 							ERROR("exchangeSystematic from "<<bestTargetIDFrom<<" to "<<bestTargetIDTo);
 							ERROR("should be "<<lengthAfterAddCopy);
@@ -1699,7 +1408,7 @@ bool VNSDOPN::exchangeSystematic(DOPN &actualDOPN, std::vector<GraphNode> &actua
 
 							exit(1);
 						}
-						if (fabs(actualReward + maxAddReward - copyAdd.getReward()) > 0.1) {
+						if ( fabs(actualReward + maxAddReward - copyAdd.getReward()) > 0.1 ) {
 							ERROR("reward does not match");
 							ERROR("exchangeSystematic from "<<bestTargetIDFrom<<" to "<<bestTargetIDTo);
 							ERROR((actualReward + maxAddReward)<< " and "<< copyAdd.getReward());
@@ -1714,18 +1423,18 @@ bool VNSDOPN::exchangeSystematic(DOPN &actualDOPN, std::vector<GraphNode> &actua
 		}
 	}
 
-	if (bestTargetIDFrom != -1) {
+	if ( bestTargetIDFrom != -1 ) {
 
 		GraphNode testingRelocateFrom = actualVNS[bestTargetIDFrom];
 		GraphNode testingRelocateTo = actualVNS[bestTargetIDTo];
 
-		if (bestTargetIDTo > bestTargetIDFrom) {
+		if ( bestTargetIDTo > bestTargetIDFrom ) {
 			//INFO("add point "<<bestTargetIDTo);
 
 			actualDOPN.removePoint(bestTargetIDTo);
 			actualDOPN.addPoint(testingRelocateFrom, bestTargetIDTo);
 
-			if (bestTargetIDFrom < actualDOPN.getNumTargets()) {
+			if ( bestTargetIDFrom < actualDOPN.getNumTargets() ) {
 				actualDOPN.removePoint(bestTargetIDFrom);
 				actualDOPN.addPoint(testingRelocateTo, bestTargetIDFrom);
 			}
@@ -1735,7 +1444,7 @@ bool VNSDOPN::exchangeSystematic(DOPN &actualDOPN, std::vector<GraphNode> &actua
 
 		} else {
 
-			if (bestTargetIDFrom < actualDOPN.getNumTargets()) {
+			if ( bestTargetIDFrom < actualDOPN.getNumTargets() ) {
 				actualDOPN.removePoint(bestTargetIDFrom);
 				actualDOPN.addPoint(testingRelocateTo, bestTargetIDFrom);
 			}
@@ -1750,13 +1459,13 @@ bool VNSDOPN::exchangeSystematic(DOPN &actualDOPN, std::vector<GraphNode> &actua
 
 		double afterChangeLength = actualDOPN.getPathLength();
 
-		if (fabs(afterChangeLength - minLength) > 0.1) {
+		if ( fabs(afterChangeLength - minLength) > 0.1 ) {
 			ERROR("diff in afterChangeLength and minLength");
 			ERROR("exchangeSystematic from "<<bestTargetIDFrom<<" to "<<bestTargetIDTo);
 			ERROR(afterChangeLength <<" and "<<minLength);
 			exit(1);
 		}
-		if (fabs(actualReward + maxAddReward - actualDOPN.getReward())) {
+		if ( fabs(actualReward + maxAddReward - actualDOPN.getReward()) ) {
 			ERROR("reward does not match");
 			ERROR("exchangeSystematic from "<<bestTargetIDFrom<<" to "<<bestTargetIDTo);
 			ERROR((actualReward + maxAddReward)<< " and "<< actualDOPN.getReward());
@@ -1770,15 +1479,15 @@ bool VNSDOPN::exchangeSystematic(DOPN &actualDOPN, std::vector<GraphNode> &actua
 void VNSDOPN::pathInsert(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, int numExchanges) {
 
 	const int sizeV = actualVNS.size() - 1;
-	if (sizeV >= 2) {
-		for (int var = 0; var < numExchanges; ++var) {
+	if ( sizeV >= 2 ) {
+		for ( int var = 0 ; var < numExchanges ; ++var ) {
 			std::unordered_set<int> randNumbersSet;
-			while (randNumbersSet.size() < 3) {
+			while ( randNumbersSet.size() < 3 ) {
 				randNumbersSet.insert(randIntMinMax(0, sizeV));
 			}
 			std::vector<int> randNumbers;
 			int i = 0;
-			for (auto it = randNumbersSet.begin(); it != randNumbersSet.end(); ++it) {
+			for ( auto it = randNumbersSet.begin() ; it != randNumbersSet.end() ; ++it ) {
 				randNumbers.push_back(*it);
 			}
 			CSort<int>::quicksort(&randNumbers, 0, randNumbers.size() - 1);
@@ -1787,14 +1496,14 @@ void VNSDOPN::pathInsert(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, in
 			int exchangeFromEnd = randNumbers[1];
 			int insertTo = randNumbers[2];
 			bool insertUp = true;
-			if (randIntMinMax(0, 1) == 1) {
+			if ( randIntMinMax(0, 1) == 1 ) {
 				insertTo = randNumbers[0];
 				exchangeFromStart = randNumbers[1];
 				exchangeFromEnd = randNumbers[2];
 				insertUp = false;
 			}
 
-			if (insertUp) {
+			if ( insertUp ) {
 				//insert up
 
 				std::vector<GraphNode> newVec(actualVNS.begin() + exchangeFromStart, actualVNS.begin() + exchangeFromEnd + 1);
@@ -1802,10 +1511,10 @@ void VNSDOPN::pathInsert(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, in
 				actualVNS.insert(actualVNS.begin() + insertTo, newVec.begin(), newVec.end());
 				actualVNS.erase(actualVNS.begin() + exchangeFromStart, actualVNS.begin() + exchangeFromEnd + 1);
 
-				if (insertTo < actualDOPN.getNumTargets()) {
+				if ( insertTo < actualDOPN.getNumTargets() ) {
 					actualDOPN.addPoint(newVec, insertTo);
 				}
-				if (exchangeFromStart < actualDOPN.getNumTargets()) {
+				if ( exchangeFromStart < actualDOPN.getNumTargets() ) {
 					actualDOPN.removePoint(exchangeFromStart, MIN(exchangeFromEnd, actualDOPN.getNumTargets() - 1));
 				}
 
@@ -1817,10 +1526,10 @@ void VNSDOPN::pathInsert(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, in
 				actualVNS.erase(actualVNS.begin() + exchangeFromStart, actualVNS.begin() + exchangeFromEnd + 1);
 				actualVNS.insert(actualVNS.begin() + insertTo, newVec.begin(), newVec.end());
 
-				if (exchangeFromStart < actualDOPN.getNumTargets()) {
+				if ( exchangeFromStart < actualDOPN.getNumTargets() ) {
 					actualDOPN.removePoint(exchangeFromStart, MIN(exchangeFromEnd, actualDOPN.getNumTargets() - 1));
 				}
-				if (insertTo < actualDOPN.getNumTargets()) {
+				if ( insertTo < actualDOPN.getNumTargets() ) {
 					actualDOPN.addPoint(newVec, insertTo);
 				}
 
@@ -1837,14 +1546,14 @@ void VNSDOPN::pathInsert(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, in
 void VNSDOPN::pathExchange(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, int numExchanges) {
 //INFO("pathExchange "<<numExchanges<<" begin");
 	const int sizeV = actualVNS.size() - 1;
-	if (sizeV >= 3) {
-		for (int var = 0; var < numExchanges; ++var) {
+	if ( sizeV >= 3 ) {
+		for ( int var = 0 ; var < numExchanges ; ++var ) {
 			std::unordered_set<int> randNumbersSet;
-			while (randNumbersSet.size() < 4) {
+			while ( randNumbersSet.size() < 4 ) {
 				randNumbersSet.insert(randIntMinMax(0, sizeV));
 			}
 			std::vector<int> randNumbers;
-			for (auto it = randNumbersSet.begin(); it != randNumbersSet.end(); ++it) {
+			for ( auto it = randNumbersSet.begin() ; it != randNumbersSet.end() ; ++it ) {
 				randNumbers.push_back(*it);
 			}
 			CSort<int>::quicksort(&randNumbers, 0, randNumbers.size() - 1);
@@ -1854,7 +1563,7 @@ void VNSDOPN::pathExchange(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, 
 			int exchangeToStart = randNumbers[2];
 			int exchangeToEnd = randNumbers[3];
 			bool exchangeUp = true;
-			if (randIntMinMax(0, 1) == 1) {
+			if ( randIntMinMax(0, 1) == 1 ) {
 				exchangeFromStart = randNumbers[2];
 				exchangeFromEnd = randNumbers[3];
 				exchangeToStart = randNumbers[0];
@@ -1862,7 +1571,7 @@ void VNSDOPN::pathExchange(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, 
 				exchangeUp = false;
 			}
 
-			if (exchangeUp) {
+			if ( exchangeUp ) {
 				std::vector<GraphNode> newVecFrom(actualVNS.begin() + exchangeFromStart, actualVNS.begin() + exchangeFromEnd + 1);		//is below
 				std::vector<GraphNode> newVecTo(actualVNS.begin() + exchangeToStart, actualVNS.begin() + exchangeToEnd + 1);		//is above
 
@@ -1872,12 +1581,12 @@ void VNSDOPN::pathExchange(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, 
 				actualVNS.insert(actualVNS.begin() + exchangeFromStart, newVecTo.begin(), newVecTo.end());
 
 				//INFO("add newVecFrom");
-				if (exchangeToStart < actualDOPN.getNumTargets()) {
+				if ( exchangeToStart < actualDOPN.getNumTargets() ) {
 					actualDOPN.removePoint(exchangeToStart, MIN(exchangeToEnd, actualDOPN.getNumTargets() - 1));
 					actualDOPN.addPoint(newVecFrom, exchangeToStart);
 				}
 				//INFO("add newVecTo");
-				if (exchangeFromStart < actualDOPN.getNumTargets()) {
+				if ( exchangeFromStart < actualDOPN.getNumTargets() ) {
 					actualDOPN.removePoint(exchangeFromStart, MIN(exchangeFromEnd, actualDOPN.getNumTargets() - 1));
 					actualDOPN.addPoint(newVecTo, exchangeFromStart);
 				}
@@ -1895,13 +1604,13 @@ void VNSDOPN::pathExchange(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS, 
 				//INFO("size after "<<actualVNS.size());
 
 				//INFO("add newVecTo");
-				if (exchangeFromStart < actualDOPN.getNumTargets()) {
+				if ( exchangeFromStart < actualDOPN.getNumTargets() ) {
 					actualDOPN.removePoint(exchangeFromStart, MIN(exchangeFromEnd, actualDOPN.getNumTargets() - 1));
 					actualDOPN.addPoint(newVecTo, exchangeFromStart);
 				}
 
 				//INFO("add newVecFrom");
-				if (exchangeToStart < actualDOPN.getNumTargets()) {
+				if ( exchangeToStart < actualDOPN.getNumTargets() ) {
 					actualDOPN.removePoint(exchangeToStart, MIN(exchangeToEnd, actualDOPN.getNumTargets() - 1));
 					actualDOPN.addPoint(newVecFrom, exchangeToStart);
 				}
@@ -1920,9 +1629,9 @@ void VNSDOPN::insertion(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS) {
 	INFO("insertion begin");
 	int waitTimeus = 1000;
 	bool somethingAdded = true;
-	savePaths(&actualDOPN);
+	//savePaths(&actualDOPN);
 
-	while (somethingAdded) {
+	while ( somethingAdded ) {
 		//INFO("inserting");
 		somethingAdded = false;
 		double minimalAddDistPerReward = DBL_MAX;
@@ -1932,16 +1641,16 @@ void VNSDOPN::insertion(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS) {
 		int idTourNodeMinimal = -1;
 
 		int dopSize = actualDOPN.getNumTargets();
-		for (int idAvNode = dopSize; idAvNode < actualVNS.size(); ++idAvNode) {
+		for ( int idAvNode = dopSize ; idAvNode < actualVNS.size() ; ++idAvNode ) {
 			//try to add between start ang goal
 			GraphNode testingNode = actualVNS[idAvNode];
-			for (int idTourNode = 0; idTourNode < actualDOPN.getSize(); ++idTourNode) {
+			for ( int idTourNode = 0 ; idTourNode < actualDOPN.getSize() ; ++idTourNode ) {
 				//INFO("try to add idAvNode "<<idAvNode<<" to position "<<idTourNode);
 				double newDistance = actualDOPN.tryToAdd(testingNode, idTourNode).actual_len;
 				double additionalDistance = newDistance - actualLength;
 				double additionalDistPerReward = additionalDistance / testingNode.reward;
 				//INFO("distance "<<newDistance);
-				if (additionalDistPerReward < minimalAddDistPerReward && newDistance <= budget) {
+				if ( additionalDistPerReward < minimalAddDistPerReward && newDistance <= budget ) {
 					//INFO("additionalDistPerReward bettew "<<additionalDistPerReward);
 					minimalAddDistPerReward = additionalDistPerReward;
 					newLengthAfterAdd = newDistance;
@@ -1950,18 +1659,18 @@ void VNSDOPN::insertion(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS) {
 				}
 			}
 		}
-		if (idAvNodeMinimal >= 0 && idTourNodeMinimal >= 0 && newLengthAfterAdd <= budget) {
+		if ( idAvNodeMinimal >= 0 && idTourNodeMinimal >= 0 && newLengthAfterAdd <= budget ) {
 			somethingAdded = true;
 			//INFO("add idAvNode "<<idAvNodeMinimal<<" to position "<<idTourNodeMinimal);
 
 			GraphNode inserting = actualVNS[idAvNodeMinimal];
 			actualDOPN.addPoint(actualVNS[idAvNodeMinimal], idTourNodeMinimal);
-			savePaths(&actualDOPN);
+			//savePaths(&actualDOPN);
 			//INFO("improveNeighLocations after insert");
 			//improveNeighLocations(actualDOPN, actualVNS, 1);
 			//INFO("improveNeighLocations after insert end");
 
-			if (idAvNodeMinimal > idTourNodeMinimal) {
+			if ( idAvNodeMinimal > idTourNodeMinimal ) {
 				actualVNS.erase(actualVNS.begin() + idAvNodeMinimal);
 				actualVNS.insert(actualVNS.begin() + idTourNodeMinimal, inserting);
 			} else {
@@ -2042,11 +1751,11 @@ std::vector<GraphNode> VNSDOPN::getReachableNodes() {
 
 	DOPN sgDOPN = DOPN(startNode, goalNode, radius, resolution, neighborhood_radius, neighborhood_resolution, null_start_goal_radius);
 
-	for (int var = 0; var < nodesForInsertion.size(); ++var) {
+	for ( int var = 0 ; var < nodesForInsertion.size() ; ++var ) {
 		//INFO("sgDOPN.tryToAdd");
 		double distanceNode = sgDOPN.tryToAdd(nodesForInsertion[var], 0).actual_len;
 		//INFO(var<<" distanceNode "<<distanceNode);
-		if (distanceNode <= this->budget) {
+		if ( distanceNode <= this->budget ) {
 			reachableNodes_.push_back(nodesForInsertion[var]);
 		}
 	}
@@ -2058,9 +1767,9 @@ int VNSDOPN::greaterThanDistanceStartGoal(GraphNode gn1, GraphNode gn2, struct S
 	StartGoalNodes * sgNodes = (StartGoalNodes *) data.data;
 	double distanceSG1 = sgNodes->start.distanceTo(gn1) + gn1.distanceTo(sgNodes->goal);
 	double distanceSG2 = sgNodes->start.distanceTo(gn2) + gn2.distanceTo(sgNodes->goal);
-	if (distanceSG1 > distanceSG2) {
+	if ( distanceSG1 > distanceSG2 ) {
 		return 1;
-	} else if (distanceSG1 < distanceSG2) {
+	} else if ( distanceSG1 < distanceSG2 ) {
 		return -1;
 	} else {
 		return 0;
@@ -2069,7 +1778,7 @@ int VNSDOPN::greaterThanDistanceStartGoal(GraphNode gn1, GraphNode gn2, struct S
 
 double VNSDOPN::getTourLength(std::vector<GraphNode> tour) {
 	double distance = 0;
-	for (int var = 0; var < tour.size() - 1; ++var) {
+	for ( int var = 0 ; var < tour.size() - 1 ; ++var ) {
 		distance += tour[var].distanceTo(tour[var + 1]);
 	}
 	return distance;
@@ -2077,7 +1786,7 @@ double VNSDOPN::getTourLength(std::vector<GraphNode> tour) {
 
 double VNSDOPN::getTourReward(std::vector<GraphNode> tour) {
 	double price = 0;
-	for (int var = 0; var < tour.size(); ++var) {
+	for ( int var = 0 ; var < tour.size() ; ++var ) {
 		price += tour[var].reward;
 	}
 	return price;
@@ -2086,23 +1795,24 @@ double VNSDOPN::getTourReward(std::vector<GraphNode> tour) {
 void VNSDOPN::checkConsistency(DOPN &actualDOPN, std::vector<GraphNode> &actualVNS) {
 	INFO("checkConsistency");
 
-	if (actualDOPN.getPathLength() > budget) {
+	if ( actualDOPN.getPathLength() > budget ) {
 		ERROR("inconsistent actualDOPN is over budget "<<actualDOPN.getPathLength()<<" > "<<budget);
 		exit(1);
 	}
 
-	for (int var1 = 0; var1 < actualVNS.size(); ++var1) {
-		if (var1 < actualDOPN.getNumTargets()) {
-			if (actualVNS[var1].id != actualDOPN.getTarget(var1).id) {
-				ERROR("inconsistent actualVNS not same as actualDOPN at position"<<var1<<" ids are "<<actualVNS[var1].id<<" and "<<actualDOPN.getTarget(var1).id);
+	for ( int var1 = 0 ; var1 < actualVNS.size() ; ++var1 ) {
+		if ( var1 < actualDOPN.getNumTargets() ) {
+			if ( actualVNS[var1].id != actualDOPN.getTarget(var1).id ) {
+				ERROR(
+						"inconsistent actualVNS not same as actualDOPN at position"<<var1<<" ids are "<<actualVNS[var1].id<<" and "<<actualDOPN.getTarget(var1).id);
 				exit(1);
 			}
 		}
-		for (int var2 = var1 + 1; var2 < actualVNS.size(); ++var2) {
+		for ( int var2 = var1 + 1 ; var2 < actualVNS.size() ; ++var2 ) {
 
-			if (actualVNS[var1].id == actualVNS[var2].id) {
+			if ( actualVNS[var1].id == actualVNS[var2].id ) {
 				ERROR("inconsistent actualVNS repeat "<<var1<<" and "<<var2);
-				for (int nodeID = 0; nodeID < actualVNS.size(); ++nodeID) {
+				for ( int nodeID = 0 ; nodeID < actualVNS.size() ; ++nodeID ) {
 					INFO(nodeID<<" id "<<actualVNS[nodeID].id);
 				}
 
@@ -2121,67 +1831,69 @@ void VNSDOPN::load(void) {
 // nothing to load, structures are passed to the constructor
 	INFO("load");
 	int n = nodesAll.size();
-	if (canvas) {
+	if ( canvas ) {
 		CoordsVector points;
 		//INFO("BORDER " << BORDER);
-		foreach(GraphNode station, nodesAll) {
-			Coords coord_up(station.x + BORDER, station.y + BORDER);
-			Coords coord_down(station.x - BORDER, station.y - BORDER);
-			points.push_back(coord_up);
-			points.push_back(coord_down);
-		}
+		foreach(GraphNode station, nodesAll){
+		Coords coord_up(station.x + BORDER, station.y + BORDER);
+		Coords coord_down(station.x - BORDER, station.y - BORDER);
+		points.push_back(coord_up);
+		points.push_back(coord_down);
+	}
 		*canvas << canvas::AREA;
 		//INFO("draw points");
-		foreach(Coords coords, points) {
-			//INFO(coords.x<<" "<<coords.y);
-			*canvas << coords;
-		}
+		foreach(Coords coords, points){
+		//INFO(coords.x<<" "<<coords.y);
+		*canvas << coords;
+	}
 		INFO("set to canvas");
 		*canvas << canvas::END;
 
-		if (config.get<bool>("draw-stations")) {
+		if ( config.get<bool>("draw-stations") ) {
 			std::string pallete = config.get<std::string>("draw-targets-reward-palette");
-			if (config.get<bool>("draw-targets-reward") and imr::isFile(pallete)) {
+			if ( config.get<bool>("draw-targets-reward") and imr::isFile(pallete) ) {
 				imr::gui::CColorMap map;
 				map.load(pallete);
 				double minReward = DBL_MAX;
 				double maxReward = -DBL_MAX;
-				for (int var = 0; var < nodesAll.size(); ++var) {
-					if (nodesAll[var].reward < minReward) {
+				for ( int var = 0 ; var < nodesAll.size() ; ++var ) {
+					if ( nodesAll[var].reward < minReward ) {
 						minReward = nodesAll[var].reward;
 					}
-					if (nodesAll[var].reward > maxReward) {
+					if ( nodesAll[var].reward > maxReward ) {
 						maxReward = nodesAll[var].reward;
 					}
 				}
-				if (minReward == maxReward) {
+				if ( minReward == maxReward ) {
 					minReward = 0.99 * maxReward;
 				}
 				map.setRange(minReward, maxReward);
 				*canvas << "targets" << CShape(config.get<std::string>("draw-shape-targets")) << canvas::POINT;
-				for (GraphNode station : nodesAll) {
+				for ( GraphNode station : nodesAll ) {
 					//DEBUG("reward: " << target->reward << " color: " << map.getColor((double)target->reward));
 					Coords cord(station.x, station.y);
 					*canvas << imr::gui::canvas::FILL_COLOR << map.getColor((double) station.reward) << cord;
 
 				}
 				double radius = config.get<double>("neighborhood-radius");
-				if (radius > 0) {
-					for (GraphNode station : nodesAll) {
-						if (station.id != startIndex && station.id != goalIndex) {
+				if ( radius > 0 ) {
+					for ( GraphNode station : nodesAll ) {
+						if ( station.id != startIndex && station.id != goalIndex ) {
 							Point point(station.x, station.y);
 
 							//INFO_VAR(20 * radius);
 							*canvas << "neighbours";
-							*canvas << imr::gui::Shape::GREEN_POINT << imr::gui::canvas::PEN_ALPHA << 0.2 << imr::gui::canvas::FILL_ALPHA << 0.2 << imr::gui::canvas::FILL_COLOR
-									<< map.getColor((double) station.reward) << canvas::ARC << Fill(false) << station.x << station.y << radius << (double) 0 << (2 * M_PI);
+							*canvas << imr::gui::Shape::GREEN_POINT << imr::gui::canvas::PEN_ALPHA << 0.2 << imr::gui::canvas::FILL_ALPHA << 0.2
+									<< imr::gui::canvas::FILL_COLOR
+									<< map.getColor((double) station.reward) << canvas::ARC << Fill(false) << station.x << station.y << radius << (double) 0
+									<< (2 * M_PI);
 						}
 					}
 				}
 			} else {
 				//INFO("draw stations");
 				*canvas << "stations" << CShape(config.get<std::string>("draw-shape-stations")) << canvas::POINT;
-				for (GraphNode station : nodesAll) {
+				for ( GraphNode station : nodesAll ) {
 
 					//INFO(cord.x<<" ; "<<cord.y);
 					Coords cord(station.x, station.y);
@@ -2196,17 +1908,17 @@ void VNSDOPN::load(void) {
 }
 
 void VNSDOPN::drawNeighborhoodPoints() {
-	if (canvas && draw_neighborhood_points) {
+	if ( canvas && draw_neighborhood_points ) {
 		//INFO("drawNeighborhoodPoints");
 		usleep(2000);
 		*canvas << canvas::CLEAR << "neighborhoodp" << "neighborhoodp" << canvas::POINT;
 		CShape neighborhoodPoint("blue", "blue", 1, 1);
-		for (int nodeID = 0; nodeID < DOPN::getAllSamples()->size(); ++nodeID) {
+		for ( int nodeID = 0 ; nodeID < DOPN::getAllSamples()->size() ; ++nodeID ) {
 			//INFO_VAR(nodeID);
 			std::vector<std::vector<GraphNode_AngNeigh>>& neighborhood = DOPN::getAllSamples()->at(nodeID);
 			const int neighborhoodSize = neighborhood.size();
 			//INFO_VAR(neighborhoodSize);
-			for (int neighID = 0; neighID < neighborhoodSize; ++neighID) {
+			for ( int neighID = 0 ; neighID < neighborhoodSize ; ++neighID ) {
 				//INFO(neighID<<" draw neighborhood pos "<<neighborhood[neighID][0].node.x<<" "<<neighborhood[neighID][0].node.y);
 				Coords cord(neighborhood[neighID][0].node.x, neighborhood[neighID][0].node.y);
 				*canvas << neighborhoodPoint << cord;
@@ -2224,19 +1936,19 @@ void VNSDOPN::drawPath(int usleepTime, DOPN * toShow) {
 	//INFO("drawPath begin");
 //CoordsVector path;
 //get_ring_path(step, path);
-	if (canvas) {
+	if ( canvas ) {
 		*canvas << canvas::CLEAR << "path" << "path";
 		//INFO("path cleared");
 
 		std::vector<Dubins> pathDubins = this->tourDOPN.getPath();
-		if (toShow != NULL) {
+		if ( toShow != NULL ) {
 			pathDubins = toShow->getPath();
 		}
 
 		//INFO("pathDubins size "<<pathDubins.size());
 		CShape blackPoint("black", "black", 1, 4);
 		CShape blackLine("black", "black", 1, 0);
-		for (int var = 0; var < pathDubins.size(); ++var) {
+		for ( int var = 0 ; var < pathDubins.size() ; ++var ) {
 			//INFO("draw point start "<<pathDubins[var].start.point);
 			//INFO("draw point end "<<pathDubins[var].end.point);
 
@@ -2246,7 +1958,7 @@ void VNSDOPN::drawPath(int usleepTime, DOPN * toShow) {
 		}
 
 		*canvas << canvas::CLEAR << "pathpoint" << "pathpoint" << canvas::POINT;
-		for (int var = 0; var < pathDubins.size(); ++var) {
+		for ( int var = 0 ; var < pathDubins.size() ; ++var ) {
 
 			Coords cordstart(pathDubins[var].start.point.x, pathDubins[var].start.point.y);
 			*canvas << blackPoint << cordstart;
@@ -2255,13 +1967,14 @@ void VNSDOPN::drawPath(int usleepTime, DOPN * toShow) {
 		}
 		*canvas << canvas::END;
 
-		if (neighborhood_radius > 0 && pathDubins.size() > 0) {
+		if ( neighborhood_radius > 0 && pathDubins.size() > 0 ) {
 			SColor color;
 			color.set(1.0, 1.0, 0.0, 0.2);
-			*canvas << canvas::CLEAR << "sensorradius" << "sensorradius" << imr::gui::canvas::PEN_ALPHA << 0.0 << imr::gui::canvas::FILL_ALPHA << 0.3 << imr::gui::canvas::FILL_COLOR << color
+			*canvas << canvas::CLEAR << "sensorradius" << "sensorradius" << imr::gui::canvas::PEN_ALPHA << 0.0 << imr::gui::canvas::FILL_ALPHA << 0.3
+					<< imr::gui::canvas::FILL_COLOR << color
 					<< canvas::ARC;
 			*canvas << pathDubins[0].start.point.x << pathDubins[0].start.point.y << neighborhood_radius << (double) 0 << (2 * M_PI);
-			for (int var = 0; var < pathDubins.size(); ++var) {
+			for ( int var = 0 ; var < pathDubins.size() ; ++var ) {
 				Coords cordend(pathDubins[var].end.point.x, pathDubins[var].end.point.y);
 				*canvas << pathDubins[var].end.point.x << pathDubins[var].end.point.y << neighborhood_radius << 0.0 << (2 * M_PI);
 			}
@@ -2290,10 +2003,9 @@ void VNSDOPN::after_init(void) {
 
 }
 
-
 void VNSDOPN::savePaths(DOPN * toShow) {
 	//INFO("savePaths");
-	if (SAVE_ITER_PATHS && toShow != NULL) {
+	if ( SAVE_ITER_PATHS && toShow != NULL ) {
 		//INFO("getPathSampled robot"<<var);
 		std::vector<State> states = toShow->getPathSampled(0.5);
 		std::stringstream ss;
@@ -2309,8 +2021,8 @@ void VNSDOPN::savePaths(DOPN * toShow) {
 void VNSDOPN::saveToFile(std::vector<State> &toSave, std::string filename) {
 	//std::cout << "saveToFile " << filename << std::endl << std::flush;
 	std::ofstream out(filename);
-	if (out.is_open()) {
-		for (int var = 0; var < toSave.size(); ++var) {
+	if ( out.is_open() ) {
+		for ( int var = 0 ; var < toSave.size() ; ++var ) {
 			out << toSave[var].point.x << " " << toSave[var].point.y << " " << toSave[var].ang << std::endl;
 		}
 		out.close();
@@ -2322,7 +2034,7 @@ void VNSDOPN::saveToFile(std::vector<State> &toSave, std::string filename) {
 void VNSDOPN::saveRewToFile(double reward, double length, std::string filename) {
 //	std::cout << "saveToFile " << filename << std::endl << std::flush;
 	std::ofstream out(filename);
-	if (out.is_open()) {
+	if ( out.is_open() ) {
 		out << reward << " " << length << std::endl;
 		out.close();
 	} else {
@@ -2338,13 +2050,13 @@ void VNSDOPN::save(void) {
 //DEBUG("INIT_TIME_CPU: " << tInit.cpuTime());
 //DEBUG("SAVE_TIME_CPU: " << tSave.cpuTime());
 	DEBUG("SOLVE_TIME_CPU: " << tSolve.cpuTime());
-	if (SAVE_SETTINGS) {
+	if ( SAVE_SETTINGS ) {
 		saveSettings(getOutputIterPath(config.get<std::string>("settings"), dir));
 	}
-	if (SAVE_INFO) {
+	if ( SAVE_INFO ) {
 		saveInfo(getOutputIterPath(config.get<std::string>("info"), dir));
 	}
-	if (SAVE_RESULTS) {
+	if ( SAVE_RESULTS ) {
 		std::string file = getOutputIterPath(config.get<std::string>("result-path"), dir);
 		imr::assert_io(createDirectory(dir), "Can not create file in path'" + file + "'");
 		std::ofstream ofs(file.c_str());
@@ -2352,11 +2064,11 @@ void VNSDOPN::save(void) {
 		ofs << std::setprecision(14);
 
 		std::vector<Dubins> finalPath = finalTourDOPN.getPath();
-		foreach(const Dubins &pt, finalPath) {
-			ofs << pt << std::endl;
-			//ofs << pt.getStart().point.x << " " << pt.getStart().point.y << std::endl;
-			//ofs << pt.getEnd().point.x << " " << pt.getEnd().point.y << std::endl;
-		}
+		foreach(const Dubins &pt, finalPath){
+		ofs << pt << std::endl;
+		//ofs << pt.getStart().point.x << " " << pt.getStart().point.y << std::endl;
+		//ofs << pt.getEnd().point.x << " " << pt.getEnd().point.y << std::endl;
+	}
 
 		imr::assert_io(ofs.good(), "Error occur during path saving");
 		ofs.close();
@@ -2376,13 +2088,13 @@ void VNSDOPN::save(void) {
 
 	std::vector<Dubins> finalPath = finalTourDOPN.getPath();
 	std::vector<State> samples = finalTourDOPN.getPathSampled(config.get<double>("sampled-path-distance"));
-	for (int var = 0; var < samples.size(); ++var) {
+	for ( int var = 0 ; var < samples.size() ; ++var ) {
 		ofs << samples[var].point.x << DD << samples[var].point.y << DD << samples[var].ang << DD << std::endl;
 	}
 	imr::assert_io(ofs.good(), "Error occur during path saving");
 	ofs.close();
 
-	for (int var = 0; var < samples.size(); ++var) {
+	for ( int var = 0 ; var < samples.size() ; ++var ) {
 		ofs2 << samples[var].point.x << " " << samples[var].point.y << " " << samples[var].ang << std::endl;
 	}
 
@@ -2481,21 +2193,21 @@ void VNSDOPN::save(void) {
 	 ofsUsage.close();
 	 */
 
-	if (SAVE_TARGETS) {
+	if ( SAVE_TARGETS ) {
 		std::string file = getOutputIterPath(config.get<std::string>("targets"), dir);
 		imr::assert_io(createDirectory(dir), "Can not create file in path'" + file + "'");
 		std::ofstream ofs(file.c_str());
 		imr::assert_io(ofs.good(), "Cannot create path '" + file + "'");
 		ofs << std::setprecision(14);
-		for (int var = 0; var < nodesAll.size(); ++var) {
+		for ( int var = 0 ; var < nodesAll.size() ; ++var ) {
 			ofs << nodesAll[var].id << DD << nodesAll[var].x << DD << nodesAll[var].y << DD << nodesAll[var].reward << std::endl;
 		}
 		imr::assert_io(ofs.good(), "Error occur during path saving");
 		ofs.close();
 	}
-	if (canvas) { // map must be set
+	if ( canvas ) { // map must be set
 		*canvas << canvas::CLEAR << "ring";
-		if (config.get<bool>("draw-path")) {
+		if ( config.get<bool>("draw-path") ) {
 			drawPath();
 		}
 		saveCanvas();
@@ -2512,7 +2224,7 @@ void VNSDOPN::visualize(void) {
 
 void VNSDOPN::defineResultLog(void) {
 	static bool resultLogInitialized = false;
-	if (!resultLogInitialized) {
+	if ( !resultLogInitialized ) {
 		resultLog << result::newcol << "NAME";
 		resultLog << result::newcol << "METHOD";
 		resultLog << result::newcol << "CTIME";
@@ -2542,8 +2254,8 @@ void VNSDOPN::fillResultRecord(int numIters, double length, int numItersLastImpr
 
 	std::vector<std::vector<std::vector<GraphNode_Ang>>>samples = this->finalTourDOPN.getSamples();
 	std::stringstream tourNodes;
-	for (int var = 0; var < samples.size(); ++var) {
-		if (var != 0) {
+	for ( int var = 0 ; var < samples.size() ; ++var ) {
+		if ( var != 0 ) {
 			tourNodes << ",";
 		}
 		tourNodes << samples[var][0][0].node.id;
@@ -2551,7 +2263,8 @@ void VNSDOPN::fillResultRecord(int numIters, double length, int numItersLastImpr
 
 	double final_length = this->finalTourDOPN.getPathLength();
 
-	resultLog << result::newrec << name << getMethod() << t[0] << numIters << this->budget << radius << resolution << neighborhood_radius << neighborhood_resolution << final_reward << maximalRewardAll
+	resultLog << result::newrec << name << getMethod() << t[0] << numIters << this->budget << radius << resolution << neighborhood_radius
+			<< neighborhood_resolution << final_reward << maximalRewardAll
 			<< final_length << numItersLastImprovement << timeLastImprovement << maximal_calculation_time_MS << tourNodes.str();
 
 }
@@ -2640,12 +2353,315 @@ imr::CConfig & VNSDOPN::getConfig(imr::CConfig & config) {
 
 int VNSDOPN::greaterThanGraphNodeReward(GraphNode gn1, GraphNode gn2, struct SortCompareVar<GraphNode> data) {
 //INFO("greaterThanGraphNodeReward");
-	if (gn1.reward < gn2.reward) {
+	if ( gn1.reward < gn2.reward ) {
 		return 1;
-	} else if (gn1.reward > gn2.reward) {
+	} else if ( gn1.reward > gn2.reward ) {
 		return -1;
 	} else {
 		return 0;
 	}
+}
+
+void VNSDOPN::exampleInsertRandom(DOPN &actualDOPN) {
+	INFO("exampleInsertRandom");
+	int targetIDFrom = 5;
+	int targetIDTo = 2;
+
+	DOPN copyAdd = actualDOPN;
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+	//double lengthBeforeAddCopy = copyAdd.getPathLength();
+	GraphNode testingRelocate = copyAdd.getTarget(targetIDFrom);
+	INFO("to relocate "<<testingRelocate.id)
+	if ( targetIDTo > targetIDFrom ) {
+		copyAdd.addPoint(testingRelocate, targetIDTo);
+		if ( targetIDFrom < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(targetIDFrom);
+		}
+	} else {
+		if ( targetIDFrom < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(targetIDFrom);
+		}
+		copyAdd.addPoint(testingRelocate, targetIDTo);
+	}
+	copyAdd.update();
+	double lengthBeforeAddCopy = copyAdd.getPathLength();
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+	saveSampled("matlab/beforeInsertRandom.txt", copyAdd);
+	//do it back
+	targetIDFrom = 2;
+	targetIDTo = 6; //old +1
+	testingRelocate = copyAdd.getTarget(targetIDFrom);
+	INFO("to relocate "<<testingRelocate.id)
+	if ( targetIDTo > targetIDFrom ) {
+		INFO("add to "<<targetIDTo);
+		copyAdd.addPoint(testingRelocate, targetIDTo);
+		if ( targetIDFrom < copyAdd.getNumTargets() ) {
+			INFO("add "<<targetIDFrom);
+			copyAdd.removePoint(targetIDFrom);
+		}
+	} else {
+		if ( targetIDFrom < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(targetIDFrom);
+		}
+		copyAdd.addPoint(testingRelocate, targetIDTo);
+	}
+	copyAdd.update();
+	double lengthAfterAddCopy = copyAdd.getPathLength();
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+	saveSampled("matlab/afterInsertRandom.txt", copyAdd);
+
+}
+
+void VNSDOPN::exampleExchangeRandom(DOPN &actualDOPN) {
+	INFO("exampleExchangeRandom");
+	int targetIDFrom = 5;
+	int targetIDTo = 2;
+
+	DOPN copyAdd = actualDOPN;
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+
+	GraphNode testingRelocateFromCopy = copyAdd.getTarget(targetIDFrom);
+	GraphNode testingRelocateToCopy = copyAdd.getTarget(targetIDTo);
+
+	if ( targetIDTo > targetIDFrom ) {
+		copyAdd.removePoint(targetIDTo);
+		copyAdd.addPoint(testingRelocateFromCopy, targetIDTo);
+		if ( targetIDFrom < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(targetIDFrom);
+			copyAdd.addPoint(testingRelocateToCopy, targetIDFrom);
+		}
+	} else {
+		if ( targetIDFrom < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(targetIDFrom);
+			copyAdd.addPoint(testingRelocateToCopy, targetIDFrom);
+		}
+		copyAdd.removePoint(targetIDTo);
+		copyAdd.addPoint(testingRelocateFromCopy, targetIDTo);
+	}
+	copyAdd.update();
+
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+	saveSampled("matlab/beforeExchangeRandom.txt", copyAdd);
+
+	//do it back
+	targetIDFrom = 2;
+	targetIDTo = 5; //old +1
+
+	testingRelocateFromCopy = copyAdd.getTarget(targetIDFrom);
+	testingRelocateToCopy = copyAdd.getTarget(targetIDTo);
+
+	if ( targetIDTo > targetIDFrom ) {
+		copyAdd.removePoint(targetIDTo);
+		copyAdd.addPoint(testingRelocateFromCopy, targetIDTo);
+		if ( targetIDFrom < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(targetIDFrom);
+			copyAdd.addPoint(testingRelocateToCopy, targetIDFrom);
+		}
+	} else {
+		if ( targetIDFrom < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(targetIDFrom);
+			copyAdd.addPoint(testingRelocateToCopy, targetIDFrom);
+		}
+		copyAdd.removePoint(targetIDTo);
+		copyAdd.addPoint(testingRelocateFromCopy, targetIDTo);
+	}
+	copyAdd.update();
+
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+	saveSampled("matlab/afterExchangeRandom.txt", copyAdd);
+
+}
+
+void VNSDOPN::examplePathInsert(DOPN &actualDOPN) {
+	INFO("examplePathInsert");
+	int exchangeFromStart = 0;
+	int exchangeFromEnd = 2;
+	int insertTo = 5;
+
+	DOPN copyAdd = actualDOPN;
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+	bool insertUp = true;
+	std::vector<GraphNode> targets = copyAdd.getAllTargets();
+	if ( insertUp ) {
+		//insert up
+		std::vector<GraphNode> newVec(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
+		if ( insertTo < copyAdd.getNumTargets() ) {
+			copyAdd.addPoint(newVec, insertTo);
+			copyAdd.listIds();
+		}
+		if ( exchangeFromStart < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.listIds();
+		}
+
+	} else {
+		//insert bellow
+		std::vector<GraphNode> newVec(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
+
+		if ( exchangeFromStart < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
+		}
+		if ( insertTo < copyAdd.getNumTargets() ) {
+			copyAdd.addPoint(newVec, insertTo);
+		}
+	}
+
+	copyAdd.update();
+
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+
+	saveSampled("matlab/beforePathInsertRandom.txt", copyAdd);
+
+	exchangeFromStart = 2;
+	exchangeFromEnd = 4;
+	insertTo = 0;
+
+	insertUp = false;
+	targets = copyAdd.getAllTargets();
+	if ( insertUp ) {
+		//insert up
+		std::vector<GraphNode> newVec(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
+		if ( insertTo < copyAdd.getNumTargets() ) {
+			copyAdd.addPoint(newVec, insertTo);
+			copyAdd.listIds();
+		}
+		if ( exchangeFromStart < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.listIds();
+		}
+
+	} else {
+		//insert bellow
+		std::vector<GraphNode> newVec(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
+
+		if ( exchangeFromStart < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
+		}
+		if ( insertTo < copyAdd.getNumTargets() ) {
+			copyAdd.addPoint(newVec, insertTo);
+		}
+	}
+
+	copyAdd.update();
+
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+	saveSampled("matlab/afterPathInsertRandom.txt", copyAdd);
+}
+
+void VNSDOPN::examplePathExchange(DOPN &actualDOPN) {
+	INFO("examplePathExchange");
+	int exchangeFromStart = 0;
+	int exchangeFromEnd = 2;
+	int exchangeToStart = 4;
+	int exchangeToEnd = 5;
+
+	DOPN copyAdd = actualDOPN;
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+	bool exchangeUp = true;
+	std::vector<GraphNode> targets = copyAdd.getAllTargets();
+	if ( exchangeUp ) {
+		std::vector<GraphNode> newVecFrom(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);		//is below
+		std::vector<GraphNode> newVecTo(targets.begin() + exchangeToStart, targets.begin() + exchangeToEnd + 1);		//is above
+
+		if ( exchangeToStart < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(exchangeToStart, MIN(exchangeToEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.addPoint(newVecFrom, exchangeToStart);
+		}
+		//INFO("add newVecTo");
+		if ( exchangeFromStart < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.addPoint(newVecTo, exchangeFromStart);
+		}
+
+	} else {
+		std::vector<GraphNode> newVecFrom(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
+		std::vector<GraphNode> newVecTo(targets.begin() + exchangeToStart, targets.begin() + exchangeToEnd + 1);
+
+		if ( exchangeFromStart < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.addPoint(newVecTo, exchangeFromStart);
+		}
+
+		//INFO("add newVecFrom");
+		if ( exchangeToStart < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(exchangeToStart, MIN(exchangeToEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.addPoint(newVecFrom, exchangeToStart);
+		}
+
+	}
+
+	copyAdd.update();
+
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+
+	saveSampled("matlab/beforePathExchangeRandom.txt", copyAdd);
+
+	exchangeToStart = 0;
+	exchangeToEnd = 1;
+	exchangeFromStart = 3;
+	exchangeFromEnd = 5;
+
+	exchangeUp = false;
+	targets = copyAdd.getAllTargets();
+	if ( exchangeUp ) {
+		std::vector<GraphNode> newVecFrom(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);		//is below
+		std::vector<GraphNode> newVecTo(targets.begin() + exchangeToStart, targets.begin() + exchangeToEnd + 1);		//is above
+
+		if ( exchangeToStart < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(exchangeToStart, MIN(exchangeToEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.addPoint(newVecFrom, exchangeToStart);
+		}
+		//INFO("add newVecTo");
+		if ( exchangeFromStart < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.addPoint(newVecTo, exchangeFromStart);
+		}
+
+	} else {
+		std::vector<GraphNode> newVecFrom(targets.begin() + exchangeFromStart, targets.begin() + exchangeFromEnd + 1);
+		std::vector<GraphNode> newVecTo(targets.begin() + exchangeToStart, targets.begin() + exchangeToEnd + 1);
+
+		if ( exchangeFromStart < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(exchangeFromStart, MIN(exchangeFromEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.addPoint(newVecTo, exchangeFromStart);
+		}
+
+		//INFO("add newVecFrom");
+		if ( exchangeToStart < copyAdd.getNumTargets() ) {
+			copyAdd.removePoint(exchangeToStart, MIN(exchangeToEnd, copyAdd.getNumTargets() - 1));
+			copyAdd.addPoint(newVecFrom, exchangeToStart);
+		}
+
+	}
+
+	copyAdd.update();
+
+	copyAdd.listIds();
+	drawPath(1000000, &copyAdd);
+	saveSampled("matlab/afterPathExchangeRandom.txt", copyAdd);
+}
+
+void VNSDOPN::saveSampled(std::string filename, DOPN &actualDOPN) {
+	std::string file = filename;
+	std::ofstream ofs(filename.c_str());
+	imr::assert_io(ofs.good(), "Cannot create path '" + filename + "'");
+	ofs << std::setprecision(14);
+	std::vector<State> samples = actualDOPN.getPathSampled(config.get<double>("sampled-path-distance"));
+	for ( int var = 0 ; var < samples.size() ; ++var ) {
+		ofs << samples[var].point.x << DD << samples[var].point.y << DD << samples[var].ang << DD << std::endl;
+	}
+	imr::assert_io(ofs.good(), "Error occur during path saving");
+	ofs.close();
 }
 
