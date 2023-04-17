@@ -34,6 +34,11 @@ This is a research code, expect that it changes often and any fitness for a part
 
 The code has been tested on Ubuntu 20.04.
 
+### Installing dependencies
+
+Install the following dependencies:<br />
+`sudo apt-get install git build-essential cmake pkg-config ccache liblog4cxx-dev libboost-filesystem-dev libcairo2-dev libboost-program-options-dev libboost-thread-dev libboost-iostreams-dev`<br />
+
 ### Downloading the code
 
 Clone the code repository and update the submodules.<br />
@@ -41,10 +46,7 @@ Clone the code repository and update the submodules.<br />
 `cd vns_dopn`<br />
 `git submodule update --init --recursive`
 
-### Compilation and dependencies
-
-Install following dependencies:<br />
-`sudo apt-get install git build-essential cmake pkg-config ccache liblog4cxx-dev libboost-filesystem-dev libcairo2-dev libboost-program-options-dev libboost-thread-dev libboost-iostreams-dev`<br />
+### Compilation
 
 Compile the submodule jf-vendors<br />
 `cd crl ; ./install.sh ; cd ..`<br />
