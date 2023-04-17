@@ -11,7 +11,7 @@ CXXFLAGS:=$(call uniq,$(CXXFLAGS))
 
 bin: $(TARGET)
 
-$(OBJS): %.o: %.cpp
+$(OBJS): %.o: source/%.cpp
 	$(CXX) -c $< $(CXXFLAGS) $(CPPFLAGS) -o $(OBJ_DIR)/$@
 
 $(TARGET): create_directories  obj_subdirs $(OBJS) 

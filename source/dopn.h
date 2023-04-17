@@ -11,8 +11,8 @@
 #include "HeuristicTypes.h"
 #include "MathCommon.h"
 using namespace crl;
+#include "../opendubins/dubins.h"
 #include "crl/logging.h"
-#include "opendubins/dubins.h"
 #include <tuple>
 
 #define OUTPUT_DEFAULT "\033[0m"

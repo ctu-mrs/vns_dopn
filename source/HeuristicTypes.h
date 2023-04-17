@@ -15,8 +15,8 @@
 #include <limits>
 #include <vector>
 
-#include "opendubins/point.h"
-#include "opendubins/state.h"
+#include "../opendubins/point.h"
+#include "../opendubins/state.h"
 
 using namespace opendubins;
 
