@@ -28,6 +28,9 @@ CAIRO_LDFLAGS+=-lcairo -pthread -lX11
 LOCAL_CFLAGS=-I../include 
 LOCAL_LDFLAGS=-L../lib 
 
+LOCAL_CFLAGS+=-I./jf-vendors/include
+LOCAL_LDFLAGS+=-L./jf-vendors/lib 
+
 #LOCAL_CFLAGS+=-I../opendubins/build/include
 #LOCAL_LDFLAGS+=-L../opendubins/build/lib 
 
