@@ -7,10 +7,13 @@
 
 #ifndef MATHCOMMON_H_
 #define MATHCOMMON_H_
+
+// #define logger crl::logger
+
+#include <float.h>
+#include <math.h>
 #include <stdlib.h>
 #include <time.h>
-#include <math.h>
-#include <float.h>
 #include <vector>
 
 #ifndef PI_
@@ -18,10 +21,10 @@
 #endif
 
 #define M_2PI (2 * PI_)
-#define POW(x) ((x)*(x))
-#define MIN(x,y) ((x > y) ? y : x)
-#define MAX(x,y) ((x > y) ? ( x ) : ( y ))
-#define ABS(x) ((x < 0) ? (-(x)) : ( x ))
+#define POW(x) ((x) * (x))
+#define MIN(x, y) ((x > y) ? y : x)
+#define MAX(x, y) ((x > y) ? (x) : (y))
+#define ABS(x) ((x < 0) ? (-(x)) : (x))
 #define ANGLE_MIN (0)
 #define ANGLE_MAX (M_2PI)
 
@@ -32,8 +35,9 @@ int randIntMinMax(int min, int max);
  * @param angle
  * @return angle in range <0,2pi]
  */
-double normalizeAngle(double angle,double min=ANGLE_MIN,double max=ANGLE_MAX);
-std::vector<double> range(double min ,double max,double step = 1.0);
+double normalizeAngle(double angle, double min = ANGLE_MIN,
+                      double max = ANGLE_MAX);
+std::vector<double> range(double min, double max, double step = 1.0);
 
 int sgn(int val);
 double sgn(double val);
