@@ -44,7 +44,7 @@ Clone the code repository and update the submodules.<br />
 ### Compilation and dependencies
 
 Install following dependencies:<br />
-`sudo apt-get install build-essential cmake pkg-config ccache liblog4cxx-dev`<br />
+`sudo apt-get install git build-essential cmake pkg-config ccache liblog4cxx-dev`<br />
 
 Compile the submodule jf-vendors<br />
 `cd crl ; ./install.sh ; cd ..`<br />
